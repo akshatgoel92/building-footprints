@@ -107,41 +107,6 @@ def get_matching_s3_keys(prefix="", suffix=""):
 	for obj in get_matching_s3_objects(prefix, suffix): yield obj["Key"]
 
 
-def send_email(subject, msg):
-    '''
-    Send an email to all people in the recipients file.
-    '''
-
-	with open('./recipients.json') as r:
-		recipients = json.load(r)
-
-	with open('./gma_secrets.json') as secrets:
-		credentials = json.load(secrets)['smtp']
-	 
-	user = credentials['user']
-	password = credentials['password']
-	region = credentials['region']
-	
-	smtp_server = 'email-smtp.' + region + '.amazonaws.com'
-	smtp_port = 587
-	sender = 'akshat.goel@ifmr.ac.in'
-	text_subtype = 'html'
-	
-	msg = MIMEText(msg, text_subtype)
-	msg['Subject']= subject
-	msg['From'] = sender
-	msg['To'] = ', '.join(recipients)
-	
-	conn = SMTP(smtp_server, smtp_port)
-	conn.set_debuglevel(1)
-	conn.ehlo()
-	conn.starttls()
-	conn.ehlo()
-	conn.login(user, password)
-	conn.sendmail(sender, recipients, msg.as_string())
-	conn.close()
-
-
 if __name__ == '__main__':
     
     main()
