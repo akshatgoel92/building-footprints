@@ -5,7 +5,18 @@ import boto3
 import argparse
 import numpy as np
 import pandas as pd
+
     
+def make_folder(name):
+    '''
+    Make a folder to store imagery.
+    '''
+    try:
+        os.makedirs(name)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
 
 def get_credentials():
     '''
@@ -130,8 +141,10 @@ def upload_s3(file_from = './test.txt',
     bucket_name = get_bucket_name()
     s3.upload_file(file_from, bucket_name, file_to)
 
+
 def tests():
     
+    make_folder('./Image Folder')
     get_credentials()
     get_bucket_name()
     get_s3_client()
