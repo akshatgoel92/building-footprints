@@ -13,9 +13,8 @@ def make_folder(name):
     '''
     try:
         os.makedirs(name)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
+    except Exception as e:
+        print(e)
 
 
 def get_credentials():
