@@ -1,3 +1,4 @@
 secrets.json
 .python*
 *.txt
+.DS_Store
