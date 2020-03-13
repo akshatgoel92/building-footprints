@@ -10,57 +10,64 @@ import pandas as pd
 import helpers
 
 
-
-def make_image_folder():
+def get_paths(destination, root = "Image Folder"):
     
-    helpers.make_folder('./Image Folder')
-
-
-def get_imagery(destination):
+    source = "./" + root + '/' + destination
+    pre = root + '/' + destination
     
-    source = "Image Folder/" + destination
-    helpers.make_folder('./' + source)
+    return(source, pre)
+
+
+def make_folders(source, root = "Image Folder",):
     
-    files = helpers.get_matching_s3_keys(prefix = source)
-    for image in files:
-        helpers.download_s3(image, destination + image)
+    helpers.make_folder('./' + root)
+    helpers.make_folder(source) 
 
 
-def get_google_earth():
+def get_image_keys(pre):
     
-    helpers.make_folder('./Deoria Google Earth Image')
-
-
-def get_landsat_30m():
+    images = helpers.get_matching_s3_keys(prefix = pre)
     
-    helpers.make_folder('./Deoria Landsat 30M')
+    return(images)
 
 
-def get_metal_shapefile():
-    
-    helpers.make_folder('./Deoria Metal Shapefile')
-
-
-def get_nrsc_5m():
-    
-    helpers.make_folder('./Deoria NRSC 5M')
-
-
-def get_sentinel_10m():
-    
-    helpers.make_folder('./Deoroia Sentinel 10M')
-
-
-def get_ghaziabad_ge():
-    
-    helpers.make_folder('./Ghaziabad GE Imagery')
+def get_images(images):
+    '''
+    Then downloads the images
+    '''
+    try: 
+        for image in images:
+            print('Downloading {}'.format(image))
+            helpers.download_s3(image, './' + image)
+    except Exception as e:
+        print('Download error: {}'.format(e))
 
 
 def main():
     
-    pass
-
-
-if __name__ '__main__':
+    # List of imagery here
+    args = {1: 'Deoria Google Earth Image', 
+            2: 'Deoria Landsat 30M',
+            3: 'Deoria Metal Shapefile',
+            4: 'Deoria NRSC 5M',
+            5: 'Deroia Sentinel 10M',
+            6: 'Ghaziabad GE Imagery'}
+    
+    # User inputs which imagery she wants
+    print(args)
+    arg = int(input("Enter what folder number you need from above:"))
+    
+    # Run the data download pipeline
+    destination = args[arg]
+    source, pre = get_paths(destination)
+    
+    make_folders(source)
+    images = get_image_keys(pre)
+    
+    # Finally we get the images here
+    get_images(images)
+    
+    
+if __name__ == '__main__':
     
     main()

@@ -15,6 +15,7 @@ def make_folder(name):
         os.makedirs(name)
     except Exception as e:
         print(e)
+        pass
 
 
 def get_credentials():
