@@ -2,3 +2,4 @@ secrets.json
 .python*
 *.txt
 .DS_Store
+__pycache__/
