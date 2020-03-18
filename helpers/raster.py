@@ -24,8 +24,8 @@ def list_images(root = 'Image Folder',
 def get_image(root = 'Image Folder', image_type = 'Deoria Landsat 30M', 
               image_name = 'Deoria_2019.tif'):
     '''
-    Input: 
-    Output:
+    Input: Root folder, image type, image name
+    Output: Image reference
     '''
     # Construct the image path
     image_path = './' + root + '/' + image_type + '/' + image_name
