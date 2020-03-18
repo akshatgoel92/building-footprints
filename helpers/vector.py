@@ -10,19 +10,22 @@ def open_shape_file(path):
 def parse_args():
     
     parser = argparse.ArgumentParser(description ='Data loading parser')
+    parser.add_argument('--path', type = str, required = False, 
+                        default = './Image Folder/Deoria Metal Shapefile/Metal roof.shp')
+    
+    args.parser.parse_args()
+    path = args.path
     
     return(path)
 
 
-def tests():
+def main():
     
-    test = './Image Folder/Deoria Metal Shapefile/Metal roof.shp'
     path = parse_args()
-    assert path == test
-    
     shp = open_shape_file(path)
+    
     return(shp)
 
 if __name__ == '__main__':
     
-    shp = tests()
+    shp = main()
