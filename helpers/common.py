@@ -140,10 +140,3 @@ def upload_s3(file_from = './test.txt',
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
     s3.upload_file(file_from, bucket_name, file_to)
-    
-    
-if __name__ == '__main__':
-    '''
-    Function testing happens here. 
-    '''
-    main()
