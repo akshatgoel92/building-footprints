@@ -27,11 +27,10 @@ def get_image(root = 'Image Folder', image_type = 'Deoria Landsat 30M',
     Input: Root folder, image type, image name
     Output: Image reference
     '''
-    # Construct the image path
+    
     image_path = './' + root + '/' + image_type + '/' + image_name
-    # Open the image
     img = rasterio.open(image_path)
-    # Return the image
+    
     return(img)
 
 
@@ -73,3 +72,16 @@ def plot_image(img, title = '', y_label = '', band = 1):
     
     ax.set_axis_off()
     plt.show()
+
+
+def write_image(root, image_type, image_name, out_image, out_meta):
+    '''
+    Input: 1) Reference to output image object
+           2) References to output root, type, image_name
+           3) Reference to output image meta-data
+    Output: .tif file at outputh path with acurate meta-data
+    '''
+    out_path = './' + root + '/' + image_type + '/' + image_name
+    
+    with rasterio.open(out_path, "w", **out_meta) as dest:
+        dest.write(out_image)
