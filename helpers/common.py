@@ -140,26 +140,10 @@ def upload_s3(file_from = './test.txt',
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
     s3.upload_file(file_from, bucket_name, file_to)
-
-
-def tests():
-    
-    
-    make_folder()
-    get_credentials()
-    get_bucket_name()
-    get_s3_client()
-    
-    get_matching_s3_objects()
-    get_matching_s3_keys()
-    download_s3()
-    upload_s3()
     
     
 if __name__ == '__main__':
     '''
     Function testing happens here. 
     '''
-    tests()
-   
-    
+    main()
