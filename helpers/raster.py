@@ -44,6 +44,10 @@ def get_img_metadata(img):
 
 
 def convert_img_to_array(img):
+    '''
+    Input: Image reference
+    Output: Numpy array containing pixel values
+    '''
     
     # Read all raster values
     arr = img.read()
@@ -71,34 +75,24 @@ def plot_image(img, title = '', y_label = ''):
     plt.show()
 
 
-def open_shape_file(path):
-    
-    f = fiona.open(path, 'r')
-    
-    return(f)
-
-
 def parse_args():
     
     parser = argparse.ArgumentParser(description ='Data loading parser')
     parser.add_argument('--root', type = str, default = 'Image Folder', required = False)
     parser.add_argument('--img_type', type = str, default = 'Deoria Landsat 30M', required = False)
-    parser.add_argument('--shp', type = str, required = False, default = './Image Folder/Deoria Metal Shapefile/Metal roof.shp')
-    
     
     args = parser.parse_args()
-    root = args.root
-    shp = args.shp
-    image_type = args.image_type
-    
-    return(root, image_type)
+    return(args.root, args.image_type)
 
     
 def tests():
     
-    images = list_images()
+    imgs = list_images()
     img = get_image()
+    
+    # Convert to numerical array
     arr = convert_img_to_array(img)
+    plot_image(img)
     
     return(img, arr)
 

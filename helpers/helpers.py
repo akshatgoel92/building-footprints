@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
     
-def make_folder(name):
+def make_folder(name = './../Image Folder'):
     '''
     Make a folder to store imagery.
     '''
@@ -144,7 +144,8 @@ def upload_s3(file_from = './test.txt',
 
 def tests():
     
-    make_folder('./Image Folder')
+    
+    make_folder()
     get_credentials()
     get_bucket_name()
     get_s3_client()
