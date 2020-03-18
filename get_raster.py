@@ -1,5 +1,6 @@
 # Import oackages
 import os
+import fiona
 import argparse
 import rasterio
 import numpy as np
@@ -18,7 +19,7 @@ def list_images(root = 'Image Folder',
     images = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
     
     return(images)
-    
+
 
 def get_image(root = 'Image Folder', image_type = 'Deoria Landsat 30M', 
               image_name = 'Deoria_2019.tif'):
@@ -46,18 +47,9 @@ def convert_img_to_array(img):
     
     # Read all raster values
     arr = img.read()
-    print(arr.shape)
+    
     return(arr)
 
-
-def show_image(img):
-    '''
-    Input: Image reference
-    Output: Show image
-    '''
-    # Show the image
-    show(img)
-    
 
 def plot_image(img, title = '', y_label = ''):
     '''
@@ -79,14 +71,24 @@ def plot_image(img, title = '', y_label = ''):
     plt.show()
 
 
+def open_shape_file(path):
+    
+    f = fiona.open(path, 'r')
+    
+    return(f)
+
+
 def parse_args():
     
     parser = argparse.ArgumentParser(description ='Data loading parser')
     parser.add_argument('--root', type = str, default = 'Image Folder', required = False)
-    parser.add_argument('--image_type', type = str, default = 'Deoria Landsat 30M', required = False)
+    parser.add_argument('--img_type', type = str, default = 'Deoria Landsat 30M', required = False)
+    parser.add_argument('--shp', type = str, required = False, default = './Image Folder/Deoria Metal Shapefile/Metal roof.shp')
+    
     
     args = parser.parse_args()
     root = args.root
+    shp = args.shp
     image_type = args.image_type
     
     return(root, image_type)
