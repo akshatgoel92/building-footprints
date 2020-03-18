@@ -41,9 +41,9 @@ def get_images(images):
             helpers.download_s3(image, './' + image)
     except Exception as e:
         print('Download error: {}'.format(e))
-
-
-def main():
+    
+    
+def get_input():
     
     # List of imagery here
     args = {1: 'Deoria Google Earth Image', 
@@ -57,14 +57,18 @@ def main():
     print(args)
     arg = int(input("Enter what folder number you need from above:"))
     
-    # Run the data download pipeline
+    return(arg)
+    
+def main():
+    
+    arg = get_input()
     destination = args[arg]
     source, pre = get_paths(destination)
     
     make_folders(source)
     images = get_image_keys(pre)
     
-    # Finally we get the images here
+    
     get_images(images)
     
     

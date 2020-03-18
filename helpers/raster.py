@@ -55,7 +55,7 @@ def convert_img_to_array(img):
     return(arr)
 
 
-def plot_image(img, title = '', y_label = ''):
+def plot_image(img, title = '', y_label = '', band = 1):
     '''
     Inputs: 1) Image reference
             2) Title
@@ -63,7 +63,7 @@ def plot_image(img, title = '', y_label = ''):
     Output: Plot
     '''
     fig, ax = plt.subplots(figsize=(10,10))
-    dsmplot = ax.imshow(img.read(1))
+    dsmplot = ax.imshow(img.read(band))
     
     ax.set_title(title, fontsize=14)
     cbar = fig.colorbar(dsmplot, fraction=0.035, pad=0.01)
@@ -73,30 +73,3 @@ def plot_image(img, title = '', y_label = ''):
     
     ax.set_axis_off()
     plt.show()
-
-
-def parse_args():
-    
-    parser = argparse.ArgumentParser(description ='Data loading parser')
-    parser.add_argument('--root', type = str, default = 'Image Folder', required = False)
-    parser.add_argument('--img_type', type = str, default = 'Deoria Landsat 30M', required = False)
-    
-    args = parser.parse_args()
-    return(args.root, args.image_type)
-
-    
-def tests():
-    
-    imgs = list_images()
-    img = get_image()
-    
-    # Convert to numerical array
-    arr = convert_img_to_array(img)
-    plot_image(img)
-    
-    return(img, arr)
-
-
-if __name__ == '__main__':
-    
-    test1, test2 = tests()
