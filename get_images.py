@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 # Import S3 wrappers
-from helpers import helpers
+from helpers import common as helpers
 
 
 def get_paths(destination, root = "Image Folder"):
