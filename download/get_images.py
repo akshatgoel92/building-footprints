@@ -21,9 +21,12 @@ def get_image_keys(pre):
 def get_images(images):
 
     try: 
+        
         for image in images:
+            
             print('Downloading {}'.format(image))
             common.download_s3(image, './' + image)
+    
     except Exception as e:
         print('Download error: {}'.format(e))
     
