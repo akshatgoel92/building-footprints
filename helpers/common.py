@@ -24,7 +24,7 @@ def get_credentials():
     '''
     with open('./secrets.json') as secrets:
         s3_access = json.load(secrets)['s3']
-    
+        
     return(s3_access['default_bucket'], 
            s3_access['access_key_id'],
            s3_access['secret_access_key'])
@@ -38,7 +38,6 @@ def get_s3_client():
     s3 = boto3.client("s3", 
                       aws_access_key_id = access_key_id, 
                       aws_secret_access_key = secret_access_key)
-    
     return(s3)
 
 
@@ -50,7 +49,6 @@ def get_s3_resource():
     s3 = boto3.resource('s3', 
                         aws_access_key_id = access_key_id, 
                         aws_secret_access_key = secret_access_key)
-    
     return(s3)
 
 
@@ -59,11 +57,9 @@ def get_bucket_name():
     Get the default bucket name.
     '''
     bucket_name, _, _ = get_credentials()
-    
     return(bucket_name)
 
     
-
 def get_matching_s3_objects(prefix="", suffix=""):
     """
     Generate objects in an S3 bucket.
@@ -136,7 +132,6 @@ def upload_s3(file_from = './test.txt',
     '''
     Upload an object to S3.
     '''
-    
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
     s3.upload_file(file_from, bucket_name, file_to)
