@@ -10,7 +10,6 @@ import pandas as pd
 from helpers import common
 
 
-
 def get_image_keys(pre):
     
     images = common.get_matching_s3_keys(prefix = pre)
