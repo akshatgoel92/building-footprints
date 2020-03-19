@@ -8,9 +8,7 @@ import pandas as pd
 
     
 def make_folder(name = './../Image Folder'):
-    '''
-    Make a folder to store imagery.
-    '''
+
     try:
         os.makedirs(name)
     except Exception as e:
@@ -18,10 +16,30 @@ def make_folder(name = './../Image Folder'):
         pass
 
 
+def make_folders(source, root = "Image Folder",):
+    
+    make_folder('./' + root)
+    make_folder(source) 
+
+
+def get_paths(root, image_type, image_name):
+    
+    path = './' + root + '/' + image_type + '/'
+    image_path = path + image_name
+    
+    return(path, image_path)
+
+
+def get_paths_old(destination, root = "Image Folder"):
+    
+    source = "./" + root + '/' + destination
+    pre = root + '/' + destination
+    
+    return(source, pre)
+
+
 def get_credentials():
-    '''
-    Get credentials for S3 access.
-    '''
+    
     with open('./secrets.json') as secrets:
         s3_access = json.load(secrets)['s3']
         
@@ -31,9 +49,7 @@ def get_credentials():
 
 
 def get_s3_client():
-    '''
-    Get an S3 client object.
-    '''
+
     _, access_key_id, secret_access_key = get_credentials()
     s3 = boto3.client("s3", 
                       aws_access_key_id = access_key_id, 
@@ -42,9 +58,7 @@ def get_s3_client():
 
 
 def get_s3_resource():
-    '''
-    Get an S3 resource object.
-    '''
+
     _, access_key_id, secret_access_key = get_credentials()
     s3 = boto3.resource('s3', 
                         aws_access_key_id = access_key_id, 
@@ -53,9 +67,7 @@ def get_s3_resource():
 
 
 def get_bucket_name():
-    '''
-    Get the default bucket name.
-    '''
+    
     bucket_name, _, _ = get_credentials()
     return(bucket_name)
 
@@ -104,9 +116,7 @@ def get_matching_s3_keys(prefix="", suffix=""):
 
 
 def get_object_s3(key):
-    '''
-    Get an object from S3.
-    '''
+    
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
     f = s3.get_object(bucket_name, key)["Body"]
@@ -116,9 +126,7 @@ def get_object_s3(key):
         
 def download_s3(file_from = 'Raw Data/NRSC_Raw/198124711/ACC_REP.txt',
                 file_to = './test.txt'):
-    '''
-    Download a particular file from S3.
-    '''
+    
     s3 = get_s3_resource()
     bucket_name = get_bucket_name()
     try:
@@ -129,9 +137,7 @@ def download_s3(file_from = 'Raw Data/NRSC_Raw/198124711/ACC_REP.txt',
 
 def upload_s3(file_from = './test.txt', 
               file_to = 'Raw Data/NRSC_Raw/198124711/test.txt' ):
-    '''
-    Upload an object to S3.
-    '''
+    
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
     s3.upload_file(file_from, bucket_name, file_to)

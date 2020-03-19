@@ -10,19 +10,6 @@ import pandas as pd
 from helpers import common as helpers
 
 
-def get_paths(destination, root = "Image Folder"):
-    
-    source = "./" + root + '/' + destination
-    pre = root + '/' + destination
-    
-    return(source, pre)
-
-
-def make_folders(source, root = "Image Folder",):
-    
-    helpers.make_folder('./' + root)
-    helpers.make_folder(source) 
-
 
 def get_image_keys(pre):
     
@@ -32,9 +19,7 @@ def get_image_keys(pre):
 
 
 def get_images(images):
-    '''
-    Then downloads the images
-    '''
+
     try: 
         for image in images:
             print('Downloading {}'.format(image))
@@ -58,6 +43,7 @@ def get_input():
     arg = int(input("Enter what folder number you need from above:"))
     
     return(arg)
+
     
 def main():
     
