@@ -13,11 +13,13 @@ from helpers import common
 def list_images(root = 'Image Folder', 
                 image_type = 'Deoria Landsat 30M'):
     
-    path,_ = common.get_local_paths(root, 
-                                    image_type)
+    path = common.\
+           get_local_folder_path(root,
+                                 image_type)
     
     images = [f for f in os.listdir(path) 
-              if os.path.isfile(os.path.join(path, f))]
+              if os.path.\
+              isfile(os.path.join(path, f))]
     
     return(images)
 
@@ -26,9 +28,11 @@ def get_image(root = 'Image Folder',
               image_type = 'Deoria Landsat 30M', 
               image_name = 'Deoria_2019.tif'):
     
-    _, image_path = common.get_local_paths(root, 
-                                           image_type, 
-                                           image_name)
+    image_path = common.\
+                 get_local_image_path(root, 
+                                      image_type, 
+                                      image_name)
+    
     image = rasterio.open(image_path)
     
     return(image)
@@ -47,12 +51,15 @@ def convert_img_to_array(img):
 def plot_image(img, title = '', 
                y_label = '', band = 1):
     
-    fig, ax = plt.subplots(figsize=(10,10))
+    fig, ax = plt.\
+              subplots(figsize=(10,10))
+    
     dsmplot = ax.imshow(img.read(band))
     
     ax.set_title(title, fontsize=14)
     
-    cbar = fig.colorbar(dsmplot, fraction=0.035, 
+    cbar = fig.colorbar(dsmplot, 
+                        fraction=0.035, 
                         pad=0.01)
     
     cbar.ax.get_yaxis().labelpad = 15
@@ -66,9 +73,10 @@ def plot_image(img, title = '',
 def write_image(root, image_type, 
                 image_name, out_image, out_meta):
     
-    _, out_path = common.get_local_paths(root, 
-                                         image_type, 
-                                         image_name) 
+    out_path = common.\
+               get_local_image_path(root, 
+                                    image_type, 
+                                    image_name) 
     
     with rasterio.open(out_path, "w", **out_meta) as dest:
         dest.write(out_image)

@@ -1,5 +1,5 @@
 import fiona
-from common import helpers
+from helpers import common
 
 
 def open_shape_file(path):
@@ -13,9 +13,10 @@ def get_shapes(root = 'Image Folder',
                image_type = 'Deoria Metal Shapefile', 
                image_name = 'Metal roof.shp'):
     
-    _, path = helpers.get_local_paths(root, 
-                                      image_type, 
-                                      image_name)
+    path = common.\
+           get_local_image_path(root, 
+                                image_type, 
+                                image_name)
     
 
     with fiona.open(path, 'r') as shapefile:

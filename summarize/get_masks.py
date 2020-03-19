@@ -13,11 +13,20 @@ def get_masks(root =  'Image Folder',
     
     shapes = vector.get_shapes()
     
-    with raster.get_image(root, image_type, image_name) as image:
-        out_image, out_transform = rasterio.mask.mask(image, shapes, crop=False)
+    with raster.\
+    get_image(root, image_type, image_name) as image:
+        
+        out_image, out_transform = rasterio.\
+                                   mask.\
+                                   mask(image, 
+                                        shapes, 
+                                        crop=False)
+        
         out_meta = image.meta
     
-    return(out_image, out_transform, out_meta)
+    return(out_image, 
+           out_transform, 
+           out_meta)
 
 
 def write_masks(out_image, out_transform, 
@@ -31,10 +40,15 @@ def write_masks(out_image, out_transform,
             "transform": out_transform}
     
     out_meta.update(args)
-    raster.write_image(root, image_type, 
-                       mask_name, out_image, out_meta)
+    raster.write_image(root, 
+                       image_type, 
+                       mask_name, 
+                       out_image, 
+                       out_meta)
     
-    return(out_image, out_transform, out_meta)
+    return(out_image, 
+           out_transform, 
+           out_meta)
 
 if __name__ == '__main__':
     

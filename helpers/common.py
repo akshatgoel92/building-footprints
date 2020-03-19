@@ -6,7 +6,25 @@ import argparse
 import numpy as np
 import pandas as pd
 
+
+def get_local_folder_path(root, image_type):
     
+    return(os.path.join(root, image_type))
+
+
+def get_local_image_path(root, image_type, image_name):
+
+    return(os.path.join(root, image_type, image_name))
+    
+
+def get_s3_paths(destination, root = "Image Folder"):
+    
+    source = "./" + root + '/' + destination
+    source = os.path.join(root, destination)
+    pre = os.path.join(root, destination)
+    
+    return(source, pre)
+
 def make_folder(name):
 
     try:
@@ -16,31 +34,15 @@ def make_folder(name):
         pass
 
 
-def make_folders(source, root = "Image Folder"):
+def make_folders(source, root):
     
-    make_folder('./' + root)
+    make_folder(root)
     make_folder(source) 
-
-
-def get_local_paths(root, image_type, image_name = ''):
-    
-    folder_path = './' + root + '/' + image_type + '/'
-    image_path = folder_path + image_name
-    
-    return(folder_path, image_path)
-
-
-def get_s3_paths(destination, root = "Image Folder"):
-    
-    source = "./" + root + '/' + destination
-    pre = root + '/' + destination
-    
-    return(source, pre)
 
 
 def get_credentials():
     
-    with open('./secrets.json') as secrets:
+    with open('./helpers/secrets.json') as secrets:
         s3_access = json.load(secrets)['s3']
         
     return(s3_access['default_bucket'], 
@@ -58,7 +60,7 @@ def get_s3_client():
 
 
 def get_s3_resource():
-
+    
     _, access_key_id, secret_access_key = get_credentials()
     s3 = boto3.resource('s3', 
                         aws_access_key_id = access_key_id, 
@@ -67,7 +69,6 @@ def get_s3_resource():
 
 
 def get_bucket_name():
-    
     bucket_name, _, _ = get_credentials()
     return(bucket_name)
 
@@ -95,6 +96,7 @@ def get_matching_s3_objects(prefix="", suffix=""):
         kwargs["Prefix"] = key_prefix
         
         for page in paginator.paginate(**kwargs):
+            
             try: 
                 contents = page["Contents"]
             except Exception as e: 
