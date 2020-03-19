@@ -54,7 +54,12 @@ def make_folder(name):
 
 
 def make_folders(source, root):
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     make_folder(root)
     make_folder(source) 
 
