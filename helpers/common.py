@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
     
-def make_folder(name = './../Image Folder'):
+def make_folder(name):
 
     try:
         os.makedirs(name)
@@ -16,7 +16,7 @@ def make_folder(name = './../Image Folder'):
         pass
 
 
-def make_folders(source, root = "Image Folder",):
+def make_folders(source, root = "Image Folder"):
     
     make_folder('./' + root)
     make_folder(source) 
@@ -80,12 +80,14 @@ def get_matching_s3_objects(prefix="", suffix=""):
     Taken from: https://alexwlchan.net/2019/07/listing-s3-keys/
     Copyright © 2012–19 Alex Chan. Prose is CC-BY licensed, code is MIT.
     """
+    
     s3 = get_s3_client()
     kwargs = {'Bucket': get_bucket_name()} 
     paginator = s3.get_paginator("list_objects_v2")
        	
     if isinstance(prefix, str): 
         prefixes = (prefix, )
+    
     else: 
         prefixes = prefix
     
@@ -93,11 +95,14 @@ def get_matching_s3_objects(prefix="", suffix=""):
         kwargs["Prefix"] = key_prefix
         
         for page in paginator.paginate(**kwargs):
-            try: contents = page["Contents"]
-            except Exception as e: print(e) 
+            try: 
+                contents = page["Contents"]
+            except Exception as e: 
+                print(e) 
             
             for obj in contents:
                 key = obj["Key"]
+                
                 if key.endswith(suffix):
                     yield obj
     
@@ -124,19 +129,19 @@ def get_object_s3(key):
     return(f)
     
         
-def download_s3(file_from = 'Raw Data/NRSC_Raw/198124711/ACC_REP.txt',
-                file_to = './test.txt'):
+def download_s3(file_from, file_to):
     
     s3 = get_s3_resource()
     bucket_name = get_bucket_name()
+    
     try:
         s3.Bucket(bucket_name).download_file(file_from, file_to)
+    
     except Exception as e: 
         print(e)
 
 
-def upload_s3(file_from = './test.txt', 
-              file_to = 'Raw Data/NRSC_Raw/198124711/test.txt' ):
+def upload_s3(file_from, file_to):
     
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
