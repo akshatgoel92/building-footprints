@@ -65,8 +65,7 @@ def convert_img_to_array(img):
     return(img.read())
 
 
-def plot_image(img, title = '', 
-               y_label = '', band = 1):
+def plot_image(img, title, y_label, band):
     '''
     ------------------------
     Input: 

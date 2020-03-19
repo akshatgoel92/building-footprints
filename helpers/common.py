@@ -39,6 +39,7 @@ def get_s3_paths(destination, root):
     
     return(source, pre)
 
+
 def make_folder(name):
     '''
     ------------------------
@@ -195,7 +196,8 @@ def download_s3(file_from, file_to):
     bucket_name = get_bucket_name()
     
     try:
-        s3.Bucket(bucket_name).download_file(file_from, file_to)
+        s3.Bucket(bucket_name).\
+        download_file(file_from, file_to)
     
     except Exception as e: 
         print(e)
