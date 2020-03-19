@@ -1,5 +1,5 @@
 import fiona
-import argparse
+from common import helpers
 
 
 def open_shape_file(path):
@@ -9,10 +9,20 @@ def open_shape_file(path):
     return(f)
 
 
-def get_shapes(path = './Image Folder/Deoria Metal Shapefile/Metal roof.shp'):
+def get_shapes(root = 'Image Folder', 
+               image_type = 'Deoria Metal Shapefile', 
+               image_name = 'Metal roof.shp'):
     
+    _, path = helpers.get_local_paths(root, 
+                                      image_type, 
+                                      image_name)
+    
+
     with fiona.open(path, 'r') as shapefile:
-        shapes = [feature["geometry"] for feature in shapefile 
+        # Need to be careful that no None objects 
+        # are in the shapefile
+        shapes = [feature["geometry"] 
+                  for feature in shapefile 
                   if feature["geometry"] is not None]
     
     return(shapes)

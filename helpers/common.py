@@ -22,15 +22,15 @@ def make_folders(source, root = "Image Folder",):
     make_folder(source) 
 
 
-def get_paths(root, image_type, image_name):
+def get_local_paths(root, image_type, image_name = ''):
     
-    path = './' + root + '/' + image_type + '/'
-    image_path = path + image_name
+    folder_path = './' + root + '/' + image_type + '/'
+    image_path = folder_path + image_name
     
-    return(path, image_path)
+    return(folder_path, image_path)
 
 
-def get_paths_old(destination, root = "Image Folder"):
+def get_s3_paths(destination, root = "Image Folder"):
     
     source = "./" + root + '/' + destination
     pre = root + '/' + destination

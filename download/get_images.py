@@ -7,13 +7,13 @@ import numpy as np
 import pandas as pd
 
 # Import S3 wrappers
-from helpers import common as helpers
+from helpers import common
 
 
 
 def get_image_keys(pre):
     
-    images = helpers.get_matching_s3_keys(prefix = pre)
+    images = common.get_matching_s3_keys(prefix = pre)
     
     return(images)
 
@@ -23,7 +23,7 @@ def get_images(images):
     try: 
         for image in images:
             print('Downloading {}'.format(image))
-            helpers.download_s3(image, './' + image)
+            common.download_s3(image, './' + image)
     except Exception as e:
         print('Download error: {}'.format(e))
     
@@ -49,12 +49,12 @@ def main():
     
     arg = get_input()
     destination = args[arg]
-    source, pre = get_paths(destination)
+    source, pre = common.get_s3_paths(destination)
     
     make_folders(source)
     images = get_image_keys(pre)
     
-    
+    # Now we get the actual images
     get_images(images)
     
     
