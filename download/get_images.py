@@ -11,14 +11,24 @@ from helpers import common
 
 
 def get_image_keys(pre):
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     images = common.get_matching_s3_keys(prefix = pre)
     
     return(images)
 
 
 def get_images(images):
-
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     try: 
         
         for image in images:
@@ -31,7 +41,12 @@ def get_images(images):
         print('Download error: {}'.format(e))
     
 def get_root_folder():
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     # List of folders on S3 here
     folders = {1: 'Image Folder', 
                2: 'Sentinel'}
@@ -45,7 +60,12 @@ def get_root_folder():
     return(folder)
     
 def get_image_type():
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     # List of imagery here
     args = {1: 'Deoria Google Earth Image', 
             2: 'Deoria Landsat 30M',

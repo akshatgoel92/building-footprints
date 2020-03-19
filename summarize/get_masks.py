@@ -7,10 +7,13 @@ import rasterio
 import rasterio.mask
 
 
-def get_masks(root =  'Image Folder', 
-              image_type = 'Deoria Landsat 30M', 
-              image_name = 'Deoria_2019.tif'):
-    
+def get_masks(root, image_type, image_name):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     shapes = vector.get_shapes()
     
     with raster.\
@@ -30,10 +33,14 @@ def get_masks(root =  'Image Folder',
 
 
 def write_masks(out_image, out_transform, 
-                out_meta, root = 'Image Folder', 
-                image_type = 'Deoria Landsat 30M', 
-                mask_name = 'Deoria_2019_mask.tif'):
-    
+                out_meta, root, image_type, 
+                mask_name):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     args = {"driver": "GTiff", 
             "height": out_image.shape[1], 
             "width": out_image.shape[2], 

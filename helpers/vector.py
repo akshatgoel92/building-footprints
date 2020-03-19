@@ -3,16 +3,24 @@ from helpers import common
 
 
 def open_shape_file(path):
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     f = fiona.open(path, 'r')
     
     return(f)
 
 
-def get_shapes(root = 'Image Folder', 
-               image_type = 'Deoria Metal Shapefile', 
-               image_name = 'Metal roof.shp'):
-    
+def get_shapes(root, image_type, image_name):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     path = common.\
            get_local_image_path(root, 
                                 image_type, 

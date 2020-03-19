@@ -8,25 +8,44 @@ import pandas as pd
 
 
 def get_local_folder_path(root, image_type):
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     return(os.path.join(root, image_type))
 
 
 def get_local_image_path(root, image_type, image_name):
-
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     return(os.path.join(root, image_type, image_name))
     
 
-def get_s3_paths(destination, root = "Image Folder"):
-    
-    source = "./" + root + '/' + destination
+def get_s3_paths(destination, root):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     source = os.path.join(root, destination)
     pre = os.path.join(root, destination)
     
     return(source, pre)
 
 def make_folder(name):
-
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     try:
         os.makedirs(name)
     except Exception as e:
@@ -41,7 +60,12 @@ def make_folders(source, root):
 
 
 def get_credentials():
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     with open('./helpers/secrets.json') as secrets:
         s3_access = json.load(secrets)['s3']
         
@@ -51,7 +75,12 @@ def get_credentials():
 
 
 def get_s3_client():
-
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     _, access_key_id, secret_access_key = get_credentials()
     s3 = boto3.client("s3", 
                       aws_access_key_id = access_key_id, 
@@ -60,7 +89,12 @@ def get_s3_client():
 
 
 def get_s3_resource():
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     _, access_key_id, secret_access_key = get_credentials()
     s3 = boto3.resource('s3', 
                         aws_access_key_id = access_key_id, 
@@ -69,19 +103,26 @@ def get_s3_resource():
 
 
 def get_bucket_name():
+    '''
+    ------------------------
+    Input: None
+    Output S3 bucket name
+    ------------------------
+    '''
     bucket_name, _, _ = get_credentials()
     return(bucket_name)
 
     
 def get_matching_s3_objects(prefix="", suffix=""):
     """
+    ------------------------
     Generate objects in an S3 bucket.
     :param prefix: Only fetch objects whose key starts with this prefix (optional).
     :param suffix: Only fetch objects whose keys end with this suffix (optional).
     Taken from: https://alexwlchan.net/2019/07/listing-s3-keys/
     Copyright © 2012–19 Alex Chan. Prose is CC-BY licensed, code is MIT.
+    ------------------------
     """
-    
     s3 = get_s3_client()
     kwargs = {'Bucket': get_bucket_name()} 
     paginator = s3.get_paginator("list_objects_v2")
@@ -111,19 +152,26 @@ def get_matching_s3_objects(prefix="", suffix=""):
     
 def get_matching_s3_keys(prefix="", suffix=""):
     """
+    ------------------------
     Generate the keys in an S3 bucket.
     :param bucket: Name of the S3 bucket.
     :param prefix: Only fetch keys that start with this prefix (optional).
     :param suffix: Only fetch keys that end with this suffix (optional).
     Taken from: https://alexwlchan.net/2019/07/listing-s3-keys/
     Copyright © 2012–19 Alex Chan. Prose is CC-BY licensed, code is MIT.
+    ------------------------
     """
     for obj in get_matching_s3_objects(prefix, suffix): 
         yield obj["Key"]
 
 
 def get_object_s3(key):
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
     f = s3.get_object(bucket_name, key)["Body"]
@@ -132,7 +180,12 @@ def get_object_s3(key):
     
         
 def download_s3(file_from, file_to):
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     s3 = get_s3_resource()
     bucket_name = get_bucket_name()
     
@@ -144,7 +197,12 @@ def download_s3(file_from, file_to):
 
 
 def upload_s3(file_from, file_to):
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
     s3.upload_file(file_from, bucket_name, file_to)

@@ -10,9 +10,13 @@ from rasterio.plot import show
 from helpers import common
 
 
-def list_images(root = 'Image Folder', 
-                image_type = 'Deoria Landsat 30M'):
-    
+def list_images(root, image_type):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     path = common.\
            get_local_folder_path(root,
                                  image_type)
@@ -24,10 +28,13 @@ def list_images(root = 'Image Folder',
     return(images)
 
 
-def get_image(root = 'Image Folder', 
-              image_type = 'Deoria Landsat 30M', 
-              image_name = 'Deoria_2019.tif'):
-    
+def get_image(root, image_type, image_name):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     image_path = common.\
                  get_local_image_path(root, 
                                       image_type, 
@@ -39,17 +46,33 @@ def get_image(root = 'Image Folder',
 
 
 def get_img_metadata(img):
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     return(img.profile)
 
 
 def convert_img_to_array(img):
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     return(img.read())
 
 
 def plot_image(img, title = '', 
                y_label = '', band = 1):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     
     fig, ax = plt.\
               subplots(figsize=(10,10))
@@ -72,7 +95,12 @@ def plot_image(img, title = '',
 
 def write_image(root, image_type, 
                 image_name, out_image, out_meta):
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     out_path = common.\
                get_local_image_path(root, 
                                     image_type, 
