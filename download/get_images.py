@@ -45,7 +45,8 @@ def get_root_folder():
     '''
     # List of folders on S3 here
     folders = {1: 'Image Folder', 
-               2: 'Sentinel'}
+               2: 'Sentinel',
+               3: 'Metal Shapefile'}
     
     # User inputs which folder she wants
     print(folders)
@@ -55,20 +56,26 @@ def get_root_folder():
     return(folder)
 
     
-def get_image_type():
+def get_image_type(root):
     '''
     ------------------------
     Input: 
     Output:
     ------------------------
     '''
-    args = {1: 'Deoria Google Earth Image', 
-            2: 'Deoria Landsat 30M',
-            3: 'Deoria Metal Shapefile',
-            4: 'Deoria NRSC 5M',
-            5: 'Deroia Sentinel 10M',
-            6: 'Ghaziabad GE Imagery',
-            7: 'Gorakhpur'}
+    if root == 'Image Folder':
+        args = {1: 'Deoria Google Earth Image', 
+                2: 'Deoria Landsat 30M',
+                3: 'Deoria Metal Shapefile',
+                4: 'Deoria NRSC 5M',
+                5: 'Deroia Sentinel 10M',
+                6: 'Ghaziabad GE Imagery'}
+    
+    elif root == 'Sentinel':
+        args = {1: 'Gorakhpur'}
+    
+    elif root == 'Metal Shapefile':
+        args = {1: 'Gorakhpur'}
     
     print(args)
     arg = int(input("Enter what image type number you need from above:"))
@@ -81,12 +88,11 @@ def get_image_type():
 def main():
     
     root = get_root_folder()
-    destination = get_image_type()
-    source, pre = common.get_s3_paths(destination)
+    destination = get_image_type(root)
+    source, pre = common.get_s3_paths(destination, root)
     
     common.make_folders(source, root)
     images = get_image_keys(pre)
-    
     get_images(images)
     
     
