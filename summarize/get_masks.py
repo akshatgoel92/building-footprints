@@ -3,12 +3,16 @@ from helpers import vector
 from helpers import common 
 
 import os
+import json
 import fiona
+import argparse
 import rasterio
 import rasterio.mask
 
 
-def get_masks(root, image_type, image_name, shape):
+def get_masks(root, image_type, image_name, 
+              shape_root, shape_type, 
+              shape_name, invert):
     '''
     ------------------------
     Input: 
@@ -16,7 +20,8 @@ def get_masks(root, image_type, image_name, shape):
     ------------------------
     '''
     shapes = vector.\
-             get_shapes(**shape)
+             get_shapes(shape_root, shape_type, 
+                        shape_name)
     
     with raster.\
     get_image(root, image_type, image_name) as image:
@@ -25,7 +30,8 @@ def get_masks(root, image_type, image_name, shape):
                                    mask.\
                                    mask(image, 
                                         shapes, 
-                                        crop=False)
+                                        crop = False,
+                                        invert = invert)
         
         out_meta = image.meta
     
@@ -33,6 +39,24 @@ def get_masks(root, image_type, image_name, shape):
            out_transform, 
            out_meta)
 
+
+def get_mask_name(image_name, invert):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
+    if invert:
+        suffix = '_reverse_mask.tif'
+    else:
+        suffix = '_mask.tif'
+    
+    mask_name = os.path.\
+                splitext(image_name)[0] + \
+                suffix
+    
+    return(mask_name)
 
 def write_masks(out_image, out_transform, 
                 out_meta, root, image_type, 
@@ -60,27 +84,70 @@ def write_masks(out_image, out_transform,
            out_meta)
 
 
-def parse_args():
-    
+def get_args():
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     parser = argparse.ArgumentParser()
-    parser.add_argument('--root', type = str, default = 'Sentinel', required = False)
-    parser.add_argument('--image_type', type = str, default= 'Gorakhpur', required = False)
-    parser.add_argument('--image_name', type = int, default = 'RT_T44RQQ_20190521T045701_B02.tif', required = False)
     
-    parser.add_argument('--shape_root', type = str, default = 'Metal Shapefile', required = False)
-    parser.add_argument('--shape_image_type', type = str, default= 'Gorakhpur', required = False)
-    parser.add_argument('--shape_image_name', type = int, default = 'Metal roof.shp', required = False)
+    parser.add_argument('--region', type = str, 
+                        default = 'Gorakhpur', 
+                        required = False)
+    
+    parser.add_argument('--invert', type = bool, 
+                        default = False, 
+                        required = False)
+                            
     args = parser.parse_args()
+    region = args.region
+    invert = args.invert
     
-    root = args.root
-    image_type = args.image_type
-    image_name = args.image_name
-    shape_root = args.shape_root
-    shape_type = args.shape_type
-    shape_name = args.shape_name
-    mask_name = os.path.splitext(image_name)[0]
+    with open('summarize/image_config.json', 'r') as f:
+        img = json.load(f)[region]
+    
+    return(img, invert)
+
+
+def parse_args(img):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
+    root = img['root']    
+    image_type = img['image_type']
+    image_name = img['image_name']
+    
+    shape_root = img['shape_root']
+    shape_type = img['shape_type']
+    shape_name = img['shape_name']
+        
+    return(root, image_type, image_name, 
+           shape_root, shape_type, 
+           shape_name)
+
+
+
+def main():
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
+    img, invert = get_args()
+    img = parse_args(img)
+    
+    out = get_masks(*img, invert)
+    root, image_type, image_name = img[0], img[1], img[2]
+    
+    mask_name = get_mask_name(image_name, invert)
+    write_masks(*out, root, image_type, mask_name)
+
     
 if __name__ == '__main__':
-    
-    out_image, out_transform, out_meta = get_masks()
-    write_masks(out_image, out_transform, out_meta)
+    main()
