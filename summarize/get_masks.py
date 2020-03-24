@@ -36,8 +36,7 @@ def get_masks(root, image_type, image_name,
         out_meta = image.meta
     
     return(out_image, 
-           out_transform, 
-           out_meta)
+           out_transform, out_meta)
 
 
 def get_mask_name(image_name, invert):
