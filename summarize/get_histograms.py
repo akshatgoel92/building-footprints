@@ -39,6 +39,10 @@ def plot_histogram(root, img_type, img_name, rvs_name):
      
      pyplot.show()
      plt.savefig('/Users/akshatgoel/Desktop/test.png')
+    
+    
+def plot_histogram_bokeh():
+    pass
 
      
 def main():

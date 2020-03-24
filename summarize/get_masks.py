@@ -35,8 +35,7 @@ def get_masks(root, image_type, image_name,
         
         out_meta = image.meta
     
-    return(out_image, 
-           out_transform, out_meta)
+    return(out_image, out_transform, out_meta)
 
 
 def get_mask_name(image_name, invert):
@@ -48,6 +47,7 @@ def get_mask_name(image_name, invert):
     '''
     if invert:
         suffix = '_reverse_mask.tif'
+    
     else:
         suffix = '_mask.tif'
     
@@ -56,6 +56,21 @@ def get_mask_name(image_name, invert):
                 suffix
     
     return(mask_name)
+
+
+def get_stack_name(image_name):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
+    stack_name = os.path.\
+                 splitext(image_name)[0] + \
+                 'stacked.tif'
+    
+    return(stack_name)
+
 
 def write_masks(out_image, out_transform, 
                 out_meta, root, image_type, 
@@ -83,6 +98,30 @@ def write_masks(out_image, out_transform,
            out_meta)
 
 
+def stack_masks(root, image_type, stack_name):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
+    
+    names = raster.list_images(root, image_type)
+    
+    masks = [common.get_local_image_path(root, image_type, name)
+             for name in names if 'mask' in name]
+    
+    with rasterio.open(masks[0]) as f0:
+        meta = f0.meta
+    
+    meta.update(count = len(masks))
+    
+    with rasterio.open(stack_name, 'w', **meta) as f:
+        for id, layer in enumerate(masks, start=1):
+            with rasterio.open(layer) as f1:
+                f.write_band(id, f1.read(1))
+                
+
 def get_args():
     '''
     ------------------------
@@ -93,12 +132,10 @@ def get_args():
     parser = argparse.ArgumentParser()
     
     parser.add_argument('--region', type = str, 
-                        default = 'Gorakhpur', 
-                        required = False)
+                        default = 'Gorakhpur', required = False)
     
     parser.add_argument('--invert', type = bool, 
-                        default = False, 
-                        required = False)
+                        default = False, required = False)
                             
     args = parser.parse_args()
     region = args.region
@@ -126,9 +163,7 @@ def parse_args(img):
     shape_name = img['shape_name']
         
     return(root, image_type, image_name, 
-           shape_root, shape_type, 
-           shape_name)
-
+           shape_root, shape_type, shape_name)
 
 
 def main():
@@ -146,6 +181,9 @@ def main():
     
     mask_name = get_mask_name(image_name, invert)
     write_masks(*out, root, image_type, mask_name)
+    
+    stack_name = get_stack_name(image_name)
+    stack_masks(root, image_type, stack_name)
 
     
 if __name__ == '__main__':
