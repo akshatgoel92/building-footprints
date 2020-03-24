@@ -65,33 +65,6 @@ def convert_img_to_array(img):
     return(img.read())
 
 
-def plot_image(img, title, y_label, band):
-    '''
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    '''
-    
-    fig, ax = plt.\
-              subplots(figsize=(10,10))
-    
-    dsmplot = ax.imshow(img.read(band))
-    
-    ax.set_title(title, fontsize=14)
-    
-    cbar = fig.colorbar(dsmplot, 
-                        fraction=0.035, 
-                        pad=0.01)
-    
-    cbar.ax.get_yaxis().labelpad = 15
-    cbar.ax.set_ylabel(y_label, 
-                       rotation=270)
-    
-    ax.set_axis_off()
-    plt.show()
-
-
 def write_image(root, image_type, 
                 image_name, out_image, out_meta):
     '''
