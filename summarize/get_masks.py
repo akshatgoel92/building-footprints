@@ -67,7 +67,7 @@ def get_stack_name(image_name):
     '''
     stack_name = os.path.\
                  splitext(image_name)[0] + \
-                 'stacked.tif'
+                 '_stacked.tif'
     
     return(stack_name)
 
