@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 
 
+
+
 def get_local_folder_path(root, image_type):
     '''
     ------------------------
@@ -15,6 +17,7 @@ def get_local_folder_path(root, image_type):
     ------------------------
     '''
     return(os.path.join(root, image_type))
+    
 
 
 def get_local_image_path(root, image_type, image_name):
@@ -25,6 +28,25 @@ def get_local_image_path(root, image_type, image_name):
     ------------------------
     '''
     return(os.path.join(root, image_type, image_name))
+
+
+
+def list_images(root, image_type):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
+    path = get_local_folder_path(root,
+                                 image_type)
+    
+    images = [f for f in os.listdir(path) 
+              if os.path.\
+              isfile(os.path.join(path, f))
+              and f.endswith('.tif')]
+    
+    return(images)
     
 
 def get_s3_paths(destination, root):

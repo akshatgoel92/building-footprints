@@ -20,7 +20,7 @@ def get_image_keys(pre):
     return(common.get_matching_s3_keys(prefix = pre))
 
 
-def get_images(images):
+def get_images(images, existing):
     '''
     ------------------------
     Input: 
@@ -29,8 +29,9 @@ def get_images(images):
     '''
     try: 
         for image in images:
-            print('Downloading {}'.format(image))
-            common.download_s3(image, image)
+            if image not in existing:
+                print('Downloading {}'.format(image))
+                common.download_s3(image, image)
     
     except Exception as e:
         print('Download error: {}'.format(e))
@@ -46,7 +47,8 @@ def get_root_folder():
     # List of folders on S3 here
     folders = {1: 'Image Folder', 
                2: 'Sentinel',
-               3: 'Metal Shapefile'}
+               3: 'Metal Shapefile',
+               4: 'Bing Gorakhpur'}
     
     # User inputs which folder she wants
     print(folders)
@@ -71,11 +73,22 @@ def get_image_type(root):
                 5: 'Deroia Sentinel 10M',
                 6: 'Ghaziabad GE Imagery'}
     
+    
     elif root == 'Sentinel':
         args = {1: 'Gorakhpur'}
     
+    
     elif root == 'Metal Shapefile':
         args = {1: 'Gorakhpur'}
+    
+    
+    elif root == 'Bing Gorakhpur':
+        args = {
+            
+            1: 'Bing maps imagery_Gorakhpur'
+            
+        }
+    
     
     print(args)
     arg = int(input("Enter what image type number you need from above:"))
@@ -93,7 +106,13 @@ def main():
     
     common.make_folders(source, root)
     images = get_image_keys(pre)
-    get_images(images)
+    
+    existing = [common.get_local_image_path(root, destination, img) 
+                for img in common.list_images(root, destination)]
+    
+    images = [img for img in images if img not in existing]
+    
+    get_images(images, existing)
     
     
 if __name__ == '__main__':
