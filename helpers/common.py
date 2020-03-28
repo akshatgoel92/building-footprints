@@ -101,7 +101,6 @@ def get_credentials():
            s3_access['access_key_id'],
            s3_access['secret_access_key'])
 
-
 def get_s3_client():
     '''
     ------------------------
@@ -139,6 +138,22 @@ def get_bucket_name():
     '''
     bucket_name, _, _ = get_credentials()
     return(bucket_name)
+
+
+def put_object_s3(f, key):
+    '''
+    ------------------------
+    Input: None
+    Output S3 bucket name
+    ------------------------
+    '''
+    client = get_s3_client()
+    bucket_name = get_bucket_name()
+    response = client.put_object( 
+        Bucket=bucket_name,
+        Body=f,
+        Key=key
+    )
 
     
 def get_matching_s3_objects(prefix="", suffix=""):
