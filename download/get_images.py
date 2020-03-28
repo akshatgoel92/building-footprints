@@ -66,6 +66,7 @@ def get_image_type(root):
     ------------------------
     '''
     if root == 'Image Folder':
+        
         args = {1: 'Deoria Google Earth Image', 
                 2: 'Deoria Landsat 30M',
                 3: 'Deoria Metal Shapefile',
@@ -83,18 +84,12 @@ def get_image_type(root):
     
     
     elif root == 'Bing Gorakhpur':
-        args = {
-            
-            1: 'Bing maps imagery_Gorakhpur'
-            
-        }
-    
+        args = {1: 'Bing maps imagery_Gorakhpur'}
     
     print(args)
     arg = int(input("Enter what image type number you need from above:"))
     
     destination = args[arg]
-    
     return(destination)
 
     
