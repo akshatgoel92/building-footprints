@@ -1,36 +1,31 @@
 
-# Install Python 3.7.0 and make it default version
-# First install dependencies 
-apt update && apt upgrade -y
-apt install build-essential -y
-apt install libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev -y
-sudo apt-get install zlib1g-dev
+    
+    apt update && apt upgrade -y
 
-# Then get Python .tar file and unzip 
-wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz
-tar -xzvf Python-3.7.0.tgz
+    apt install build-essential -y
 
-# Run configuration files
-Python-3.7.0/configure --enable-optimizations
+    apt install libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev -y        
 
-# Run make file
-make
-make install
+    sudo apt-get install zlib1g-dev
 
-# Set to system Python
-update-alternatives --install /usr/bin/python python /root/python 1
+    wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz
 
-# Go back home
-cd ~
+    tar -xzvf Python-3.7.0.tgz
 
-# Clone repository
-git clone https://github.com/sociometrik/roof-classify.git
+    Python-3.7.0/configure --enable-optimizations
 
-# Create a new virtual environment
-python -m venv roof-env
+    make
 
-# Go into the newly cloned repository
-cd ~/roof-classify
+    make install
 
-# Activate the virtual environment
-source ./../roof-env/bin/activate
+    update-alternatives --install /usr/bin/python python /root/python 1
+
+    cd ~
+
+    git clone https://github.com/sociometrik/roof-classify.git
+    
+    python -m venv roof-env
+
+    cd ~/roof-classify
+
+    source ./../roof-env/bin/activate
