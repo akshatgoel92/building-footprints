@@ -49,7 +49,8 @@ def write_mosaic(mosaic, out_trans, out_meta, count):
                      "transform": out_trans,
                      "compress": "lzw"})
     
-    with rasterio.open(out_fp, "w", **out_meta, BIGTIFF="IF_NEEDED") as dest:
+    with rasterio.open(out_fp, "w", **out_meta, 
+                       BIGTIFF="IF_NEEDED") as dest:
         dest.write(mosaic)
 
 
