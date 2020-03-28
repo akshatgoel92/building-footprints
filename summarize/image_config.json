@@ -1,12 +1,12 @@
 {
 	"Gorakhpur": {
-		"root": "Sentinel",
-		"image_type": "Gorakhpur",
-		"image_name": "RT_T44RQQ_20190521T045701_B02.tif",
+		"root": "Bing Gorakhpur",
+		"image_type": "Gorakhpur_Mosaics",
+		"image_name": "chunk_10.tif",
 		"shape_root": "Metal Shapefile",
 		"shape_type": "Gorakhpur",
 		"shape_name": "Metal roof.shp",
-		"mask_name": "Gorakhpur_Sentinel"
+		"mask_name": "Gorakhpur_chunk_10"
 	},
 
 	"Deoria": {
