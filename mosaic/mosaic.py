@@ -8,12 +8,9 @@ from helpers import vector
 from helpers import raster
 
 
-def get_image_list(root = 'Bing Gorakhpur', 
-                   image_type = 'Bing maps imagery_Gorakhpur', 
-                   chunksize = 200):
+def get_image_list(path = 'Bing Gorakhpur/Gorakhpur imagery/', chunksize = 200):
     
-    images = raster.list_images(root, image_type)
-    images = [common.get_local_image_path(root, image_type, img) for img in images]
+    images = [img for img in common.get_matching_s3_keys(path) if img.endswith('tif')]
     images = [images[x:x+chunksize] for x in range(0, len(images), chunksize)]
     
     return(images)
@@ -54,7 +51,7 @@ def write_mosaic(mosaic, out_trans, out_meta, count):
         dest.write(mosaic)
 
 
-if __name__ == '__main__':
+def main():
     
     images = get_image_list()
     
@@ -64,5 +61,7 @@ if __name__ == '__main__':
         out_meta = files[0].meta.copy()
         mosaic, out_trans = get_mosaic(files)
         write_mosaic(mosaic, out_trans, out_meta, count)
+
+
 
 

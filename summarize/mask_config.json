@@ -2,11 +2,11 @@
 	"Gorakhpur": {
 		"root": "Bing Gorakhpur",
 		"image_type": "Gorakhpur_Mosaics",
-		"image_name": "chunk_10.tif",
+		"image_name": "chunk_20.tif",
 		"shape_root": "Metal Shapefile",
 		"shape_type": "Gorakhpur",
-		"shape_name": "Metal roof.shp",
-		"mask_name": "Gorakhpur_chunk_10"
+		"shape_name": "result.shp",
+		"mask_name": "Gorakhpur_chunk_20"
 	},
 
 	"Deoria": {

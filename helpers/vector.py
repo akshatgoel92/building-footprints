@@ -1,6 +1,7 @@
 # Import packages
 import fiona
 import pyproj
+import geopandas as gpd
 import numpy as np
 
 # Import sub-modules for area calculation
@@ -68,3 +69,16 @@ def calculate_area_proportion(shapes, path):
     proportion = (vec/ras)*100
     
     return(proportion)
+
+
+def change_crs(path = './Metal Shapefile/Gorakhpur/Metal roof.shp', 
+               target_crs = {'init': 'epsg:3857'}):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
+    new_df = gpd.read_file(path)
+    new_df = new_df.to_crs(target_crs)
+    new_df.to_file("./Metal Shapefile/result.shp")

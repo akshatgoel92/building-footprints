@@ -4,9 +4,6 @@ import json
 import boto3
 import argparse
 import numpy as np
-import pandas as pd
-
-
 
 
 def get_local_folder_path(root, image_type):
@@ -57,9 +54,8 @@ def get_s3_paths(destination, root):
     ------------------------
     '''
     source = os.path.join(root, destination)
-    pre = os.path.join(root, destination)
     
-    return(source, pre)
+    return(source, source)
 
 
 def make_folder(name):
@@ -100,6 +96,7 @@ def get_credentials():
     return(s3_access['default_bucket'], 
            s3_access['access_key_id'],
            s3_access['secret_access_key'])
+           
 
 def get_s3_client():
     '''

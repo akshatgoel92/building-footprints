@@ -27,4 +27,8 @@
 
     cd ~/roof-classify
 
-    source ./../roof-env/bin/activate
+    source ./../roof-env/bin/activat
+
+    pip install --upgrade pip 
+
+    pip install config/requirements.txt
