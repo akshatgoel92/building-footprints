@@ -40,35 +40,6 @@ def get_shapes(shape):
     return(shapes)
 
 
-def get_poly_area(shapes):
-    '''
-    ------------------------
-    Input: 
-    Output:
-    Source: https://github.com/scisco/area
-    ------------------------
-    '''
-    areas = np.array([area(obj) for obj in shapes]).sum()
-    areas = areas/(1000*1000)
-    
-    return(areas)
-    
-
-
-def calculate_area_proportion(shapes, path):
-    '''
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    '''
-    vec = vector.get_area(shapes)
-    ras = raster.get_area(path)
-    proportion = (vec/ras)*100
-    
-    return(proportion)
-
-
 def change_crs(path = './Image Folder/Deoria Metal Shapefile/Metal roof.shp', 
                target_crs = {'init': 'epsg:3857'}):
     '''

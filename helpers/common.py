@@ -28,7 +28,7 @@ def get_local_image_path(root, image_type, image_name):
 
 
 
-def list_images(root, image_type):
+def list_local_images(root, image_type):
     '''
     ------------------------
     Input: 
