@@ -1,14 +1,19 @@
 import os
 from helpers import raster
 from helpers import common
-from flatten import helpers
+from flatten import utils
 
 
 
 def parse_args(root, image_type, shape_root, 
                shape_type, shape_name, output_format, 
                extension, prefix):
-    
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
     parser = argparse.\
              ArgumentParser(description = '')
     
@@ -68,6 +73,12 @@ def parse_args(root, image_type, shape_root,
 def main(root, image_type, shape_root, 
          shape_type, shape_name, output_format, 
          extension, prefix):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
 
     files = [img for img in common.\
              get_matching_s3_keys(prefix, extension)]
@@ -77,29 +88,25 @@ def main(root, image_type, shape_root,
         
         img = raster.get_image(f)
         
-        mask, _, _ = helpers.\
+        mask, _, _ = utils.\
                      get_masks(img, shape_root, 
                                shape_type, shape_name)
         
-        labels = helpers.\
+        labels = utils.\
                  get_labels_from_mask(mask)
-        
         
         f_name = os.path.basename(os.path.splitext(f)) + \
                  output_format
         
-        
-        flat = helpers.\
+        flat = utils.\
                convert_img_to_flat_file(img, labels)
         
-        
-        helpers.\
+        utils.\
         write_flat_file(flat, root, storage, f_name)
 
 
 
 if __name__ == '__main__':
-    
     
     root = "Bing Gorakhpur"
     image_type = "Bing maps imagery_Gorakhpur"

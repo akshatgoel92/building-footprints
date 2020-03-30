@@ -40,8 +40,7 @@ def get_shapes(shape):
     return(shapes)
 
 
-def change_crs(path = './Image Folder/Deoria Metal Shapefile/Metal roof.shp', 
-               target_crs = {'init': 'epsg:3857'}):
+def change_crs(path, target_crs, out_path):
     '''
     ------------------------
     Input: 
@@ -50,4 +49,4 @@ def change_crs(path = './Image Folder/Deoria Metal Shapefile/Metal roof.shp',
     '''
     new_df = gpd.read_file(path)
     new_df = new_df.to_crs(target_crs)
-    new_df.to_file('./Image Folder/Deoria Metal Shapefile/result.shp')
+    new_df.to_file(out_path)

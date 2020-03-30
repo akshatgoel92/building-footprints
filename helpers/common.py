@@ -46,14 +46,14 @@ def list_local_images(root, image_type):
     return(images)
     
 
-def get_s3_paths(destination, root):
+def get_s3_paths(image_type, root):
     '''
     ------------------------
     Input: 
     Output:
     ------------------------
     '''
-    source = os.path.join(root, destination)
+    source = os.path.join(root, image_type)
     
     return(source)
 

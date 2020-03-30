@@ -14,12 +14,22 @@ from rasterio.plot import show
 from rasterio.session import AWSSession
 
 
+def get_existing_flat_files(root, image_type):
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
+    path = get_s3_paths(image_type, root)
+    exists = common.get_matching_s3_keys(prefix = prefix, 
+                                         suffix = suffix)
+    
+    return(exists)
 
-def get_masks(rstr, 
-              shape_root = 'Image Folder', 
-              shape_type = 'Deoria Metal Shapefile', 
-              shape_name = 'Metal roof.shp', 
-              invert = False,
+
+def get_masks(rstr, shape_root, shape_type,
+              shape_name, invert = False,
               filled = False):
     '''
     ------------------------

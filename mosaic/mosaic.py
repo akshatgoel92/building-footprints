@@ -70,23 +70,39 @@ def write_mosaic(mosaic, out_trans, out_meta, out_fp):
                      "transform": out_trans,
                      "compress": "lzw"})
     
-    with rasterio.open(out_fp, "w", **out_meta, BIGTIFF="IF_NEEDED") as dest:
+    with rasterio.open(out_fp, "w", **out_meta, 
+                       BIGTIFF="IF_NEEDED") as dest:
         dest.write(mosaic)
 
 
 def main():
+    '''
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    '''
+    path = common.\
+           get_s3_path("Bing Gorakhpur", 
+                       "Bing maps imagery_Gorakhpur")
     
-    path = common.get_s3_path("Bing Gorakhpur", 
-                              "Bing maps imagery_Gorakhpur")
+    parser = argparse.\
+             ArgumentParser(description = '')
     
-    parser = argparse.ArgumentParser(description = '')
-    parser.add_argument('--path', type = str, default = path)
-    parser.add_argument('=-extension', type = str, default = 'tif')
-    parser.add_argument('=-chunksize', type = str, default = '200')
+    parser.\
+    add_argument('--path', type = str, default = path)
+    
+    parser.\
+    add_argument('=-extension', type = str, default = 'tif')
+    
+    parser.\
+    add_argument('=-chunksize', type = str, default = '200')
+    
     args = parser.parse_args()
     
     path = args.path
     extension = args.extension
+    
     chunksize = args.chunksize
     images = get_image_list(path, extension, chunksize)
     
@@ -94,6 +110,7 @@ def main():
         
         files = open_image_list(element)
         out_meta = files[0].meta.copy()
+        
         mosaic, out_trans = get_mosaic(files)
         out_fp = "chunk_{}.tif".format(count)
         write_mosaic(mosaic, out_trans, out_meta, out_fp)
