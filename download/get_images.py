@@ -102,11 +102,11 @@ def main():
     common.make_folders(source, root)
     images = get_image_keys(pre)
     
-    existing = [common.get_local_image_path(root, destination, img) 
+    existing = [common.\
+                get_local_image_path(root, destination, img) 
                 for img in common.list_images(root, destination)]
     
     images = [img for img in images if img not in existing]
-    
     get_images(images, existing)
     
     
