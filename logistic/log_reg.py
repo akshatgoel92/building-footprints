@@ -11,8 +11,8 @@ def load_data():
 def model_compile():
     # 2-class logistic regression in Keras
     model = Sequential()
-    model.add(Dense(1, activation='sigmoid', input_dim=x.shape[1]))
-    model.compile(optimizer='rmsprop', loss='binary_crossentropy')
+    model.add(Dense(1, activation="sigmoid", input_dim=x.shape[1]))
+    model.compile(optimizer="rmsprop", loss="binary_crossentropy")
 
 
 def model_fit():
