@@ -55,7 +55,7 @@ def get_s3_paths(destination, root):
     '''
     source = os.path.join(root, destination)
     
-    return(source, source)
+    return(source)
 
 
 def make_folder(name):

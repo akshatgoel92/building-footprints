@@ -1,8 +1,8 @@
 # Import packages
-import fiona
-import pyproj
 import geopandas as gpd
 import numpy as np
+import pyproj
+import fiona
 
 # Import sub-modules for area calculation
 from area import area
@@ -11,8 +11,6 @@ from helpers import raster
 from functools import partial
 from shapely.ops import transform
 from shapely.geometry import shape
-
-
 
 
 
@@ -71,7 +69,7 @@ def calculate_area_proportion(shapes, path):
     return(proportion)
 
 
-def change_crs(path = './Metal Shapefile/Gorakhpur/Metal roof.shp', 
+def change_crs(path = './Image Folder/Deoria Metal Shapefile/Metal roof.shp', 
                target_crs = {'init': 'epsg:3857'}):
     '''
     ------------------------
@@ -81,4 +79,4 @@ def change_crs(path = './Metal Shapefile/Gorakhpur/Metal roof.shp',
     '''
     new_df = gpd.read_file(path)
     new_df = new_df.to_crs(target_crs)
-    new_df.to_file("./Metal Shapefile/result.shp")
+    new_df.to_file('./Image Folder/Deoria Metal Shapefile/result.shp')

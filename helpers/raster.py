@@ -33,9 +33,7 @@ def list_images(root, image_type):
     return(images)
 
 
-def get_image(root = 'Bing Gorakhpur', 
-              image_type = 'Bing maps imagery_Gorakhpur', 
-              image_name = 'qgis_test.0.tif'):
+def get_image(path):
     '''
     ------------------------
     Input: 
@@ -46,10 +44,7 @@ def get_image(root = 'Bing Gorakhpur',
     bucket_name, access_key, secret_access_key = common.\
                                                  get_credentials()
     
-    url = 's3://{}/{}/{}/{}'.format(bucket_name, 
-                                    root, 
-                                    image_type, 
-                                    image_name)
+    url = 's3://{}/{}'.format(bucket_name, path)
     
     session = boto3.Session(aws_access_key_id=access_key, 
                             aws_secret_access_key=secret_access_key)
@@ -61,9 +56,7 @@ def get_image(root = 'Bing Gorakhpur',
     return(f)
 
 
-def get_masks(root = 'Bing Gorakhpur', 
-              image_type = 'Bing maps imagery_Gorakhpur', 
-              image_name = 'qgis_test.0.tif', 
+def get_masks(rstr, 
               shape_root = 'Image Folder', 
               shape_type = 'Deoria Metal Shapefile', 
               shape_name = 'Metal roof.shp', 
@@ -81,18 +74,14 @@ def get_masks(root = 'Bing Gorakhpur',
     shape = vector.open_shape_file(shp)
     shapes = vector.get_shapes(shape)
     
-    rstr = get_image(root, image_type, image_name)
-    
-    with rstr as image:
+    out_image, out_transform = rasterio.mask.\
+                                        mask(rstr, 
+                                             shapes, 
+                                             crop = False,
+                                             invert = invert,
+                                             filled = filled)
         
-        out_image, out_transform = rasterio.mask.\
-                                   mask(image, 
-                                        shapes, 
-                                        crop = False,
-                                        invert = invert,
-                                        filled = filled)
-        
-        out_meta = image.meta
+    out_meta = rstr.meta
         
     return(out_image, out_transform, out_meta)
 
@@ -104,7 +93,7 @@ def get_labels_from_mask(mask):
     Output:
     ------------------------
     '''
-    labels = (np.sum(out_image.mask, axis = 0) > 0)\
+    labels = (np.sum(mask, axis = 0) > 0)\
              .astype(int)\
              .flatten()
     
@@ -170,7 +159,7 @@ def write_flat_file(flat,
                                            get_credentials()
         
         s3_folder = common.get_s3_paths(image_type, root)[0]
-        file_to = os.path.join(, image_name)
+        file_to = os.path.join(s3_folder, image_name)
         common.upload_s3(file_from, file_to)
     
     
