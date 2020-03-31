@@ -38,7 +38,7 @@ def main(
         
             flat = utils.convert_img_to_flat_file(img, labels)
             utils.write_flat_file(flat, root, storage, f_name)
-        except Exceptin as e:
+        except Exception as e:
             print(e)
             continue 
         
