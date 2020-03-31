@@ -50,6 +50,7 @@ def get_root_folder():
         2: "Sentinel",
         3: "Metal Shapefile",
         4: "Bing Gorakhpur",
+        5: "GE Gorakhpur"
     }
 
     # User inputs which folder she wants
@@ -82,10 +83,14 @@ def get_image_type(root):
         args = {1: "Gorakhpur"}
 
     elif root == "Metal Shapefile":
-        args = {1: "Gorakhpur"}
+        args = {1: "Gorakhpur",
+                2: "Deoria"}
 
     elif root == "Bing Gorakhpur":
         args = {1: "Bing maps imagery_Gorakhpur"}
+    
+    elif root == "GE Gorakhpur":
+        args = {1: ""}
 
     print(args)
     arg = int(input("Enter what image type number you need from above:"))
@@ -98,14 +103,14 @@ def main():
 
     root = get_root_folder()
     destination = get_image_type(root)
-    source, pre = common.get_s3_paths(destination, root)
+    source = common.get_s3_paths(destination, root)
 
     common.make_folders(source, root)
-    images = get_image_keys(pre)
+    images = get_image_keys(source)
 
     existing = [
         common.get_local_image_path(root, destination, img)
-        for img in common.list_images(root, destination)
+        for img in common.list_local_images(root, destination)
     ]
 
     images = [img for img in images if img not in existing]
