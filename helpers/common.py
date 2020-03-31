@@ -44,7 +44,7 @@ def list_local_images(root, image_type):
     return images
 
 
-def get_s3_paths(image_type, root):
+def get_s3_paths(root, image_type):
     """
     ------------------------
     Input: 
