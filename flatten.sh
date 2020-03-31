@@ -1,3 +1,3 @@
-EXPORT PYTHONPATH=.
+export PYTHONPATH=.
 
 python flatten/flatten.py

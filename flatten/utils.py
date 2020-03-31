@@ -8,6 +8,7 @@ import numpy as np
 import rasterio.mask
 import matplotlib.pyplot as plt
 
+from helpers import raster
 from helpers import vector
 from helpers import common
 from rasterio.plot import show
@@ -21,7 +22,7 @@ def get_existing_flat_files(root, image_type):
     Output:
     ------------------------
     """
-    path = get_s3_paths(image_type, root)
+    path = get_s3_paths(root, image_type)
     exists = common.get_matching_s3_keys(prefix=prefix, suffix=suffix)
 
     return exists
@@ -66,7 +67,7 @@ def convert_img_to_flat_file(img, labels):
     Output:
     --------------------------
     """ ""
-    arr = convert_img_to_array(img)
+    arr = raster.convert_img_to_array(img)
     height = range(img.height)
     width = range(img.width)
     bands = range(img.count)
@@ -113,7 +114,7 @@ def write_flat_file(
 
     _, access_key, secret_access_key = common.get_credentials()
 
-    s3_folder = common.get_s3_paths(image_type, root)[0]
+    s3_folder = common.get_s3_paths(root, image_type)
     file_to = os.path.join(s3_folder, image_name)
     common.upload_s3(file_from, file_to)
 
