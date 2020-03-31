@@ -104,7 +104,7 @@ if __name__ == "__main__":
     root = "GE Gorakhpur"
     image_type = "tiles"
 
-    shape_root = "Metal Shapefile"
+    shape_root = "Metal_Shapefile"
     shape_type = "Gorakhpur"
 
     shape_name = "Metal roof.shp"
