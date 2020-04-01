@@ -127,15 +127,3 @@ def write_flat_file(
     s3_folder = common.get_s3_paths(root, image_type)
     file_to = os.path.join(s3_folder, image_name)
     common.upload_s3(file_from, file_to)
-
-
-def load_flat_file(flat, path):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    flat = np.load(path)
-
-    return flat

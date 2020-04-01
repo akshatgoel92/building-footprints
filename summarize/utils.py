@@ -14,6 +14,18 @@ from rasterio.plot import show
 from rasterio.session import AWSSession
 
 
+def get_flat_file(flat, path):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    flat = np.load(path)
+
+    return flat
+
+
 def get_resolution(img):
     '''
     ------------------------
@@ -99,3 +111,5 @@ def calculate_area_proportion(shapes, path):
     proportion = (vec/ras)*100
     
     return(proportion)
+
+
