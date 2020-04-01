@@ -1,13 +1,12 @@
 import os
+import utils
 import argparse
 import platform
 from helpers import raster
 from helpers import common
 
-if 'Linux' in platform.platform():
-    import utils
-else: 
-    from flatten import utils
+
+
 
 
 def main(
@@ -18,6 +17,7 @@ def main(
     shape_name,
     output_format,
     extension,
+    storage,
     prefix,
     prefix_storage,
 ):
@@ -27,7 +27,8 @@ def main(
     Output:
     ------------------------
     """
-
+    print(prefix)
+    print(extension)
     files = [img for img in common.get_matching_s3_keys(prefix, extension)]
     
     existing = [
@@ -111,6 +112,7 @@ def parse_args(
         shape_name,
         output_format,
         extension,
+        storage
     )
 
 
@@ -140,5 +142,5 @@ if __name__ == "__main__":
         extension,
         storage,
     )
-
-    main(*args, prefix_storage)
+    print(args)
+    main(*args, prefix, prefix_storage)
