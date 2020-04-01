@@ -139,7 +139,6 @@ if __name__ == "__main__":
         output_format,
         extension,
         storage,
-        prefix_storage,
     )
 
-    main(*args)
+    main(*args, prefix_storage)
