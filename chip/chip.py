@@ -19,21 +19,13 @@ def get_tiles(ds, width, height):
     ncols = ds.meta["width"]
     nrows = ds.meta["height"]
 
-    offsets = product(
-        range(0, ncols, width), range(0, nrows, height)
-    )
-
-    big_window = windows.Window(
-        col_off=0, row_off=0, width=ncols, height=nrows
-    )
+    offsets = product(range(0, ncols, width), range(0, nrows, height))
+    big_window = windows.Window(col_off=0, row_off=0, width=ncols, height=nrows)
 
     for col_off, row_off in offsets:
 
         window = windows.Window(
-            col_off=col_off,
-            row_off=row_off,
-            width=width,
-            height=height,
+            col_off=col_off, row_off=row_off, width=width, height=height,
         ).intersection(big_window)
 
         transform = windows.transform(window, ds.transform)
@@ -41,12 +33,7 @@ def get_tiles(ds, width, height):
 
 
 def output_chip(
-    in_path,
-    input_filename,
-    out_path,
-    output_filename,
-    width,
-    height,
+    in_path, input_filename, out_path, output_filename, width, height,
 ):
     """
     ------------------------
@@ -70,14 +57,10 @@ def output_chip(
 
             outpath = os.path.join(
                 out_path,
-                output_filename.format(
-                    int(window.col_off), int(window.row_off)
-                ),
+                output_filename.format(int(window.col_off), int(window.row_off)),
             )
 
-            with rasterio.open(
-                outpath, "w", **meta
-            ) as outds:
+            with rasterio.open(outpath, "w", **meta) as outds:
                 outds.write(inds.read(window=window))
 
 
@@ -89,10 +72,9 @@ def upload_chips(in_path, out_path):
     ------------------------
     """
     upload_files = [
-        os.path.join(out_path, img)
-        for img in common.list_local_images(out_path, "")
+        os.path.join(out_path, img) for img in common.list_local_images(out_path, "")
     ]
-    
+
     for img in upload_files:
         file_to = common.get_s3_paths(in_path, out_path)
         common.upload_s3(img, os.path.join(in_path, img))
@@ -116,42 +98,16 @@ def main():
 
     parser = argparse.ArgumentParser(description="")
 
-    parser.add_argument(
-        "--in_path", 
-        type=str, 
-        default=in_path
-    )
+    parser.add_argument("--in_path", type=str, default=in_path)
+    parser.add_argument("--input_filename", type=str, default=input_filename)
 
-    parser.add_argument(
-        "--input_filename", 
-        type=str, 
-        default=input_filename
-    )
+    parser.add_argument("--out_path", type=str, default=out_path)
+    parser.add_argument("--output_filename", type=str, default=output_filename,)
 
-    parser.add_argument(
-        "--out_path", 
-        type=str, 
-        default=out_path
-    )
+    parser.add_argument("--width", type=str, default=width)
+    parser.add_argument("--height", type=str, default=height)
 
-    parser.add_argument(
-        "--output_filename",
-        type=str,
-        default=output_filename,
-    )
-
-    parser.add_argument("--width", 
-    type=str, 
-    default=width
-    )
-
-    parser.add_argument(
-        "--height", 
-        type=str, 
-        default=height
-    )
-    
-    args = parser.parse_args()
+    args=parser.parse_args()
     output_chip(**vars(args))
     upload_chips(in_path, out_path)
 
