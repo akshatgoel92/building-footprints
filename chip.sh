@@ -1,3 +1,1 @@
-export PYTHONPATH=.
-
-python chip/chip.py
+python ./chip/chip.py

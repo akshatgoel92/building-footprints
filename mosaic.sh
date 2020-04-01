@@ -1,3 +1,1 @@
-EXPORT PYTHONPATH=.
-
-python mosaic/mosaic.py
+python ./mosaic/mosaic.py
