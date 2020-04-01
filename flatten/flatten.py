@@ -1,8 +1,13 @@
 import os
 import argparse
-from flatten import utils
+import platform
 from helpers import raster
 from helpers import common
+
+if 'Linux' in platform.platform():
+    import utils
+else: 
+    from flatten import utils
 
 
 def main(
