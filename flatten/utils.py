@@ -15,6 +15,16 @@ from rasterio.plot import show
 from rasterio.session import AWSSession
 
 
+def get_basename(f):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    return os.path.splitext(os.path.basename(f))[0]
+
+
 def get_existing_flat_files(root, image_type):
     """
     ------------------------

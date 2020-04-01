@@ -1,6 +1,6 @@
 import os
-import utils
 import argparse
+from flatten import utils
 from helpers import raster
 from helpers import common
 
@@ -14,6 +14,7 @@ def main(
     output_format,
     extension,
     prefix,
+    prefix_storage,
 ):
     """
     ------------------------
@@ -23,25 +24,36 @@ def main(
     """
 
     files = [img for img in common.get_matching_s3_keys(prefix, extension)]
+    
+    existing = [
+        utils.get_basename(f)
+        for f in common.get_matching_s3_keys(prefix_storage, output_format)
+    ]
+    
+    remaining = [f for f in files if utils.get_basename(f) not in existing]
     counter = 0
 
-    for f in files:
-        counter +=1
+    for f in remaining:
+        
+        counter += 1
+        
         print(f)
         print(counter)
+        
+        
         try:
             img = raster.get_image(f)
             mask, _, _ = utils.get_masks(img, shape_root, shape_type, shape_name)
 
             labels = utils.get_labels_from_mask(mask)
             f_name = os.path.splitext(os.path.basename(f))[0] + output_format
-        
+
             flat = utils.convert_img_to_flat_file(img, labels)
             utils.write_flat_file(flat, root, storage, f_name)
+        
         except Exception as e:
             print(e)
-            continue 
-        
+            continue
 
 
 def parse_args(
@@ -61,7 +73,7 @@ def parse_args(
     ------------------------
     """
     parser = argparse.ArgumentParser(description="")
-    
+
     parser.add_argument("--root", type=str, default=root)
     parser.add_argument("--storage", type=str, default=storage)
 
@@ -75,17 +87,16 @@ def parse_args(
     parser.add_argument("--output_format", type=str, default=output_format)
 
     args = parser.parse_args()
-    
+
     root = args.root
     storage = args.storage
     extension = args.extension
     image_type = args.image_type
-    
+
     shape_root = args.shape_root
     shape_type = args.shape_type
     shape_name = args.shape_name
     output_format = args.output_format
-    prefix = common.get_s3_paths(root, image_type)
 
     return (
         root,
@@ -95,7 +106,6 @@ def parse_args(
         shape_name,
         output_format,
         extension,
-        prefix,
     )
 
 
@@ -112,6 +122,8 @@ if __name__ == "__main__":
 
     storage = "flat"
     output_format = ".npz"
+    prefix = common.get_s3_paths(root, image_type)
+    prefix_storage = common.get_s3_paths(root, storage)
 
     args = parse_args(
         root,
@@ -122,6 +134,7 @@ if __name__ == "__main__":
         output_format,
         extension,
         storage,
+        prefix_storage,
     )
 
     main(*args)
