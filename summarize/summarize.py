@@ -8,27 +8,40 @@ from helpers import vector
 
 def main():
     
-    root = ''
-    image_type = ''
-    shp_path = ''
+    # Convert to command line arguments
+    # Need to remove hardcoding from this and other file
+    bands = 3
+    suffix = '.npz' 
+    root = 'GE Gorakhpur'
+    image_type = 'blocks'
+    prefix = common.get_s3_paths(root, image_type)
     
-    files = utils.get_existing_flat_files()
-    total_tiles = get_total_tiles(root, image_type)
+    # List files
+    files = list(common.get_matching_s3_keys(prefix, suffix))
     
-    for img in files:
+    for i, f in enumerate(files):
         
-        image = raster.get_image(img)
-        arr = raster.convert_img_to_array(image)
+        # Load data
+        df = utils.get_flat_file(f)
         
-        res = utils.get_resolution(image)
-        area = utils.get_area(image)
+        # Get information
+        area = get_poly_area(df)
+        avgs = get_avgs(df)
+        sd = get_sd(df)
         
-        avg = utils.get_average(arr)
-        sd = utils.get_sd(arr)
-        
-        # Load shape file
-        shp = vector.open_shape_file(shp_path)
-        poly = utils.get_poly_area(shp)
-        prop = utils.get_area_proportion(shp)
+        # Get summary dataframes
+        df_area, df_summary = get_dfs(avgs, sd, area)
         
         
+        # Call histograms
+        # First make regular histogram
+        df_regular = get_regular_data(df, bands)
+        get_histogram(df_regular, f_no = i)
+        
+        # Now make overlaid histograms
+        overlay = []
+        
+        for j, band in enumerate(range(bands)):
+            df_overlay = get_overlay_data(df, band)
+            get_histogram(df_overlay, f_no = j, overlay = 1)
+    
