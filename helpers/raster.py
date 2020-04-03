@@ -54,16 +54,6 @@ def get_image(path):
     return f
 
 
-def get_img_metadata(img):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    return img.profile
-
-
 def convert_img_to_array(img):
     """
     ------------------------
