@@ -2,10 +2,8 @@
 import numpy as np
 import random
 import joblib
-
 from sklearn.linear_model import LogisticRegression
 from helpers import common
-from models import utils
 
 
 def get_flat_files(prefix, suffix, n):
