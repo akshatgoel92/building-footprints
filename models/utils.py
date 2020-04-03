@@ -167,11 +167,15 @@ def main():
         log_reg = train(X_train, Y_train, c)
         save_model(log_reg, 'log_reg_{}.sav'.format(str(c))
     
+    '''
     results = []
     for c in hypers:
         results.append(get_scores('log_reg_{}.sav'.format(c), X_dev, Y_dev))
+    '''
         
     
+if __name __ == '__main__':
+    main()
     
     
     
