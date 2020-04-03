@@ -71,7 +71,7 @@ def make_folder(name):
         pass
 
 
-def make_folders(source, root):
+def make_folders(root, image_type):
     """
     ------------------------
     Input: 
@@ -79,7 +79,7 @@ def make_folders(source, root):
     ------------------------
     """
     make_folder(root)
-    make_folder(source)
+    make_folder(image_type)
 
 
 def get_credentials():

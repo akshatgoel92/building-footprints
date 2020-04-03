@@ -102,15 +102,15 @@ def get_image_type(root):
 def main():
 
     root = get_root_folder()
-    destination = get_image_type(root)
-    source = common.get_s3_paths(destination, root)
+    image_type = get_image_type(root)
+    source = common.get_s3_paths(root, image_type)
 
     common.make_folders(root, source)
     images = get_image_keys(source)
 
     existing = [
         common.get_local_image_path(root, destination, img)
-        for img in common.list_local_images(root, destination)
+        for img in common.list_local_images(root, image_type)
     ]
 
     images = [img for img in images if img not in existing]
