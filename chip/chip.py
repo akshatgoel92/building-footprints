@@ -106,8 +106,10 @@ def main():
 
     parser.add_argument("--width", type=str, default=width)
     parser.add_argument("--height", type=str, default=height)
-
+    
     args=parser.parse_args()
+    common.make_folders(root, source)
+    
     output_chip(**vars(args))
     upload_chips(in_path, out_path)
 
