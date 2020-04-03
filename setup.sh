@@ -1,4 +1,4 @@
-# Go to root
+# Setup essential libraries for Python
 cd ~
 
 apt update && apt upgrade -y && apt install build-essential -y
@@ -8,6 +8,8 @@ apt install libncurses5-dev libgdbm-dev libnss3-dev
 apt install libssl-dev libreadline-dev libffi-dev -y 
 
 sudo apt-get install zlib1g-dev libbz2-dev
+
+apt-get install ca-certificates
 
 
 
@@ -26,6 +28,6 @@ python -m venv roof-env && cd ~/roof-classify && source ./../roof-env/bin/activa
 
 pip install --upgrade pip && pip install -r ./requirements.txt
 
-apt-get install ca-certificates
+
 
 mkdir 'Metal Shapefile' && mkdir 'GE Gorakhpur' && mkdir 'GE Gorakhpur/tiles' && mkdir 'GE Gorakhpur/flat'
