@@ -9,6 +9,8 @@ apt install libssl-dev libreadline-dev libffi-dev -y
 
 sudo apt-get install zlib1g-dev libbz2-dev
 
+sudo apt-get install liblzma-dev
+
 apt-get install ca-certificates
 
 
