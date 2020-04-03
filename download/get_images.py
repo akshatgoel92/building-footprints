@@ -105,7 +105,7 @@ def main():
     destination = get_image_type(root)
     source = common.get_s3_paths(destination, root)
 
-    common.make_folders(source, root)
+    common.make_folders(root, source)
     images = get_image_keys(source)
 
     existing = [
