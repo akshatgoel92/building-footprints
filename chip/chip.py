@@ -108,10 +108,10 @@ def main():
     parser.add_argument("--height", type=str, default=height)
     
     args=parser.parse_args()
-    common.make_folders(in_path, out_path)
+    common.make_folders(args.in_path, args.out_path)
     
     output_chip(**vars(args))
-    upload_chips(in_path, out_path)
+    upload_chips(args.in_path, args.out_path)
 
 
 if __name__ == "__main__":
