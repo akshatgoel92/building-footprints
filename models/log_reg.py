@@ -165,7 +165,7 @@ def main():
     
     for c in hypers:
         log_reg = train(X_train, Y_train, c)
-        save_model(log_reg, 'log_reg_{}.sav'.format(str(c))
+        save_model(log_reg, 'log_reg_{}.sav'.format(str(c)))
     
     '''
     results = []
