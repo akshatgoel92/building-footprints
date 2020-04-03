@@ -86,8 +86,8 @@ def main():
 
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("--path", type=str, default=path)
-    parser.add_argument("=-extension", type=str, default="tif")
-    parser.add_argument("=-chunksize", type=int, default=200)
+    parser.add_argument("--extension", type=str, default="tif")
+    parser.add_argument("--chunksize", type=int, default=200)
     args = parser.parse_args()
 
     path = args.path
