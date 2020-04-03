@@ -1,4 +1,5 @@
 # Import packages
+import io
 import os
 import json
 import boto3
@@ -210,7 +211,7 @@ def get_object_s3(key):
     """
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
-    f = s3.get_object(bucket_name, key)["Body"]
+    f = io.BytesIO(s3.get_object(Bucket=bucket_name, Key=key)["Body"].read())
 
     return f
 
