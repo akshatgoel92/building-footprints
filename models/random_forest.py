@@ -113,14 +113,14 @@ def reshape_df(df):
     return(X, Y)
 
 
-def fit(X, Y):
+def fit(X, Y, n_estimators):
     '''
     -------------------
     Input:
     Output:
     -------------------
     '''
-    rf_reg = RandomForestClassifier(n_jobs = -1, verbose = 1000)
+    rf_reg = RandomForestClassifier(n_estimators = n_estimators, n_jobs = -1, verbose = 1000)
     rf_reg.fit(X, Y)
     
     return(log_reg)
@@ -172,6 +172,7 @@ def main():
     prefix = common.get_s3_paths(root, image_type)
     suffix = '.npz'
     n = 3
+    n_estimators = 10
     
     files = get_files(prefix, suffix)
     print(files)
@@ -180,7 +181,7 @@ def main():
     train = execute_merge(train)
     
     X_train, Y_train = reshape_df(train)
-    rf_reg = fit(X_train, Y_train)
+    rf_reg = fit(X_train, Y_train, n_estimators)
     
     save_model(rf_reg, 'rf_reg_{}.sav'.format(str(c)))
     print("Done...!")
