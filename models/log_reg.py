@@ -93,7 +93,7 @@ def stack_vertical(df):
     return(X, Y)
 
 
-def train(X, Y, C):
+def fit(X, Y, C):
     '''
     -------------------
     Input:
@@ -166,7 +166,7 @@ def main():
     hypers = [1, 10]
     
     for c in hypers:
-        log_reg = train(X_train, Y_train, c)
+        log_reg = fit(X_train, Y_train, c)
         save_model(log_reg, 'log_reg_{}.sav'.format(str(c)))
     
     print("Done...!")
