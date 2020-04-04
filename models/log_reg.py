@@ -120,7 +120,7 @@ def fit(X, Y, C):
     Output:
     -------------------
     '''
-    log_reg = LogisticRegression(C=C, verbose = 5, solver = 'saga')
+    log_reg = LogisticRegression(C=C, verbose = True, n_jobs = -1, solver = 'saga')
     log_reg.fit(X, Y)
     
     return(log_reg)
@@ -171,7 +171,7 @@ def main():
     
     prefix = common.get_s3_paths(root, image_type)
     suffix = '.npz'
-    n = 2
+    n = 3
     
     files = get_files(prefix, suffix)
     train = get_train_set(files, n)
