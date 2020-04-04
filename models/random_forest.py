@@ -120,7 +120,7 @@ def fit(X, Y, n_estimators):
     Output:
     -------------------
     '''
-    rf_reg = RandomForestClassifier(n_estimators = n_estimators, n_jobs = -1, verbose = 1000)
+    rf_reg = RandomForestClassifier(n_estimators = n_estimators, n_jobs = 4, verbose = 1000)
     rf_reg.fit(X, Y)
     
     return(log_reg)
