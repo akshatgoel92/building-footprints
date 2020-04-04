@@ -7,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from helpers import common
 
 
-def get_files(prefix, suffix, n):
+def get_files(prefix, suffix):
     """
     ------------------------
     Input: 
@@ -28,12 +28,12 @@ def get_train_set(files, n):
     Output:
     ------------------------
     """
-    flats = []
-    
-    for f in files[0:n]:
+    for i,f in enumerate(files[0:n]):
+        print(i)
+        print(f)
         flats.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
         
-        return flats
+    return flats
 
 
 def get_dev_set(files, n):
@@ -63,7 +63,7 @@ def merge_flat_file(df1, df2):
         df.append(np.concatenate((a, b)))
     
     df.append(np.concatenate((df1[-1].data, df2[-1].data)))
-    df = np.transpose(np.array(df))
+    
     return(df)
     
     
@@ -101,13 +101,14 @@ def process_single_dev(dev):
     return(df_dev)
 
 
-def stack_vertical(df):
+def reshape_df(df):
     '''
     -------------------
     Input:
     Output:
     -------------------
     '''
+    df = np.transpose(np.array(df))
     X = df[:,:3]
     Y = df[:,-1]
     
@@ -135,6 +136,7 @@ def save_model(model, filename):
     -------------------
     '''
     joblib.dump(model, filename)
+
 
 def get_predictions(log_reg, X):
     '''
@@ -171,14 +173,13 @@ def main():
     
     prefix = common.get_s3_paths(root, image_type)
     suffix = '.npz'
-    n = 3
+    n = 2
     
-    files = get_files(prefix, suffix, n)
+    files = get_files(prefix, suffix)
     train = get_train_set(files, n)
-    print(train)
     train = execute_merge(train)
-    print(train)
-    X_train, Y_train = stack_vertical(train)
+    
+    X_train, Y_train = reshape_df(train)
     hypers = [1]
     
     for c in hypers:
