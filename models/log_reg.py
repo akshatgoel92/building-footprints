@@ -17,10 +17,13 @@ def get_flat_files(prefix, suffix, n):
     random.seed(a=243, version=2)
     random.shuffle(files)
     flats = []
-    dev = files[n:]
+    dev = []
     
     for f in files[0:n]:
         flats.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
+    
+    for f in files[n:]
+        dev.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
     
     
     return flats, dev
@@ -168,12 +171,6 @@ def main():
     
     print("Done...!")
     
-    '''
-    results = []
-    for c in hypers:
-        results.append(get_scores('log_reg_{}.sav'.format(c), X_dev, Y_dev))
-    '''
-        
     
 if __name__ == '__main__':
     main()
