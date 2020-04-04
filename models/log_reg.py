@@ -2,11 +2,12 @@
 import numpy as np
 import random
 import joblib
+
 from sklearn.linear_model import LogisticRegression
 from helpers import common
 
 
-def get_flat_files(prefix, suffix, n):
+def get_files(prefix, suffix, n):
     """
     ------------------------
     Input: 
@@ -16,17 +17,35 @@ def get_flat_files(prefix, suffix, n):
     files = list(common.get_matching_s3_keys(prefix, suffix))
     random.seed(a=243, version=2)
     random.shuffle(files)
+    
+    return files
+
+
+def get_train_set(files, n):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
     flats = []
-    dev = []
     
     for f in files[0:n]:
         flats.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
-    
+        
+        return flats
+
+
+def get_dev_set(files, n):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    dev = []
     for f in files[n:]:
         dev.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
-    
-    
-    return flats, dev
 
 
 def merge_flat_file(df1, df2):
@@ -152,17 +171,11 @@ def main():
     suffix = '.npz'
     n = 3
     
-    train, dev = get_flat_files(prefix, suffix, n)
-    df_train = execute_merge(train)
-    
-    if len(dev) > 1:
-        df_dev = execute_merge(dev)
-    else:
-        df_dev = process_single_dev(dev)
+    files = get_files(prefix, suffix, n)
+    train = get_train(files, n)
+    train = execute_merge(train)
     
     X_train, Y_train = stack_vertical(df_train)
-    X_dev, Y_dev = stack_vertical(df_dev)
-    
     hypers = [1, 10]
     
     for c in hypers:
