@@ -26,15 +26,15 @@ def main():
     Output:
     -------------------
     '''
-    print("Running...")
     root = 'GE Gorakhpur'
     image_type = 'blocks'
     
     prefix = common.get_s3_paths(root, image_type)
+    n_estimators = 100
     suffix = '.npz'
     n = 3
     run = 1
-    n_estimators = 100
+   
     
     
     files = get_files(prefix, suffix)
@@ -47,7 +47,6 @@ def main():
     rf_reg = fit(X_train, Y_train, n_estimators)
     
     save_model(rf_reg, 'rf_reg_{}.sav'.format(str(run)))
-    print("Done...!")
     
     
 if __name__ == '__main__':

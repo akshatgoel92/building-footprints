@@ -21,7 +21,6 @@ def main():
     Output:
     -------------------
     '''
-    print("Running...")
     root = 'GE Gorakhpur'
     image_type = 'blocks'
     
@@ -39,9 +38,6 @@ def main():
     for c in hypers:
         log_reg = fit(X_train, Y_train, c)
         save_model(log_reg, 'log_reg_{}.sav'.format(str(c)))
-    
-    print("Done...!")
-    
-    
+        
 if __name__ == '__main__':
     main()
