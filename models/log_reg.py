@@ -46,6 +46,8 @@ def get_dev_set(files, n):
     dev = []
     for f in files[n:]:
         dev.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
+    
+    return(dev)
 
 
 def merge_flat_file(df1, df2):
@@ -176,7 +178,7 @@ def main():
     train = execute_merge(train)
     
     X_train, Y_train = stack_vertical(train)
-    hypers = [1, 10]
+    hypers = [1]
     
     for c in hypers:
         log_reg = fit(X_train, Y_train, c)
