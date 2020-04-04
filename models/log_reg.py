@@ -176,7 +176,7 @@ def main():
     files = get_files(prefix, suffix, n)
     train = get_train_set(files, n)
     train = execute_merge(train)
-    
+    print(train)
     X_train, Y_train = stack_vertical(train)
     hypers = [1]
     
