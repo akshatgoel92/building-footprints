@@ -120,7 +120,7 @@ def fit(X, Y, C):
     Output:
     -------------------
     '''
-    log_reg = LogisticRegression(C=C, verbose = True)
+    log_reg = LogisticRegression(C=C, verbose = 5, solver = 'saga')
     log_reg.fit(X, Y)
     
     return(log_reg)
