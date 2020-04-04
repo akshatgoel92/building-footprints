@@ -22,7 +22,7 @@ def get_flat_files(prefix, suffix, n):
     for f in files[0:n]:
         flats.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
     
-    for f in files[n:]
+    for f in files[n:]:
         dev.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
     
     
