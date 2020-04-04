@@ -138,7 +138,9 @@ def main():
     prefix = common.get_s3_paths(root, image_type)
     suffix = '.npz'
     n = 3
-    n_estimators = 50
+    run = 1
+    n_estimators = 100
+    
     
     files = get_files(prefix, suffix)
     print(files)
@@ -149,7 +151,7 @@ def main():
     X_train, Y_train = reshape_df(train)
     rf_reg = fit(X_train, Y_train, n_estimators)
     
-    save_model(rf_reg, 'rf_reg_{}.sav'.format(str(c)))
+    save_model(rf_reg, 'rf_reg_{}.sav'.format(str(run)))
     print("Done...!")
     
     
