@@ -123,7 +123,7 @@ def fit(X, Y, n_estimators):
     rf_reg = RandomForestClassifier(n_estimators = n_estimators, max_depth = 2, bootstrap = False, n_jobs = 1, verbose = 1000)
     rf_reg.fit(X, Y)
     
-    return(log_reg)
+    return(rf_reg)
 
 
 def save_model(model, filename):
@@ -172,7 +172,7 @@ def main():
     prefix = common.get_s3_paths(root, image_type)
     suffix = '.npz'
     n = 3
-    n_estimators = 10
+    n_estimators = 50
     
     files = get_files(prefix, suffix)
     print(files)
