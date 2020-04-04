@@ -175,7 +175,7 @@ def main():
     train = get_train_set(files, n)
     train = execute_merge(train)
     
-    X_train, Y_train = stack_vertical(df_train)
+    X_train, Y_train = stack_vertical(train)
     hypers = [1, 10]
     
     for c in hypers:
