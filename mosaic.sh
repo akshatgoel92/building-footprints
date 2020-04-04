@@ -1,1 +1,0 @@
-python ./mosaic/mosaic.py
