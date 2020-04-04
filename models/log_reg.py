@@ -28,9 +28,8 @@ def get_train_set(files, n):
     Output:
     ------------------------
     """
-    for i,f in enumerate(files[0:n]):
-        print(i)
-        print(f)
+    flats = []
+    for f in files[0:n]:
         flats.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
         
     return flats
@@ -83,22 +82,21 @@ def execute_merge(files):
     
     return(df)
 
-def process_single_dev(dev):
+def process_single(df):
     '''
     -------------------
     Input:
     Output:
     -------------------
     '''
-    df_dev = []
+    df_res = []
     # Assume that the code has the mask at the end
-    for a in dev[0][4:-2]:
-        df_dev.append(a)
+    for a in df[0][4:-2]:
+        df_res.append(a)
 
-    df_dev.append(dev[0][-1].data)
-    df_dev = np.transpose(np.array(df_dev))
+    df_res.append(df[0][-1].data)
     
-    return(df_dev)
+    return(df_res)
 
 
 def reshape_df(df):
@@ -180,8 +178,8 @@ def main():
     train = execute_merge(train)
     
     X_train, Y_train = reshape_df(train)
-    hypers = [1]
     
+    hypers = [1]
     for c in hypers:
         log_reg = fit(X_train, Y_train, c)
         save_model(log_reg, 'log_reg_{}.sav'.format(str(c)))
@@ -191,7 +189,3 @@ def main():
     
 if __name__ == '__main__':
     main()
-    
-    
-    
-    
