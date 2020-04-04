@@ -1,10 +1,10 @@
-# Import packages
 import numpy as np
 import random
 import joblib
 
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from helpers import common
+
 
 
 def get_files(prefix, suffix):
@@ -19,20 +19,6 @@ def get_files(prefix, suffix):
     random.shuffle(files)
     
     return files
-
-
-def get_train_set(files, n):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    flats = []
-    for f in files[0:n]:
-        flats.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
-        
-    return flats
 
 
 def merge_flat_file(df1, df2):
@@ -68,6 +54,21 @@ def execute_merge(files):
     
     return(df)
 
+
+def get_dev_set(files, n):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    dev = []
+    for f in files[n:]:
+        dev.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
+    
+    return(dev)
+
+
 def process_single(df):
     '''
     -------------------
@@ -85,73 +86,32 @@ def process_single(df):
     return(df_res)
 
 
-def reshape_df(df):
+def get_predictions(model, X):
     '''
     -------------------
     Input:
     Output:
     -------------------
     '''
-    df = np.transpose(np.array(df))
-    X = df[:,:3]
-    Y = df[:,-1]
+    Y_hat = model.predict(X)
+    return(Y_hat)
+
+
+def get_scores(model, X_dev, Y_dev):
+    '''
+    -------------------
+    Input:
+    Output:
+    -------------------
+    '''
     
-    return(X, Y)
-
-
-def fit(X, Y, n_estimators):
-    '''
-    -------------------
-    Input:
-    Output:
-    -------------------
-    '''
-    rf_reg = RandomForestClassifier(n_estimators = n_estimators, max_depth = 2, bootstrap = False, n_jobs = 1, verbose = 1000)
-    rf_reg.fit(X, Y)
-    
-    return(rf_reg)
-
-
-def save_model(model, filename):
-    '''
-    -------------------
-    Input:
-    Output:
-    -------------------
-    '''
-    joblib.dump(model, filename)
-
-
-
+    result = model.score(X_test, Y_test)
+    return(result)
 
 def main():
-    '''
-    -------------------
-    Input:
-    Output:
-    -------------------
-    '''
-    print("Running...")
-    root = 'GE Gorakhpur'
-    image_type = 'blocks'
-    
-    prefix = common.get_s3_paths(root, image_type)
-    suffix = '.npz'
-    n = 3
-    n_estimators = 50
-    
-    files = get_files(prefix, suffix)
-    print(files)
-    
-    train = get_train_set(files, n)
-    train = execute_merge(train)
-    
-    X_train, Y_train = reshape_df(train)
-    rf_reg = fit(X_train, Y_train, n_estimators)
-    
-    save_model(rf_reg, 'rf_reg_{}.sav'.format(str(c)))
-    print("Done...!")
-    
-    
+    filename = ''
+    loaded_model = joblib.load(filename)
+
+
 if __name__ == '__main__':
     main()
