@@ -100,9 +100,7 @@ def process_single(df):
     '''
     df_res = []
     # Assume that the code has the mask at the end
-    for a in df[0][4:-2]:
-        df_res.append(a)
-
+    df_res.append(df[0][4:-2])
     df_res.append(df[0][-1].data)
     
     return(df_res)
@@ -120,6 +118,19 @@ def reshape_df(df):
     Y = df[:,-1]
     
     return(X, Y)
+
+
+def fit_log_reg(X, Y, C):
+    '''
+    -------------------
+    Input:
+    Output:
+    -------------------
+    '''
+    log_reg = LogisticRegression(C=C, verbose = True, n_jobs = -1, solver = 'saga')
+    log_reg.fit(X, Y)
+    
+    return(log_reg)
 
 
 def save_model(model, filename):
@@ -150,6 +161,5 @@ def get_scores(model, X_test, Y_test):
     Output:
     -------------------
     '''
-    
-    result = loaded_model.score(X_test, Y_test)
+    result = model.score(X_test, Y_test)
     return(result)

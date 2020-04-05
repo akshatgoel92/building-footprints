@@ -1,17 +1,6 @@
-
-
-
-def fit(X, Y, C):
-    '''
-    -------------------
-    Input:
-    Output:
-    -------------------
-    '''
-    log_reg = LogisticRegression(C=C, verbose = True, n_jobs = -1, solver = 'saga')
-    log_reg.fit(X, Y)
-    
-    return(log_reg)
+from results import utils
+from helpers import common
+from sklearn.linear_model import LogisticRegression
 
 
 def main():
@@ -28,16 +17,18 @@ def main():
     suffix = '.npz'
     n = 3
     
-    files = get_files(prefix, suffix)
-    train = get_train_set(files, n)
-    train = execute_merge(train)
-    
-    X_train, Y_train = reshape_df(train)
+    files = utils.get_files(prefix, suffix)
+    train = utils.get_train_set(files, n)
+    train = utils.execute_merge(train)
+    X_train, Y_train = utils.reshape_df(train)
+    print(X_train.shape)
+    print(Y_train.shape)
     
     hypers = [1]
     for c in hypers:
-        log_reg = fit(X_train, Y_train, c)
-        save_model(log_reg, 'log_reg_{}.sav'.format(str(c)))
+        log_reg = utils.fit_log_reg(X_train, Y_train, c)
+        utils.save_model(log_reg, 'log_reg_{}.sav'.format(str(c)))
         
+  
 if __name__ == '__main__':
     main()
