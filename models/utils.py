@@ -1,19 +1,11 @@
 import numpy as np
+import itertools
 import random
 import joblib
 
 from sklearn.linear_model import LogisticRegression
 from helpers import common
 
-
-
-# Import packages
-import numpy as np
-import random
-import joblib
-
-from sklearn.linear_model import LogisticRegression
-from helpers import common
 
 
 def get_files(prefix, suffix):
@@ -30,7 +22,7 @@ def get_files(prefix, suffix):
     return files
 
 
-def get_train_set(files, n):
+def get_train_dev_set(files, n, dev):
     """
     ------------------------
     Input: 
@@ -38,88 +30,33 @@ def get_train_set(files, n):
     ------------------------
     """
     flats = []
-    for f in files[0:n]:
+    
+    if dev == 1:
+        files_to_get = files[n:]
+    else: 
+        files_to_get = files[0:n]
+    
+    for f in files_to_get:
         flats.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
         
     return flats
 
 
-def get_dev_set(files, n):
+def get_X_Y(df):
     """
     ------------------------
     Input: 
     Output:
     ------------------------
     """
-    dev = []
-    for f in files[n:]:
-        dev.append(np.load(common.get_object_s3(f), allow_pickle = True)['arr_0'])
+    df = [np.concatenate(a) for a in zip(*itertools.chain(df))]
     
-    return(dev)
+    X = np.transpose(np.array(df[4:-2]))
+    Y = np.transpose(np.array(df[-1].data))
+    
+    return(X,Y)
 
-
-def merge_flat_file(df1, df2):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    df = []
-    # Assume that the code has the mask at the end
-    for a, b in zip(df1[4:-2], df2[4:-2]):
-        df.append(np.concatenate((a, b)))
     
-    df.append(np.concatenate((df1[-1].data, df2[-1].data)))
-    
-    return(df)
-    
-    
-def execute_merge(files):
-    '''
-    -------------------
-    Input:
-    Output:
-    -------------------
-    '''
-    df = files[0]
-        
-    for i in range(len(files)-1):
-        print(i)
-        df1 = files[i+1]
-        df = merge_flat_file(df, df1)
-    
-    return(df)
-
-def process_single(df):
-    '''
-    -------------------
-    Input:
-    Output:
-    -------------------
-    '''
-    df_res = []
-    # Assume that the code has the mask at the end
-    df_res.append(df[0][4:-2])
-    df_res.append(df[0][-1].data)
-    
-    return(df_res)
-
-
-def reshape_df(df):
-    '''
-    -------------------
-    Input:
-    Output:
-    -------------------
-    '''
-    df = np.transpose(np.array(df))
-    X = df[:,:3]
-    Y = df[:,-1]
-    
-    return(X, Y)
-
-
 def fit_log_reg(X, Y, C):
     '''
     -------------------
