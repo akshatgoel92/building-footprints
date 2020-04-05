@@ -61,7 +61,7 @@ def fit_log_reg(X, Y, C):
     Output:
     -------------------
     '''
-    log_reg = LogisticRegression(C=C, verbose = True, n_jobs = -1, solver = 'saga')
+    log_reg = LogisticRegression(C=C, verbose = True, n_jobs = -1, solver = 'saga', warm_start = True)
     log_reg.fit(X, Y)
     
     return(log_reg)
