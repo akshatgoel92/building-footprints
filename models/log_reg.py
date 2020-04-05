@@ -1,3 +1,4 @@
+import numpy as np
 from models import utils
 from helpers import common
 from sklearn.linear_model import LogisticRegression
@@ -24,7 +25,7 @@ def main():
     
     hypers = [1]
     for c in hypers:
-        log_reg = utils.fit_log_reg(np.transpose(np.array(df[4:-2])), np.transpose(np.array(df[-1].data)), c)
+        log_reg = utils.fit_log_reg(np.transpose(np.array(train[4:-2])), np.transpose(np.array(train[-1].data)), c)
         utils.save_model(log_reg, 'log_reg_{}.sav'.format(str(c)))
         
   
