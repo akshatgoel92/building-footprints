@@ -16,9 +16,10 @@ def main():
     prefix = common.get_s3_paths(root, image_type)
     suffix = '.npz'
     n = 3
+    dev = 0
     
     files = utils.get_files(prefix, suffix)
-    train = utils.get_train_dev_set(files, n)
+    train = utils.get_train_dev_set(files, n, dev)
     print(train)
     
     X_train, Y_train = utils.get_X_Y(train)
