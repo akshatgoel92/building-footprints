@@ -1,4 +1,4 @@
-from results import utils
+from models import utils
 from helpers import common
 from sklearn.linear_model import LogisticRegression
 
