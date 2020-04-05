@@ -19,7 +19,10 @@ def main():
     
     files = utils.get_files(prefix, suffix)
     train = utils.get_train_set(files, n)
+    print(train.shape)
     train = utils.execute_merge(train)
+    print(train.shape)
+    print(train)
     X_train, Y_train = utils.reshape_df(train)
     print(X_train.shape)
     print(Y_train.shape)
