@@ -1,1 +1,0 @@
-python ./chip/chip.py
