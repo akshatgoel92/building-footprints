@@ -51,10 +51,7 @@ def get_X_Y(df):
     """
     df = [np.concatenate(a) for a in zip(*itertools.chain(df))]
     
-    X = np.transpose(np.array(df[4:-2]))
-    Y = np.transpose(np.array(df[-1].data))
-    
-    return(X,Y)
+    return(df)
 
     
 def fit_log_reg(X, Y, C):

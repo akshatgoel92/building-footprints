@@ -20,15 +20,11 @@ def main():
     
     files = utils.get_files(prefix, suffix)
     train = utils.get_train_dev_set(files, n, dev)
-    print(train)
-    
-    X_train, Y_train = utils.get_X_Y(train)
-    print(X_train.shape)
-    print(Y_train.shape)
+    train = utils.get_X_Y(train)
     
     hypers = [1]
     for c in hypers:
-        log_reg = utils.fit_log_reg(X_train, Y_train, c)
+        log_reg = utils.fit_log_reg(np.transpose(np.array(df[4:-2])), np.transpose(np.array(df[-1].data)), c)
         utils.save_model(log_reg, 'log_reg_{}.sav'.format(str(c)))
         
   
