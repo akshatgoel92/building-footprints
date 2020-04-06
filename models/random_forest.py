@@ -5,6 +5,7 @@ import joblib
 
 from sklearn.ensemble import RandomForestClassifier
 from helpers import common
+from models import utils
 
 
 def main():
