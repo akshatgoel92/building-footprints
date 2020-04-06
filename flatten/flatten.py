@@ -6,9 +6,6 @@ from helpers import raster
 from helpers import common
 
 
-
-
-
 def main(
     root,
     image_type,
@@ -30,23 +27,22 @@ def main(
     print(prefix)
     print(extension)
     files = [img for img in common.get_matching_s3_keys(prefix, extension)]
-    
+
     existing = [
         utils.get_basename(f)
         for f in common.get_matching_s3_keys(prefix_storage, output_format)
     ]
-    
+
     remaining = [f for f in files if utils.get_basename(f) not in existing]
     counter = 0
 
     for f in remaining:
-        
+
         counter += 1
-        
+
         print(f)
         print(counter)
-        
-        
+
         try:
             img = raster.get_image(f)
             mask, _, _ = utils.get_masks(img, shape_root, shape_type, shape_name)
@@ -56,7 +52,7 @@ def main(
 
             flat = utils.convert_img_to_flat_file(img, labels)
             utils.write_flat_file(flat, root, storage, f_name)
-        
+
         except Exception as e:
             print(e)
             continue
@@ -112,7 +108,7 @@ def parse_args(
         shape_name,
         output_format,
         extension,
-        storage
+        storage,
     )
 
 

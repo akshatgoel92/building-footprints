@@ -19,7 +19,6 @@ from rasterio.plot import show_hist
 from rasterio.session import AWSSession
 
 
-
 def get_average(df):
     """
     ------------------------
@@ -45,6 +44,7 @@ def get_sd(df):
 
     return sd
 
+
 def get_pixel_count(df):
     """
     ------------------------
@@ -53,8 +53,7 @@ def get_pixel_count(df):
     ------------------------
     """
     total = len(df[4])
-    return(total)
-
+    return total
 
 
 def get_poly_count(df):
@@ -81,7 +80,7 @@ def get_poly_proportion(df):
     total = len(mask.mask)
     labels = get_poly_count(df)
 
-    return (1 - (labels / total))*100
+    return (1 - (labels / total)) * 100
 
 
 def get_resolution(root, image_type, image_name):
@@ -172,21 +171,20 @@ def get_poly_proportion_shp(shapes, path):
     return proportion
 
 
-def get_summary_df(avgs, sd, area, bands = 3):
+def get_summary_df(avgs, sd, area, bands=3):
     """
     ------------------------
     Input: 
     Output:
     ------------------------
     """
-    df_area = pd.DataFrame([area], columns = ['Metal roof %'])
+    df_area = pd.DataFrame([area], columns=["Metal roof %"])
     df_summary = pd.DataFrame([avgs[0:bands], sd[0:bands]]).T
-    df_summary.columns = ['Mean', 'SD']
-    
-    return(df_area, df_summary)
-    
+    df_summary.columns = ["Mean", "SD"]
 
-    
+    return (df_area, df_summary)
+
+
 def get_overlay_data(df, band):
     """
     ------------------------
@@ -198,9 +196,9 @@ def get_overlay_data(df, band):
     ones = np.where(df[8].data == 0)
     zeros = np.where(df[8].data == 1)
     df_overlay = [bands[band][ones], bands[band][zeros]]
-    
-    return(df_overlay)
-        
+
+    return df_overlay
+
 
 def get_regular_data(df):
     """
@@ -209,71 +207,71 @@ def get_regular_data(df):
     Output:
     ------------------------
     """
-    return(df[4:-2])
-    
+    return df[4:-2]
 
 
-def get_histogram(df, f_no = 0, overlay = 0):
-    '''
+def get_histogram(df, f_no=0, overlay=0):
+    """
     --------------------------------------------------
     Input: 
     Output:
     --------------------------------------------------
-    '''        
+    """
     # Store all histogram arguments here
     hist_args = {
-                'histtype': 'stepfilled',
-                'bins': 500,
-                'alpha': 0.6, 
-                }
-    
+        "histtype": "stepfilled",
+        "bins": 500,
+        "alpha": 0.6,
+    }
+
     # Store the colors here
-    # The max. bands across the imagery we have is six 
+    # The max. bands across the imagery we have is six
     # That's why we have chosen six values here
-    colors = ['red', 'green', 'blue', 
-              'yellow', 'purple', 'orange']
-    
+    colors = ["red", "green", "blue", "yellow", "purple", "orange"]
+
     # Store annotations here
     title = "Pixel value distribution"
     ylabel = "Normalized probability"
     xlabel = "Value"
-    
+
     # Set up the figure object
     ax = plt.gca()
     fig = ax.get_figure()
-    
+
     # Now iterate through bands and draw each layer
     for i, band in enumerate(df):
-        
+
         # Now prepare image
-        band_data = np.unique(band, return_counts = True)
+        band_data = np.unique(band, return_counts=True)
         indices = np.where(band_data[0] > 0)
-    
+
         # Store the values and weights
         vals = band_data[0][indices]
-        
+
         # Note that we are normalizing to probabilities
         weights = band_data[1][indices]
-        weights = weights/np.sum(weights)
-        
-        ax.hist(vals, 
-                weights = weights, 
-                label = str(i),
-                color = colors[i],
-                range = (0, 260),
-                **hist_args)
-    
-    # Add annotations 
+        weights = weights / np.sum(weights)
+
+        ax.hist(
+            vals,
+            weights=weights,
+            label=str(i),
+            color=colors[i],
+            range=(0, 260),
+            **hist_args
+        )
+
+    # Add annotations
     ax.legend(loc="upper right")
-    ax.set_title(title, fontweight='bold')
-    
+    ax.set_title(title, fontweight="bold")
+
     if not overlay:
-        plt.figtext(0.6,0.5, df_summary.to_string(), fontsize = 8)
-        plt.figtext(0.6,0.3, df_area.to_string(), fontsize = 8)
-    
+        plt.figtext(0.6, 0.5, df_summary.to_string(), fontsize=8)
+        plt.figtext(0.6, 0.3, df_area.to_string(), fontsize=8)
+
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     plt.show()
-     
-    name = 'hist_{}.png'.format(str(f_no))
+
+    name = "hist_{}.png".format(str(f_no))
     plt.savefig(name)

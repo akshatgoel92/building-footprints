@@ -102,14 +102,16 @@ def main():
     parser.add_argument("--input_filename", type=str, default=input_filename)
 
     parser.add_argument("--out_path", type=str, default=out_path)
-    parser.add_argument("--output_filename", type=str, default=output_filename,)
+    parser.add_argument(
+        "--output_filename", type=str, default=output_filename,
+    )
 
     parser.add_argument("--width", type=str, default=width)
     parser.add_argument("--height", type=str, default=height)
-    
-    args=parser.parse_args()
+
+    args = parser.parse_args()
     common.make_folders(args.in_path, args.out_path)
-    
+
     output_chip(**vars(args))
     upload_chips(args.in_path, args.out_path)
 
