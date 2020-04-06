@@ -21,7 +21,7 @@ def main():
     
     files = utils.get_files(prefix, suffix)
     
-    for f in files[0:3]:
+    for f in files[0:n]:
         train = utils.get_train_dev_set(files = [f], n = 1, dev = dev)
         train = utils.get_X_Y(train)
     

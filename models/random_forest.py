@@ -7,18 +7,6 @@ from sklearn.ensemble import RandomForestClassifier
 from helpers import common
 
 
-def fit(X, Y, n_estimators):
-    '''
-    -------------------
-    Input:
-    Output:
-    -------------------
-    '''
-    rf_reg = RandomForestClassifier(n_estimators = n_estimators, max_depth = 2, bootstrap = False, n_jobs = 1, verbose = 1000)
-    rf_reg.fit(X, Y)
-    
-    return(rf_reg)
-
 def main():
     '''
     -------------------
@@ -30,24 +18,21 @@ def main():
     image_type = 'blocks'
     
     prefix = common.get_s3_paths(root, image_type)
-    n_estimators = 100
     suffix = '.npz'
-    n = 3
-    run = 1
    
+    n = 3
+    dev = 0
+    run = 1
+    n_estimators = 100
+    files = utils.get_files(prefix, suffix)
     
-    
-    files = get_files(prefix, suffix)
-    print(files)
-    
-    train = get_train_set(files, n)
-    train = execute_merge(train)
-    
-    X_train, Y_train = reshape_df(train)
-    rf_reg = fit(X_train, Y_train, n_estimators)
-    
-    save_model(rf_reg, 'rf_reg_{}.sav'.format(str(run)))
-    
-    
+    for f in files[0:n]:
+        train = utils.get_train_dev_set(files = [f], n = 1, dev = dev)
+        train = utils.get_X_Y(train)
+        rf_reg = utils.fit_random_forest(np.transpose(np.array(train[4:-2])), np.transpose(np.array(train[-1].data)), n_estimators)
+        
+    utils.save_model(log_reg, 'rf_reg_{}.sav'.format(str(run)))
+
+
 if __name__ == '__main__':
     main()

@@ -65,6 +65,20 @@ def fit_log_reg(X, Y, C):
     log_reg.fit(X, Y)
     
     return(log_reg)
+    
+    
+def fit_random_forest(X, Y, n_estimators):
+    '''
+    -------------------
+    Input:
+    Output:
+    -------------------
+    '''
+    rf_reg = RandomForestClassifier(n_estimators = n_estimators, max_depth = 2, bootstrap = False, n_jobs = 1, verbose = 1000)
+    rf_reg.fit(X, Y)
+    
+    return(rf_reg)
+
 
 
 def save_model(model, filename):
