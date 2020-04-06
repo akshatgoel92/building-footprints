@@ -24,7 +24,7 @@ def main():
     n = 3
     dev = 0
     run = 1
-    n_estimators = 100
+    n_estimators = 50
     files = utils.get_files(prefix, suffix)
 
     for f in files[0:n]:
@@ -36,7 +36,7 @@ def main():
             n_estimators,
         )
 
-    utils.save_model(log_reg, "rf_reg_{}.sav".format(str(run)))
+    utils.save_model(rf_reg, "rf_reg_{}.sav".format(str(run)))
 
 
 if __name__ == "__main__":
