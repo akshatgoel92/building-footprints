@@ -21,12 +21,11 @@ def main():
         X, Y = utils.get_X_Y(dev)
     elif len(dev) == 1:
         X,Y = utils.process_single(dev)
-
-    X_dev, Y_dev = reshape_df(dev)
+        
     model = joblib.load(filename)
-
-    prediction = utils.get_predictions(model, X_dev)
-    result = utils.get_scores(model, X_dev, Y_dev)
+    
+    prediction = utils.get_predictions(model, X)
+    result = utils.get_scores(model, X, Y)
 
 
 if __name__ == "__main__":
