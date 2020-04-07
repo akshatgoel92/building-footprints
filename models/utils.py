@@ -61,7 +61,7 @@ def get_X_Y_single(df):
      -------------------
      '''
      X = np.transpose(np.vstack(df[0][4:-2]))
-     Y = np.transpose(np.array(dev[0][-1].data))
+     Y = np.transpose(np.array(df[0][-1].data))
 
      return(X, Y)
 
