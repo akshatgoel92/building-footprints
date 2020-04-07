@@ -155,7 +155,7 @@ def get_scores(model, X_test, Y_test):
     return result
 
 
-def get_other_scores(confusion_matrix):
+def get_other_scores():
     """
     -------------------
     Input:
