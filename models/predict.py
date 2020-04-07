@@ -33,8 +33,8 @@ def main():
     model = joblib.load(filename)
     result.append(utils.get_scores(model, X, Y))
     prediction = utils.get_predictions(model, X)
-    confusion = get_confusion_matrix(model, Y, prediction)
-    tn, fp, fn, tp, sens, spec = get_other_scores(confusion)
+    confusion = utils.get_confusion_matrix(model, Y, prediction)
+    tn, fp, fn, tp, sens, spec = utils.get_other_scores(confusion)
     
     result.append(tn)
     result.append(fp)
