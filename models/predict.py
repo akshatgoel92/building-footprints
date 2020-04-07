@@ -6,16 +6,21 @@ from models import utils
 
 def main():
 
+    
+    filename = "models/results/log_reg_1.sav"
+    prefix = "GE Gorakhpur"
+    suffix = "blocks"
+    dev = 1
     n = 3
-    filename = "models/results/rf_reg_1.sav"
+    
 
     files = utils.get_files(prefix, suffix)
-    dev = utils.get_dev_set(files, n)
+    dev = utils.get_train_dev_set(files, n, dev)
 
     if len(dev) > 1:
-        dev = utils.execute_merge(dev)
+        X, Y = utils.get_X_Y(dev)
     elif len(dev) == 1:
-        dev = utils.process_single(dev)
+        X,Y = utils.process_single(dev)
 
     X_dev, Y_dev = reshape_df(dev)
     model = joblib.load(filename)

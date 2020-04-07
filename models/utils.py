@@ -30,12 +30,11 @@ def get_train_dev_set(files, n, dev):
     ------------------------
     """
     flats = []
-
     if dev == 1:
         files_to_get = files[n:]
-    else:
+    elif dev == 0:
         files_to_get = files[0:n]
-
+    
     for f in files_to_get:
         flats.append(np.load(common.get_object_s3(f), allow_pickle=True)["arr_0"])
 
@@ -52,6 +51,31 @@ def get_X_Y(df):
     df = [np.concatenate(a) for a in zip(*itertools.chain(df))]
 
     return df
+
+
+def get_X_Y_single(df):
+     '''
+     -------------------
+     Input:
+     Output:
+     -------------------
+     '''
+     X = np.transpose(np.vstack(df[0][4:-2]))
+     Y = np.transpose(np.array(dev[0][-1].data))
+
+     return(X, Y)
+
+
+def get_nn_data(X, Y):
+    '''
+    -------------------
+    Input:
+    Output:
+    -------------------
+    '''
+    X_ = np.array([np.pad(x, (0, 65536 - len(x)%65536)) for x in X])
+    X_ = [x.reshape(len(x)//65536, 256, 256) for x in X_]
+    
 
 
 def fit_log_reg(X, Y, C):
