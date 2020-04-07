@@ -141,7 +141,7 @@ def get_confusion_matrix(model, Y, Y_pred):
     Output:
     -------------------
     """
-    return(confusion_matrix(Y_true, Y_pred))
+    return(confusion_matrix(Y, Y_pred))
 
 
 def get_scores(model, X_test, Y_test):
