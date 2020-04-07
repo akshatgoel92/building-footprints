@@ -15,7 +15,9 @@ def main():
     
 
     files = utils.get_files(prefix, suffix)
+    print(files)
     dev = utils.get_train_dev_set(files, n, dev)
+    print(dev)
 
     if len(dev) > 1:
         X, Y = utils.get_X_Y(dev)
