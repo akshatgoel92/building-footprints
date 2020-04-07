@@ -5,6 +5,7 @@ import joblib
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix
 from helpers import common
 
 
@@ -133,6 +134,15 @@ def get_predictions(model, X):
     Y_hat = model.predict(X)
     return Y_hat
 
+def get_confusion_matrix(model, Y, Y_pred):
+    """
+    -------------------
+    Input:
+    Output:
+    -------------------
+    """
+    return(confusion_matrix(Y_true, Y_pred))
+
 
 def get_scores(model, X_test, Y_test):
     """
@@ -143,3 +153,17 @@ def get_scores(model, X_test, Y_test):
     """
     result = model.score(X_test, Y_test)
     return result
+
+
+def get_other_scores(confusion_matrix):
+    """
+    -------------------
+    Input:
+    Output:
+    -------------------
+    """
+    tn, fp, fn, tp = confusion_matrix([0, 1, 0, 1], [1, 1, 1, 0]).ravel()
+    sens = tp/(tp + fn)
+    spec = tn/(tn + fp)
+    
+    return(tn, fp, fn, tp, sens, spec)

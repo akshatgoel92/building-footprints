@@ -21,19 +21,30 @@ def main():
 
     files = utils.get_files(prefix, suffix)
     print(files)
+    
     dev = utils.get_train_dev_set(files, n, dev)
-    print(dev)
-
+    
     if len(dev) > 1:
         X, Y = utils.get_X_Y(dev)
     elif len(dev) == 1:
         X,Y = utils.get_X_Y_single(dev)
         
+    result = []    
     model = joblib.load(filename)
-    
+    result.append(utils.get_scores(model, X, Y))
     prediction = utils.get_predictions(model, X)
-    result = utils.get_scores(model, X, Y)
-
+    confusion = get_confusion_matrix(model, Y, prediction)
+    tn, fp, fn, tp, sens, spec = get_other_scores(confusion)
+    
+    result.append(tn)
+    result.append(fp)
+    result.append(fn)
+    result.append(tp)
+    result.append(sens)
+    result.append(spec)
+    
+    print(confusion)
+    print(result)
 
 if __name__ == "__main__":
     main()
