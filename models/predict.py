@@ -6,13 +6,12 @@ from models import utils
 
 
 def main():
-
     
-    filename = "models/results/log_reg_1.sav"
+    name = "log_reg_1.sav"
     root = "GE Gorakhpur"
     image_type = "blocks"
     
-    filename = "models/results/log_reg_1.sav"
+    filename = os.path.join(os.path.join("models", "results"), name)
     prefix = common.get_s3_paths(root, image_type)
     suffix = ".npz"
     dev = 1
@@ -27,7 +26,7 @@ def main():
     if len(dev) > 1:
         X, Y = utils.get_X_Y(dev)
     elif len(dev) == 1:
-        X,Y = utils.process_single(dev)
+        X,Y = utils.get_X_Y_single(dev)
         
     model = joblib.load(filename)
     
