@@ -1,6 +1,7 @@
 import joblib
 import argparse
 
+from helper import common
 from models import utils
 
 
@@ -8,8 +9,12 @@ def main():
 
     
     filename = "models/results/log_reg_1.sav"
-    prefix = "GE Gorakhpur"
-    suffix = "blocks"
+    root = "GE Gorakhpur"
+    image_type = "blocks"
+    
+    filename = "models/results/log_reg_1.sav"
+    prefix = common.get_s3_paths(root, image_type)
+    suffix = ".npz"
     dev = 1
     n = 3
     
