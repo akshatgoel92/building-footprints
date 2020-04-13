@@ -58,33 +58,32 @@ def main(
             continue
 
 
-def parse_args(
-    root,
-    image_type,
-    shape_root,
-    shape_type,
-    shape_name,
-    output_format,
-    extension,
-    storage,
-):
+def parse_args():
     """
     ------------------------
     Input: 
     Output:
     ------------------------
     """
-    parser = argparse.ArgumentParser(description="")
+    shape_root = "Metal Shapefile"
+    shape_name = "Metal roof.shp"
+    shape_type = "Gorakhpur"
+    output_format = ".npz"
+    root = "GE Gorakhpur"
+    image_type = "tiles"
+    extension = ".tif"
+    storage = "flat"
 
+    prefix = common.get_s3_paths(root, image_type)
+    prefix_storage = common.get_s3_paths(root, storage)
+
+    parser = argparse.ArgumentParser(description="")
     parser.add_argument("--root", type=str, default=root)
     parser.add_argument("--storage", type=str, default=storage)
-
     parser.add_argument("--extension", type=str, default=extension)
     parser.add_argument("--image_type", type=str, default=image_type)
-
     parser.add_argument("--shape_root", type=str, default=shape_root)
     parser.add_argument("--shape_type", type=str, default=shape_type)
-
     parser.add_argument("--shape_name", type=str, default=shape_name)
     parser.add_argument("--output_format", type=str, default=output_format)
 
@@ -94,7 +93,6 @@ def parse_args(
     storage = args.storage
     extension = args.extension
     image_type = args.image_type
-
     shape_root = args.shape_root
     shape_type = args.shape_type
     shape_name = args.shape_name
@@ -114,29 +112,6 @@ def parse_args(
 
 if __name__ == "__main__":
 
-    root = "GE Gorakhpur"
-    image_type = "tiles"
-
-    shape_root = "Metal Shapefile"
-    shape_type = "Gorakhpur"
-
-    shape_name = "Metal roof.shp"
-    extension = ".tif"
-
-    storage = "flat"
-    output_format = ".npz"
-    prefix = common.get_s3_paths(root, image_type)
-    prefix_storage = common.get_s3_paths(root, storage)
-
-    args = parse_args(
-        root,
-        image_type,
-        shape_root,
-        shape_type,
-        shape_name,
-        output_format,
-        extension,
-        storage,
-    )
+    args = parse_args()
     print(args)
     main(*args, prefix, prefix_storage)
