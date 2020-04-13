@@ -134,6 +134,7 @@ def get_predictions(model, X):
     Y_hat = model.predict(X)
     return Y_hat
 
+
 def get_confusion_matrix(model, Y, Y_pred):
     """
     -------------------
