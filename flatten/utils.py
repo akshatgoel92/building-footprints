@@ -83,25 +83,34 @@ def convert_img_to_flat_file(img, labels):
     bands = range(img.count)
     trans = img.transform
     flat = []
-
+    
+    # Geographic coordinates get stored here
+    # Fix a row and iterate through all the columns
+    # Then move to the next row
     geo = [trans * (row, col) for row in height for col in width]
     x = []
     y = []
     for x_, y_ in geo:
         x.append(x_)
         y.append(y_)
-
-    x = np.array(x, dtype=np.float64)
-    y = np.array(y, dtype=np.float64)
-
-    row = np.array(list(height))
-    col = np.array(list(width))
-
+    
+    # Get row and columns
+    # This fixes a row and goes through each column
+    # Then it goes to the next row
+    img_coords = [(row, col) for row in height for col in width]
+    row = []
+    col = []
+    for row_, col_ in img_coords:
+        row.append(row)
+        col.append(col)
+    
+    # Put everything together here
     flat.append(x)
     flat.append(y)
     flat.append(row)
     flat.append(col)
-
+    
+    # Now add the labels
     for band in bands:
         flat.append(np.array([arr[band][row, col] for row in height for col in width]))
 
