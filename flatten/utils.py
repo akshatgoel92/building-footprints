@@ -92,7 +92,7 @@ def convert_img_to_flat_file(img, labels):
         y.append(y_)
 
     x = np.array(x, dtype=np.float64)
-    y = np.array(x, dtype=np.float64)
+    y = np.array(y, dtype=np.float64)
 
     row = np.array(list(height))
     col = np.array(list(width))
