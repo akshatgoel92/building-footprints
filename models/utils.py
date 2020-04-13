@@ -67,15 +67,16 @@ def get_X_Y_single(df):
      return(X, Y)
 
 
-def get_nn_data(X, Y):
+def get_nn_data(X, Y, length = 256, width = 256):
     '''
     -------------------
     Input:
     Output:
     -------------------
     '''
-    X_ = np.array([np.pad(x, (0, 65536 - len(x)%65536)) for x in X])
-    X_ = [x.reshape(len(x)//65536, 256, 256) for x in X_]
+    size = length*width
+    X_ = np.array([np.pad(x, (0, size - len(x)%size)) for x in X])
+    X_ = [x.reshape(len(x)//size, length, width) for x in X_]
     
 
 
