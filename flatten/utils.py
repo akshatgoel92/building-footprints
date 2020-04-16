@@ -15,16 +15,6 @@ from rasterio.plot import show
 from rasterio.session import AWSSession
 
 
-def get_basename(f):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    return os.path.splitext(os.path.basename(f))[0]
-
-
 def get_existing_flat_files(root, image_type):
     """
     ------------------------
@@ -56,18 +46,6 @@ def get_masks(rstr, shape_root, shape_type, shape_name, invert=False, filled=Fal
     out_meta = rstr.meta
 
     return (out_image, out_transform, out_meta)
-
-
-def get_labels_from_mask(mask):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    labels = (np.sum(mask, axis=0) > 0).astype(int).flatten()
-
-    return labels
 
 
 def convert_img_to_flat_file(img, labels):
@@ -130,6 +108,24 @@ def write_flat_file(
         """
     file_from = common.get_local_image_path(root, image_type, image_name)
     np.savez_compressed(file_from, flat)
+
+    _, access_key, secret_access_key = common.get_credentials()
+
+    s3_folder = common.get_s3_paths(root, image_type)
+    file_to = os.path.join(s3_folder, image_name)
+    common.upload_s3(file_from, file_to)
+
+
+def write_mask(
+    mask, meta, root="GE Gorakhpur", image_type=os.path.join('data', 'train_masks'), image_name = 'test.tif'):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    file_from = common.get_local_image_path(root, image_type, image_name)
+    raster.write_image(file_from, mask, meta)
 
     _, access_key, secret_access_key = common.get_credentials()
 

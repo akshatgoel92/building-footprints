@@ -1,8 +1,9 @@
 import os
-import utils
 import argparse
 import platform
 import numpy as np
+
+from flatten import utils
 from helpers import raster
 from helpers import common
 
@@ -28,31 +29,39 @@ def main(
     print(prefix)
     print(extension)
     files = [img for img in common.get_matching_s3_keys(prefix, extension)]
-
-    existing = [
-        utils.get_basename(f)
-        for f in common.get_matching_s3_keys(prefix_storage, output_format)
-    ]
+    
+    try: 
+        existing = [
+            utils.get_basename(f)
+            for f in common.get_matching_s3_keys(prefix_storage, output_format)
+        ]
+        
+        
+    
+    except Exception as e:
+        print(e)
+        print('This folder does not exist...')
+        existing = []
+        
 
     remaining = [f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing]
     counter = 0
-
+    
     for f in remaining:
-
         counter += 1
-
         print(f)
         print(counter)
 
         try:
             img = raster.get_image(f)
-            mask, _, _ = utils.get_masks(img, shape_root, shape_type, shape_name)
-
-            labels = (np.sum(mask, axis=0) > 0).astype(int).flatten()
+            mask, trans, meta = utils.get_masks(img, shape_root, shape_type, shape_name, filled = True)
+            
+            mask = (np.sum(mask, axis=0) > 0).astype(int).reshape(1, mask.shape[1], mask.shape[2])
+            mask.dtype = 'uint8'
+            meta['count'] = 1
+            
             f_name = os.path.splitext(os.path.basename(f))[0] + output_format
-
-            flat = utils.convert_img_to_flat_file(img, labels)
-            utils.write_flat_file(flat, root, storage, f_name)
+            utils.write_mask(mask, meta, root, storage, f_name)
 
         except Exception as e:
             print(e)
@@ -69,11 +78,11 @@ def parse_args():
     shape_root = "Metal Shapefile"
     shape_name = "Metal roof.shp"
     shape_type = "Gorakhpur"
-    output_format = ".npz"
+    output_format = ".tif"
     root = "GE Gorakhpur"
-    image_type = "tiles"
+    image_type = os.path.join('data', 'train_frames')
     extension = ".tif"
-    storage = "flat"
+    storage = os.path.join('data', 'train_masks')
 
     prefix = common.get_s3_paths(root, image_type)
     prefix_storage = common.get_s3_paths(root, storage)
