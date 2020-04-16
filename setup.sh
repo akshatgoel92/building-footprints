@@ -1,6 +1,8 @@
 # Setup essential libraries for Python
 cd ~
 
+git clone https://github.com/sociometrik/roof-classify.git
+
 apt update && apt upgrade -y && apt install build-essential -y
 
 apt install libncurses5-dev libgdbm-dev libnss3-dev 
@@ -23,8 +25,8 @@ Python-3.7.0/configure --enable-optimizations && make && make install
 update-alternatives --install /usr/bin/python python /root/python 1
 
 
-# Clone repository
-cd ~ && git clone https://github.com/sociometrik/roof-classify.git
+# Set up virtual environment
+cd ~
     
 python -m venv roof-env && cd ~/roof-classify && source ./../roof-env/bin/activate
 
