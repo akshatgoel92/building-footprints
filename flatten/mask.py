@@ -117,6 +117,8 @@ def parse_args():
         output_format,
         extension,
         storage,
+        prefix, 
+        prefix_storage
     )
 
 
@@ -124,4 +126,4 @@ if __name__ == "__main__":
 
     args = parse_args()
     print(args)
-    main(*args, prefix, prefix_storage)
+    main(*args)

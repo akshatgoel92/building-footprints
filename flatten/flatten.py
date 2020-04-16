@@ -108,6 +108,8 @@ def parse_args():
         output_format,
         extension,
         storage,
+        prefix, 
+        prefix_storage
     )
 
 
