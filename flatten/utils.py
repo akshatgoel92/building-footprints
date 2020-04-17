@@ -61,7 +61,7 @@ def convert_img_to_flat_file(img, labels):
     bands = range(img.count)
     trans = img.transform
     flat = []
-    
+
     # Geographic coordinates get stored here
     # Fix a row and iterate through all the columns
     # Then move to the next row
@@ -71,7 +71,7 @@ def convert_img_to_flat_file(img, labels):
     for x_, y_ in geo:
         x.append(x_)
         y.append(y_)
-    
+
     # Get row and columns
     # This fixes a row and goes through each column
     # Then it goes to the next row
@@ -81,13 +81,13 @@ def convert_img_to_flat_file(img, labels):
     for row_, col_ in img_coords:
         row.append(row)
         col.append(col)
-    
+
     # Put everything together here
     flat.append(x)
     flat.append(y)
     flat.append(row)
     flat.append(col)
-    
+
     # Now add the labels
     for band in bands:
         flat.append(np.array([arr[band][row, col] for row in height for col in width]))
@@ -117,7 +117,12 @@ def write_flat_file(
 
 
 def write_mask(
-    mask, meta, root="GE Gorakhpur", image_type=os.path.join('data', 'train_masks'), image_name = 'test.tif'):
+    mask,
+    meta,
+    root="GE Gorakhpur",
+    image_type=os.path.join("data", "train_masks"),
+    image_name="test.tif",
+):
     """
     ------------------------
     Input: 

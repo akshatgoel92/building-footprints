@@ -147,10 +147,10 @@ def copy_object_s3(source, destination):
     """
     s3_resource = get_s3_resource()
     bucket_name = get_bucket_name()
-    
+
     source = os.path.join(bucket_name, source)
     destination = destination
-    
+
     s3_resource.Object(bucket_name, destination).copy_from(CopySource=source)
 
 

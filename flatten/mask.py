@@ -29,24 +29,23 @@ def main(
     print(prefix)
     print(extension)
     files = [img for img in common.get_matching_s3_keys(prefix, extension)]
-    
-    try: 
+
+    try:
         existing = [
             utils.get_basename(f)
             for f in common.get_matching_s3_keys(prefix_storage, output_format)
         ]
-        
-        
-    
+
     except Exception as e:
         print(e)
-        print('This folder does not exist...')
+        print("This folder does not exist...")
         existing = []
-        
 
-    remaining = [f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing]
+    remaining = [
+        f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
+    ]
     counter = 0
-    
+
     for f in remaining:
         counter += 1
         print(f)
@@ -54,12 +53,18 @@ def main(
 
         try:
             img = raster.get_image(f)
-            mask, trans, meta = utils.get_masks(img, shape_root, shape_type, shape_name, filled = True)
-            
-            mask = (np.sum(mask, axis=0) > 0).astype(int).reshape(1, mask.shape[1], mask.shape[2])
-            mask.dtype = 'uint8'
-            meta['count'] = 1
-            
+            mask, trans, meta = utils.get_masks(
+                img, shape_root, shape_type, shape_name, filled=True
+            )
+
+            mask = (
+                (np.sum(mask, axis=0) > 0)
+                .astype(int)
+                .reshape(1, mask.shape[1], mask.shape[2])
+            )
+            mask.dtype = "uint8"
+            meta["count"] = 1
+
             f_name = os.path.splitext(os.path.basename(f))[0] + output_format
             utils.write_mask(mask, meta, root, storage, f_name)
 
@@ -80,9 +85,9 @@ def parse_args():
     shape_type = "Gorakhpur"
     output_format = ".tif"
     root = "GE Gorakhpur"
-    image_type = os.path.join('data', 'val_frames')
+    image_type = os.path.join("data", "val_frames")
     extension = ".tif"
-    storage = os.path.join('data', 'val_masks')
+    storage = os.path.join("data", "val_masks")
 
     prefix = common.get_s3_paths(root, image_type)
     prefix_storage = common.get_s3_paths(root, storage)
@@ -117,8 +122,8 @@ def parse_args():
         output_format,
         extension,
         storage,
-        prefix, 
-        prefix_storage
+        prefix,
+        prefix_storage,
     )
 
 

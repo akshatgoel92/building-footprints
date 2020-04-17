@@ -34,7 +34,9 @@ def main(
         for f in common.get_matching_s3_keys(prefix_storage, output_format)
     ]
 
-    remaining = [f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing]
+    remaining = [
+        f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
+    ]
     counter = 0
 
     for f in remaining:
@@ -108,8 +110,8 @@ def parse_args():
         output_format,
         extension,
         storage,
-        prefix, 
-        prefix_storage
+        prefix,
+        prefix_storage,
     )
 
 

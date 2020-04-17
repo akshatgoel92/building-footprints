@@ -35,7 +35,7 @@ def get_train_dev_set(files, n, dev):
         files_to_get = files[n:]
     elif dev == 0:
         files_to_get = files[0:n]
-    
+
     for f in files_to_get:
         flats.append(np.load(common.get_object_s3(f), allow_pickle=True)["arr_0"])
 
@@ -55,29 +55,28 @@ def get_X_Y(df):
 
 
 def get_X_Y_single(df):
-     '''
+    """
      -------------------
      Input:
      Output:
      -------------------
-     '''
-     X = np.transpose(np.vstack(df[0][4:-2]))
-     Y = np.transpose(np.array(df[0][-1].data))
+     """
+    X = np.transpose(np.vstack(df[0][4:-2]))
+    Y = np.transpose(np.array(df[0][-1].data))
 
-     return(X, Y)
+    return (X, Y)
 
 
-def get_nn_data(X, Y, length = 256, width = 256):
-    '''
+def get_nn_data(X, Y, length=256, width=256):
+    """
     -------------------
     Input:
     Output:
     -------------------
-    '''
-    size = length*width
-    X_ = np.array([np.pad(x, (0, size - len(x)%size)) for x in X])
-    X_ = [x.reshape(len(x)//size, length, width) for x in X_]
-    
+    """
+    size = length * width
+    X_ = np.array([np.pad(x, (0, size - len(x) % size)) for x in X])
+    X_ = [x.reshape(len(x) // size, length, width) for x in X_]
 
 
 def fit_log_reg(X, Y, C):
@@ -143,7 +142,7 @@ def get_confusion_matrix(model, Y, Y_pred):
     Output:
     -------------------
     """
-    return(confusion_matrix(Y, Y_pred))
+    return confusion_matrix(Y, Y_pred)
 
 
 def get_scores(model, X_test, Y_test):
@@ -165,7 +164,7 @@ def get_other_scores():
     -------------------
     """
     tn, fp, fn, tp = confusion_matrix([0, 1, 0, 1], [1, 1, 1, 0]).ravel()
-    sens = tp/(tp + fn)
-    spec = tn/(tn + fp)
-    
-    return(tn, fp, fn, tp, sens, spec)
+    sens = tp / (tp + fn)
+    spec = tn / (tn + fp)
+
+    return (tn, fp, fn, tp, sens, spec)

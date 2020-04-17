@@ -14,21 +14,19 @@ def main():
     suffix = ".npz"
     root = "GE Gorakhpur"
     image_type = "blocks"
-    
-    
-    
+
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("--root", type=str, default=root)
     parser.add_argument("--bands", type=int, default=bands)
-    parser.add_argument("--suffix", type=str, default=suffix) 
+    parser.add_argument("--suffix", type=str, default=suffix)
     parser.add_argument("--image_type", type=str, default=image_type)
-    
+
     args = parser.parse_args()
     root = args.root
     bands = args.bands
     suffix = args.suffix
     image_type = args.image_type
-    
+
     # Get S3 paths
     # List files
     prefix = common.get_s3_paths(root, image_type)
@@ -59,5 +57,6 @@ def main():
             df_overlay = get_overlay_data(df, band)
             get_histogram(df_overlay, f_no=j, overlay=1)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
