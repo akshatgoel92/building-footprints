@@ -80,9 +80,9 @@ def parse_args():
     shape_type = "Gorakhpur"
     output_format = ".tif"
     root = "GE Gorakhpur"
-    image_type = os.path.join('data', 'train_frames')
+    image_type = os.path.join('data', 'val_frames')
     extension = ".tif"
-    storage = os.path.join('data', 'train_masks')
+    storage = os.path.join('data', 'val_masks')
 
     prefix = common.get_s3_paths(root, image_type)
     prefix_storage = common.get_s3_paths(root, storage)
