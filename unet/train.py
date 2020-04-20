@@ -61,5 +61,5 @@ def train(epochs=2, pretrained = False, checkpoint_path = "my_keras_model.h5"):
     
 if __name__ == '__main__':
     
-    history, model = train(epochs = 2)
+    history, model = train(epochs = 5)
     summarize_diagnostics(history)
