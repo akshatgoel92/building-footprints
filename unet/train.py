@@ -13,7 +13,7 @@ from keras.optimizers import SGD
 from utils import *
     
     
-def train(epochs=2, checkpoint_path = "my_keras_model.h5"):
+def train(epochs=2, pretrained = False, checkpoint_path = "my_keras_model.h5"):
     """
     ---------------------------------------------
     Input: None
@@ -36,14 +36,12 @@ def train(epochs=2, checkpoint_path = "my_keras_model.h5"):
     # Prepare iterators
     train_it, test_it = load_dataset()
     
-    if checkpoint_path is not None:
+    if pretrained:
         # Load model:
         model = keras.models.load_model(checkpoint_path)
-        # Finding the epoch index from which we are resuming
-        initial_epoch = get_init_epoch(checkpoint_path)
     else:
+        # Get a new model
         model = model = unet.define_model()
-        initial_epoch = 0
 
     # Fit model
     history = model.fit_generator(
@@ -64,6 +62,4 @@ def train(epochs=2, checkpoint_path = "my_keras_model.h5"):
 if __name__ == '__main__':
     
     history, model = train(epochs = 2)
-    
-    
     summarize_diagnostics(history)
