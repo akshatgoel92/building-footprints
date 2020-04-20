@@ -158,8 +158,8 @@ def train(epochs=2):
         verbose=1,
     )
     # Evaluate model
-    loss, accuracy = model.evaluate_generator(test_it, steps=len(test_it), verbose=1)
-    print("> loss=%.3f, accuracy=%.3f" % (loss, fbeta, accuracy))
+    loss, accuracy = model.evaluate_generator(test_it, steps=225, verbose=1)
+    print("> loss=%.3f, accuracy=%.3f" % (loss, accuracy))
 
     # Learning curves
     summarize_diagnostics(history)

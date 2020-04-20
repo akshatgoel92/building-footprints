@@ -46,7 +46,7 @@ def bn_upconv_relu(input, filters, bachnorm_momentum, **conv2d_trans_args):
 
 
 def define_model(
-    input_shape=(256, 256, 3), num_classes=1, output_activation="sigmoid", num_layers=3
+    input_shape=(256, 256, 3), num_classes=1, output_activation="softmax", num_layers=3
 ):
     """
     ---------------------------------------------
