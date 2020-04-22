@@ -6,9 +6,9 @@ import time
 import keras
 import numpy as np
 
-from unet.unet import iou_coef
-from unet.unet import dice_coef
-from unet.utils import load_dataset
+from unet import iou_coef
+from unet import dice_coef
+from utils import load_dataset
 
 from numpy import load
 from keras import backend
