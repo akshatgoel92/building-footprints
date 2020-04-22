@@ -21,38 +21,9 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
 
 from keras import backend
+from unet.utils import iou_coef
+from unet.utils import dice_coef
 
-
-def iou_coef(y_true, y_pred, smooth=1):
-    """
-    ---------------------------------------------
-    Input: Keras history project
-    Output: Display diagnostic learning curves
-    ---------------------------------------------
-    """
-    axes = list(range(1, len(y_true.shape)))
-    intersection = backend.sum(backend.abs(y_true * y_pred), axis=axes)
-    union = backend.sum(y_true, axes)+ backend.sum(y_pred, axes)-intersection
-    iou = backend.mean((intersection + smooth) / (union + smooth), axis=0)
-    print(iou)
-    
-    return iou
-
-
-def dice_coef(y_true, y_pred, smooth=1):
-    """
-    ---------------------------------------------
-    Input: Keras history project
-    Output: Display diagnostic learning curves
-    ---------------------------------------------
-    """
-    axes = list(range(1, len(y_true.shape)))
-    intersection = backend.sum(y_true * y_pred, axis=axes)
-    union = backend.sum(y_true, axis=axes) + backend.sum(y_pred, axis=axes)
-    dice = backend.mean((2. * intersection + smooth)/(union + smooth), axis=0)
-    print(dice)
-    
-    return dice
 
 
 def bn_conv_relu(input, filters, bachnorm_momentum, **conv2d_args):

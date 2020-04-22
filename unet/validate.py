@@ -5,19 +5,18 @@ import unet
 import time
 import keras
 
-from unet import iou_coef
-from unet import dice_coef
-from utils import load_dataset
+from unet.unet import iou_coef
+from unet.unet import dice_coef
+from unet.utils import load_dataset
 
 from numpy import load
 from keras import backend
 from matplotlib import pyplot
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
-
-
-
-
+    
+    
+    
 def get_monitoring_callbacks():
     """
     ---------------------------------------------
@@ -32,7 +31,7 @@ def get_monitoring_callbacks():
     return(iou, dice)
 
 
-def predict_model(model = ''):
+def predict_model(checkpoint_path = 'my_keras_model.h5'):
     """
     ---------------------------------------------
     Input: None
@@ -40,18 +39,23 @@ def predict_model(model = ''):
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    if model == '':
-        model = keras.models.load_model('my_keras_model.h5')
-        iou, dice = get_monitoring_callbacks()
-    
+    model = keras.models.load_model(model, 
+                                    custom_objects = {'iou_coef': iou_coef, 
+                                                      'dice_coef': dice_coef})
     model.summary()
+    
+    model.load_weights(checkpoint_path)
     _, test_it = load_dataset()
     
-    y_pred = model.predict_generator(test_it, steps=2, verbose=1, callbacks = [iou, dice])
+    y_pred = model.predict_generator(test_it, steps=225, verbose=1)
+    
+    print(y_pred.shape)
+    print(y_pred)
+    
     return(y_pred)
 
 
-def evaluate_model(model= None, iou = iou_coef, dice = dice_coef):
+def evaluate_model(model= 'my_keras_model.h5'):
     """
     ---------------------------------------------
     Input: None
@@ -59,19 +63,30 @@ def evaluate_model(model= None, iou = iou_coef, dice = dice_coef):
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    if model is not None:
-        model = keras.models.load_model('my_keras_model.h5')
-        iou, dice = get_monitoring_callbacks()
-    
+    model = keras.models.load_model(model, 
+                                    custom_objects = {'iou_coef': iou_coef, 
+                                                      'dice_coef': dice_coef})
     model.summary()
     
     _, test_it = load_dataset()
     
-    loss, iou, dice, accuracy = model.evaluate_generator(test_it, steps=20, verbose=1, callbacks = [iou, dice])
-    print("> loss=%.3f, accuracy=%.3f" % (loss, accuracy))
+    loss, accuracy, iou, dice = model.evaluate_generator(test_it, steps=2, verbose=1)
+    print("> loss=%.3f, > accuracy=%.3f, > iou=%.3f, dice=%.3f" % (loss, accuracy, iou, dice))
     
     return(loss, iou, dice, accuracy)
 
 
+def main():
+    """
+    ---------------------------------------------
+    Input: None
+    Output: None
+    Run the test harness for evaluating a model
+    ---------------------------------------------
+    """
+    loss, iou, dice, accuracy = evaluate_model('my_keras_model.h5')
+    y_pred = predict_model()
+    
+
 if __name__ == '__main__':
-    loss, iou, dice, accuracy = evaluate_model()
+    main()

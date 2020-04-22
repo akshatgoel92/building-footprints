@@ -9,10 +9,40 @@ import keras
 from numpy import load
 from keras import backend
 from matplotlib import pyplot
-from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
+from keras.preprocessing.image import ImageDataGenerator
 
-import unet
+
+def iou_coef(y_true, y_pred, smooth=1):
+    """
+    ---------------------------------------------
+    Input: Keras history project
+    Output: Display diagnostic learning curves
+    ---------------------------------------------
+    """
+    axes = list(range(1, len(y_true.shape)))
+    intersection = backend.sum(backend.abs(y_true * y_pred), axis=axes)
+    union = backend.sum(y_true, axes)+ backend.sum(y_pred, axes)-intersection
+    iou = backend.mean((intersection + smooth) / (union + smooth), axis=0)
+    print(iou)
+    
+    return iou
+
+
+def dice_coef(y_true, y_pred, smooth=1):
+    """
+    ---------------------------------------------
+    Input: Keras history project
+    Output: Display diagnostic learning curves
+    ---------------------------------------------
+    """
+    axes = list(range(1, len(y_true.shape)))
+    intersection = backend.sum(y_true * y_pred, axis=axes)
+    union = backend.sum(y_true, axis=axes) + backend.sum(y_pred, axis=axes)
+    dice = backend.mean((2. * intersection + smooth)/(union + smooth), axis=0)
+    print(dice)
+    
+    return dice
 
 
 def summarize_diagnostics(history):
@@ -69,8 +99,7 @@ def load_dataset(batch_size=16, target_size=(256, 256)):
     train_datagen = ImageDataGenerator(
         rescale=1.0 / 255, shear_range=0.2, zoom_range=0.2, horizontal_flip=True
     )
-
-    # Validation dataset
+    
     val_datagen = ImageDataGenerator(rescale=1.0 / 255)
 
     # Load dataset
