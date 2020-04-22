@@ -44,8 +44,6 @@ def predict_model(model = 'my_keras_model.h5'):
                                     custom_objects = {'iou_coef': iou_coef, 
                                                       'dice_coef': dice_coef})
     model.summary()
-    
-    model.load_weights(checkpoint_path)
     _, test_it = load_dataset()
     
     y_pred = model.predict_generator(test_it, steps=225, verbose=1)
@@ -72,7 +70,7 @@ def evaluate_model(model= 'my_keras_model.h5'):
     
     _, test_it = load_dataset()
     
-    loss, accuracy, iou, dice = model.evaluate_generator(test_it, steps=2, verbose=1)
+    loss, accuracy, iou, dice = model.evaluate_generator(test_it, steps=225, verbose=1)
     print("> loss=%.3f, > accuracy=%.3f, > iou=%.3f, dice=%.3f" % (loss, accuracy, iou, dice))
     
     return(loss, iou, dice, accuracy)
