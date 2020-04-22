@@ -47,7 +47,7 @@ def predict_model(model = 'my_keras_model.h5'):
     _, test_it = load_dataset()
     
     y_pred = model.predict_generator(test_it, steps=225, verbose=1)
-    savez_compressed('y_pred.npz', y_pred)
+    np.savez_compressed('y_pred.npz', y_pred)
     
     print(y_pred.shape)
     print(y_pred)
