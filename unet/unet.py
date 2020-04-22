@@ -21,8 +21,8 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
 
 from keras import backend
-from unet.utils import iou_coef
-from unet.utils import dice_coef
+from utils import iou_coef
+from utils import dice_coef
 
 
 
