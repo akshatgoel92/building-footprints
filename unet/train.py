@@ -13,7 +13,8 @@ from keras.optimizers import SGD
 from utils import *
     
     
-def train(epochs=2, pretrained = False, checkpoint_path = "my_keras_model.h5"):
+def train(epochs=2, pretrained = False, results_folder = "results", 
+          checkpoint_path = "my_keras_model.h5"):
     """
     ---------------------------------------------
     Input: None
@@ -21,6 +22,8 @@ def train(epochs=2, pretrained = False, checkpoint_path = "my_keras_model.h5"):
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
+    # Create absolute path to checkpoint
+    checkpoint_path = os.path.join("results", checkpoint_path)
     # Add checkpoints for regular saving
     checkpoint_cb = keras.callbacks.ModelCheckpoint(
         checkpoint_path, save_best_only=True
@@ -38,7 +41,7 @@ def train(epochs=2, pretrained = False, checkpoint_path = "my_keras_model.h5"):
     
     if pretrained:
         # Load model:
-        checkpoint_path = os.path.join("results", checkpoint_path)
+        
         model = keras.models.load_model(checkpoint_path)
     else:
         # Get a new model
