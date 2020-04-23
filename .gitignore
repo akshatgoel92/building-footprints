@@ -12,3 +12,4 @@ Sentinel/
 .ipynb_checkpoints/
 /Bing Gorakhpur/*
 Metal Shapefile/
+*.npz
