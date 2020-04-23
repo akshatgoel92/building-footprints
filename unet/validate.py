@@ -87,6 +87,7 @@ def main():
     loss, iou, dice, accuracy = evaluate_model('my_keras_model.h5')
     y_pred = predict_model()
     
+    return(y_pred, loss, iou, dice, accuracy)
 
 if __name__ == '__main__':
-    main()
+    y_pred, loss, iou, dice, accuracy = main()
