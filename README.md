@@ -6,6 +6,6 @@ This is an experimental machine learning pipeline for semantic segmenation on Go
 
 This module downloads existing imagery from S3 to the local machine. To run it just use the following command: 
 
-``python 
+```python 
 python download/download.py 
-``
+```
