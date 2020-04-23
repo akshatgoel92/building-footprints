@@ -82,7 +82,7 @@ def make_tensorboard_directory():
     Output: Tensorboard directory path
     ---------------------------------------------
     """
-    root_logdir = os.path.join(os.curdir, "my_logs")
+    root_logdir = os.path.join(os.curdir, "logs")
     run_id = time.strftime("run_%Y_%m_%d-%H_%M_%S")
 
     return os.path.join(root_logdir, run_id)

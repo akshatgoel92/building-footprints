@@ -38,6 +38,7 @@ def train(epochs=2, pretrained = False, checkpoint_path = "my_keras_model.h5"):
     
     if pretrained:
         # Load model:
+        checkpoint_path = os.path.join("results", checkpoint_path)
         model = keras.models.load_model(checkpoint_path)
     else:
         # Get a new model
