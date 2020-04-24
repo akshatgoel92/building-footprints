@@ -25,7 +25,6 @@ from utils import iou_coef
 from utils import dice_coef
 
 
-
 def bn_conv_relu(input, filters, bachnorm_momentum, **conv2d_args):
     """
     ---------------------------------------------
@@ -136,7 +135,9 @@ def define_model(
 
     model = Model(inputs=[inputs], outputs=[outputs])
     model.compile(
-        optimizer="Adam", loss="binary_crossentropy", metrics=[iou_coef, dice_coef, keras.metrics.accuracy]
+        optimizer="Adam",
+        loss="binary_crossentropy",
+        metrics=[iou_coef, dice_coef, keras.metrics.accuracy],
     )
 
     return model

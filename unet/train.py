@@ -11,10 +11,14 @@ from matplotlib import pyplot
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
 from utils import *
-    
-    
-def train(epochs=2, pretrained = False, results_folder = "results", 
-          checkpoint_path = "my_keras_model.h5"):
+
+
+def train(
+    epochs=2,
+    pretrained=False,
+    results_folder="results",
+    checkpoint_path="my_keras_model.h5",
+):
     """
     ---------------------------------------------
     Input: None
@@ -28,7 +32,7 @@ def train(epochs=2, pretrained = False, results_folder = "results",
     checkpoint_cb = keras.callbacks.ModelCheckpoint(
         checkpoint_path, save_best_only=True
     )
-    
+
     early_stopping_cb = keras.callbacks.EarlyStopping(
         patience=10, restore_best_weights=True
     )
@@ -38,10 +42,10 @@ def train(epochs=2, pretrained = False, results_folder = "results",
 
     # Prepare iterators
     train_it, test_it = load_dataset()
-    
+
     if pretrained:
         # Load model:
-        
+
         model = keras.models.load_model(checkpoint_path)
     else:
         # Get a new model
@@ -58,12 +62,10 @@ def train(epochs=2, pretrained = False, results_folder = "results",
         verbose=1,
     )
     # Evaluate model
-    return(history, model)
+    return (history, model)
 
 
+if __name__ == "__main__":
 
-    
-if __name__ == '__main__':
-    
-    history, model = train(epochs = 5)
+    history, model = train(epochs=5)
     summarize_diagnostics(history)

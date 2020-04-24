@@ -45,7 +45,7 @@ def get_mosaic(files):
     Output:
     ------------------------
     """
-    
+
     print(files)
     mosaic, out_trans = merge(files)
 
@@ -97,7 +97,7 @@ def main():
     images = get_image_list(path, extension, chunksize)
 
     for count, element in enumerate(images):
-        
+
         print(count)
         files = open_image_list(element)
         out_meta = files[0].meta.copy()

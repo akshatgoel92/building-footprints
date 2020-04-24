@@ -22,10 +22,10 @@ def iou_coef(y_true, y_pred, smooth=1):
     """
     axes = list(range(1, len(y_true.shape)))
     intersection = backend.sum(backend.abs(y_true * y_pred), axis=axes)
-    union = backend.sum(y_true, axes)+ backend.sum(y_pred, axes)-intersection
+    union = backend.sum(y_true, axes) + backend.sum(y_pred, axes) - intersection
     iou = backend.mean((intersection + smooth) / (union + smooth), axis=0)
     print(iou)
-    
+
     return iou
 
 
@@ -39,9 +39,9 @@ def dice_coef(y_true, y_pred, smooth=1):
     axes = list(range(1, len(y_true.shape)))
     intersection = backend.sum(y_true * y_pred, axis=axes)
     union = backend.sum(y_true, axis=axes) + backend.sum(y_pred, axis=axes)
-    dice = backend.mean((2. * intersection + smooth)/(union + smooth), axis=0)
+    dice = backend.mean((2.0 * intersection + smooth) / (union + smooth), axis=0)
     print(dice)
-    
+
     return dice
 
 
@@ -63,7 +63,7 @@ def summarize_diagnostics(history):
     pyplot.title("Dice")
     pyplot.plot(history.history["dice_coef"], color="blue", label="train")
     pyplot.plot(history.history["val_dice_coef"], color="orange", label="test")
-    
+
     pyplot.subplot(213)
     pyplot.title("Intersection over Union")
     pyplot.plot(history.history["iou_coef"], color="blue", label="train")
@@ -99,7 +99,7 @@ def load_dataset(batch_size=16, target_size=(256, 256)):
     train_datagen = ImageDataGenerator(
         rescale=1.0 / 255, shear_range=0.2, zoom_range=0.2, horizontal_flip=True
     )
-    
+
     val_datagen = ImageDataGenerator(rescale=1.0 / 255)
 
     # Load dataset

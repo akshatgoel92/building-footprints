@@ -20,7 +20,6 @@ def get_remaining(
     storage,
     prefix,
     prefix_storage,
-
 ):
     """
     ------------------------
@@ -31,12 +30,12 @@ def get_remaining(
     files = [img for img in common.get_matching_s3_keys(prefix, extension)]
 
     try:
-        
+
         existing = [
             os.path.splitext(os.path.basename(f))[0]
             for f in common.get_matching_s3_keys(prefix_storage, output_format)
         ]
-        
+
         remaining = [
             f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
         ]
@@ -45,17 +44,22 @@ def get_remaining(
         print(e)
         existing = []
         remaining = [f for f in files if os.path.splitext(os.path.basename(f))[0]]
-    
-    return(remaining)
+
+    return remaining
 
 
 def get_shapes(shape_root, shape_type, shape_name):
-    
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
     shp = common.get_local_image_path(shape_root, shape_type, shape_name)
     shape = vector.open_shape_file(shp)
     shapes = vector.get_shapes(shape)
-    
-    return(shapes)
+
+    return shapes
 
 
 def get_mask(rstr, shapes, invert=False, filled=True):
@@ -65,21 +69,18 @@ def get_mask(rstr, shapes, invert=False, filled=True):
     Output:
     ------------------------
     """
-
     img = raster.get_image(f)
 
     mask, transform = rasterio.mask.mask(
         rstr, shapes, crop=False, invert=invert, filled=filled
     )
-    
+
     mask = (
-        (np.sum(mask, axis=0) > 0)
-        .astype(int)
-        .reshape(1, mask.shape[1], mask.shape[2])
+        (np.sum(mask, axis=0) > 0).astype(int).reshape(1, mask.shape[1], mask.shape[2])
     )
-    
+
     mask.dtype = "uint8"
-    
+
     meta = rstr.meta
     meta["count"] = 1
 
@@ -87,11 +88,7 @@ def get_mask(rstr, shapes, invert=False, filled=True):
 
 
 def write_mask(
-    mask,
-    meta,
-    root,
-    image_type,
-    image_name,
+    mask, meta, root, image_type, image_name,
 ):
     """
     ------------------------
@@ -132,7 +129,7 @@ def main():
     output_format = ".tif"
     root = "GE Gorakhpur"
     extension = ".tif"
-    
+
     prefix = common.get_s3_paths(root, image_type)
     prefix_storage = common.get_s3_paths(root, storage)
 
@@ -156,34 +153,34 @@ def main():
     shape_type = args.shape_type
     shape_name = args.shape_name
     output_format = args.output_format
-    
-    remaining = get_remaining(root,
-    image_type,
-    shape_root,
-    shape_type,
-    shape_name,
-    output_format,
-    extension,
-    storage,
-    prefix,
-    prefix_storage,)
-    
-    
+
+    remaining = get_remaining(
+        root,
+        image_type,
+        shape_root,
+        shape_type,
+        shape_name,
+        output_format,
+        extension,
+        storage,
+        prefix,
+        prefix_storage,
+    )
+
     shapes = get_shapes(shape_root, shape_type, shape_name)
-    
     counter = 0
-    
-    for f in remaining:    
+
+    for f in remaining:
         counter += 1
         print(f)
         print(counter)
-        
+
         mask, trans, meta = get_mask(f)
         f_name = os.path.splitext(os.path.basename(f))[0] + output_format
-        
+
         try:
             write_mask(mask, meta, root, storage, f_name)
-            
+
         except Exception as e:
             print(e)
             continue
