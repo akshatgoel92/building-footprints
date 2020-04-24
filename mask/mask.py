@@ -1,14 +1,27 @@
 import os
 import argparse
 import platform
+import rasterio
 import numpy as np
 
-from flatten import utils
 from helpers import raster
+from helpers import vector
 from helpers import common
 
 
-def get_remaining():
+def get_remaining(
+    root,
+    image_type,
+    shape_root,
+    shape_type,
+    shape_name,
+    output_format,
+    extension,
+    storage,
+    prefix,
+    prefix_storage,
+
+):
     """
     ------------------------
     Input: 
@@ -20,7 +33,7 @@ def get_remaining():
     try:
         
         existing = [
-            utils.get_basename(f)
+            os.path.splitext(os.path.basename(f))[0]
             for f in common.get_matching_s3_keys(prefix_storage, output_format)
         ]
         
@@ -36,47 +49,41 @@ def get_remaining():
     return(remaining)
 
 
-def get_masks(rstr, shape_root, shape_type, shape_name, invert=False, filled=False):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
+def get_shapes(shape_root, shape_type, shape_name):
+    
     shp = common.get_local_image_path(shape_root, shape_type, shape_name)
     shape = vector.open_shape_file(shp)
     shapes = vector.get_shapes(shape)
-
-    out_image, out_transform = rasterio.mask.mask(
-        rstr, shapes, crop=False, invert=invert, filled=filled
-    )
-
-    out_meta = rstr.meta
-
-    return (out_image, out_transform, out_meta)
+    
+    return(shapes)
 
 
-def execute_mask(f):
+def get_mask(rstr, shapes, invert=False, filled=True):
     """
     ------------------------
     Input: 
     Output:
     ------------------------
     """
-    img = raster.get_image(f)
-    mask, trans, meta = get_masks(
-        img, shape_root, shape_type, shape_name, filled=True
-    )
 
+    img = raster.get_image(f)
+
+    mask, transform = rasterio.mask.mask(
+        rstr, shapes, crop=False, invert=invert, filled=filled
+    )
+    
     mask = (
         (np.sum(mask, axis=0) > 0)
         .astype(int)
         .reshape(1, mask.shape[1], mask.shape[2])
     )
-    mask.dtype = "uint8"
-    meta["count"] = 1
     
-    return(mask, trans, meta)
+    mask.dtype = "uint8"
+    
+    meta = rstr.meta
+    meta["count"] = 1
+
+    return (mask, transform, meta)
 
 
 def write_mask(
@@ -95,6 +102,14 @@ def write_mask(
     file_from = common.get_local_image_path(root, image_type, image_name)
     raster.write_image(file_from, mask, meta)
 
+
+def upload_mask(root, image_type, image_name):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
     _, access_key, secret_access_key = common.get_credentials()
 
     s3_folder = common.get_s3_paths(root, image_type)
@@ -102,45 +117,7 @@ def write_mask(
     common.upload_s3(file_from, file_to)
 
 
-def main(
-    root,
-    image_type,
-    shape_root,
-    shape_type,
-    shape_name,
-    output_format,
-    extension,
-    storage,
-    prefix,
-    prefix_storage,
-):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    
-    counter = 0
-    
-    for f in remaining:    
-        
-        counter += 1
-        print(f)
-        print(counter)
-        
-        mask, trans, meta = execute_mask(f)
-        f_name = os.path.splitext(os.path.basename(f))[0] + output_format
-        
-        try:
-            write_mask(mask, meta, root, storage, f_name)
-            
-        except Exception as e:
-            print(e)
-            continue
-
-
-def parse_args():
+def main():
     """
     ------------------------
     Input: 
@@ -179,23 +156,38 @@ def parse_args():
     shape_type = args.shape_type
     shape_name = args.shape_name
     output_format = args.output_format
-
-    return (
-        root,
-        image_type,
-        shape_root,
-        shape_type,
-        shape_name,
-        output_format,
-        extension,
-        storage,
-        prefix,
-        prefix_storage,
-    )
+    
+    remaining = get_remaining(root,
+    image_type,
+    shape_root,
+    shape_type,
+    shape_name,
+    output_format,
+    extension,
+    storage,
+    prefix,
+    prefix_storage,)
+    
+    
+    shapes = get_shapes(shape_root, shape_type, shape_name)
+    
+    counter = 0
+    
+    for f in remaining:    
+        counter += 1
+        print(f)
+        print(counter)
+        
+        mask, trans, meta = get_mask(f)
+        f_name = os.path.splitext(os.path.basename(f))[0] + output_format
+        
+        try:
+            write_mask(mask, meta, root, storage, f_name)
+            
+        except Exception as e:
+            print(e)
+            continue
 
 
 if __name__ == "__main__":
-
-    args = parse_args()
-    print(args)
-    main(*args)
+    main()
