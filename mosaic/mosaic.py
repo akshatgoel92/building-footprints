@@ -17,7 +17,6 @@ def get_image_list(path, extension, chunksize):
     ------------------------
     """
     images = [img for img in common.get_matching_s3_keys(path, extension)]
-
     images = [images[x : x + chunksize] for x in range(0, len(images), chunksize)]
 
     return images
@@ -46,6 +45,8 @@ def get_mosaic(files):
     Output:
     ------------------------
     """
+    
+    print(files)
     mosaic, out_trans = merge(files)
 
     for f in files:
@@ -82,22 +83,22 @@ def main():
     Output:
     ------------------------
     """
-    path = common.get_s3_path("Bing Gorakhpur", "Bing maps imagery_Gorakhpur")
+    path = common.get_s3_paths("Bing Gorakhpur", "Bing maps imagery_Gorakhpur")
 
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("--path", type=str, default=path)
+    parser.add_argument("--chunksize", type=int, default=10)
     parser.add_argument("--extension", type=str, default="tif")
-    parser.add_argument("--chunksize", type=int, default=200)
     args = parser.parse_args()
 
     path = args.path
     extension = args.extension
-
     chunksize = args.chunksize
     images = get_image_list(path, extension, chunksize)
 
     for count, element in enumerate(images):
-
+        
+        print(count)
         files = open_image_list(element)
         out_meta = files[0].meta.copy()
 
@@ -107,5 +108,4 @@ def main():
 
 
 if __name__ == "__main__":
-
     main()
