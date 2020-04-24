@@ -171,16 +171,15 @@ def main():
     counter = 0
 
     for f in remaining:
+        
         counter += 1
         print(f)
         print(counter)
-
         mask, trans, meta = get_mask(f)
         f_name = os.path.splitext(os.path.basename(f))[0] + output_format
 
         try:
             write_mask(mask, meta, root, storage, f_name)
-
         except Exception as e:
             print(e)
             continue
