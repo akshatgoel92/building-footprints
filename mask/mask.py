@@ -18,19 +18,20 @@ def get_remaining():
     files = [img for img in common.get_matching_s3_keys(prefix, extension)]
 
     try:
+        
         existing = [
             utils.get_basename(f)
             for f in common.get_matching_s3_keys(prefix_storage, output_format)
         ]
+        
+        remaining = [
+            f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
+        ]
 
     except Exception as e:
         print(e)
-        print("This folder does not exist...")
         existing = []
-
-    remaining = [
-        f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
-    ]
+        remaining = [f for f in files if os.path.splitext(os.path.basename(f))[0]]
     
     return(remaining)
 
@@ -81,9 +82,9 @@ def execute_mask(f):
 def write_mask(
     mask,
     meta,
-    root="GE Gorakhpur",
-    image_type=os.path.join("data", "train_masks"),
-    image_name="test.tif",
+    root,
+    image_type,
+    image_name,
 ):
     """
     ------------------------
