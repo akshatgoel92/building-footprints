@@ -10,7 +10,8 @@ These are the tasks in the order in which they have to be done to prepare the tr
 - Download
 - Chip
 - Mosaic
-- Fold
+- Mask 
+- Split
 - Flatten
 - Summarize
 - Train (Machine Learning)
