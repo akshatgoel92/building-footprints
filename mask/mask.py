@@ -8,6 +8,99 @@ from helpers import raster
 from helpers import common
 
 
+def get_remaining():
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    files = [img for img in common.get_matching_s3_keys(prefix, extension)]
+
+    try:
+        existing = [
+            utils.get_basename(f)
+            for f in common.get_matching_s3_keys(prefix_storage, output_format)
+        ]
+
+    except Exception as e:
+        print(e)
+        print("This folder does not exist...")
+        existing = []
+
+    remaining = [
+        f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
+    ]
+    
+    return(remaining)
+
+
+def get_masks(rstr, shape_root, shape_type, shape_name, invert=False, filled=False):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    shp = common.get_local_image_path(shape_root, shape_type, shape_name)
+    shape = vector.open_shape_file(shp)
+    shapes = vector.get_shapes(shape)
+
+    out_image, out_transform = rasterio.mask.mask(
+        rstr, shapes, crop=False, invert=invert, filled=filled
+    )
+
+    out_meta = rstr.meta
+
+    return (out_image, out_transform, out_meta)
+
+
+def execute_mask(f):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    img = raster.get_image(f)
+    mask, trans, meta = get_masks(
+        img, shape_root, shape_type, shape_name, filled=True
+    )
+
+    mask = (
+        (np.sum(mask, axis=0) > 0)
+        .astype(int)
+        .reshape(1, mask.shape[1], mask.shape[2])
+    )
+    mask.dtype = "uint8"
+    meta["count"] = 1
+    
+    return(mask, trans, meta)
+
+
+def write_mask(
+    mask,
+    meta,
+    root="GE Gorakhpur",
+    image_type=os.path.join("data", "train_masks"),
+    image_name="test.tif",
+):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    file_from = common.get_local_image_path(root, image_type, image_name)
+    raster.write_image(file_from, mask, meta)
+
+    _, access_key, secret_access_key = common.get_credentials()
+
+    s3_folder = common.get_s3_paths(root, image_type)
+    file_to = os.path.join(s3_folder, image_name)
+    common.upload_s3(file_from, file_to)
+
+
 def main(
     root,
     image_type,
@@ -26,48 +119,21 @@ def main(
     Output:
     ------------------------
     """
-    print(prefix)
-    print(extension)
-    files = [img for img in common.get_matching_s3_keys(prefix, extension)]
-
-    try:
-        existing = [
-            utils.get_basename(f)
-            for f in common.get_matching_s3_keys(prefix_storage, output_format)
-        ]
-
-    except Exception as e:
-        print(e)
-        print("This folder does not exist...")
-        existing = []
-
-    remaining = [
-        f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
-    ]
+    
     counter = 0
-
-    for f in remaining:
+    
+    for f in remaining:    
+        
         counter += 1
         print(f)
         print(counter)
-
+        
+        mask, trans, meta = execute_mask(f)
+        f_name = os.path.splitext(os.path.basename(f))[0] + output_format
+        
         try:
-            img = raster.get_image(f)
-            mask, trans, meta = utils.get_masks(
-                img, shape_root, shape_type, shape_name, filled=True
-            )
-
-            mask = (
-                (np.sum(mask, axis=0) > 0)
-                .astype(int)
-                .reshape(1, mask.shape[1], mask.shape[2])
-            )
-            mask.dtype = "uint8"
-            meta["count"] = 1
-
-            f_name = os.path.splitext(os.path.basename(f))[0] + output_format
-            utils.write_mask(mask, meta, root, storage, f_name)
-
+            write_mask(mask, meta, root, storage, f_name)
+            
         except Exception as e:
             print(e)
             continue
@@ -80,15 +146,15 @@ def parse_args():
     Output:
     ------------------------
     """
+    image_type = os.path.join("data", "val_frames")
+    storage = os.path.join("data", "val_masks")
     shape_root = "Metal Shapefile"
     shape_name = "Metal roof.shp"
     shape_type = "Gorakhpur"
     output_format = ".tif"
     root = "GE Gorakhpur"
-    image_type = os.path.join("data", "val_frames")
     extension = ".tif"
-    storage = os.path.join("data", "val_masks")
-
+    
     prefix = common.get_s3_paths(root, image_type)
     prefix_storage = common.get_s3_paths(root, storage)
 
