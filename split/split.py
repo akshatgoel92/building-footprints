@@ -1,10 +1,11 @@
+from helpers import common
+import shutil.copyfile
+
 import random
 import math
 import os
 import re
 
-from helpers import common
-from shutil import copyfile
 
 
 def shuffle_flat_files(prefix="GE Gorakhpur/tile", suffix=".tif"):
@@ -28,9 +29,9 @@ def get_train_val(files, train_split = 0.75):
     Output:
     ------------------------
     """
-    last_img_train = train_split*len(files)
-    train_frames = [0:last_img_train]
-    val_frames = [last_img_train:]
+    last_img_train = math.ceil(train_split*len(files))
+    train_frames = files[0:last_img_train]
+    val_frames = files[last_img_train:]
 
     return (train_frames, val_frames)
 
@@ -63,7 +64,7 @@ def add_frames(source_frames, dest_frames):
     for source, destination in zip(source_frames, dest_frames):
         counter += 1
         print(counter)
-        copyfile(source, destination)
+        shutil.copyfile(source, destination)
     return
 
 
@@ -75,21 +76,24 @@ def main():
     ------------------------
     """
     root = "GE Gorakhpur"
+    image_type = "tile"
+    
     val_target = os.path.join(root, os.path.join("data", "val_frames"))
     train_target = os.path.join(root, os.path.join("data", "train_frames"))
     
-    prefix = get_s3_path(root, image_type)
+    prefix = common.get_local_image_path(root, image_type, '')
     files = shuffle_flat_files()
+    
     train_frames, val_frames = get_train_val(files)
+    
     train_dest, val_dest = get_dest_files(
-        train_target, val_target, train_frames, val_frames
+        train_target, val_target, 
+        train_frames, val_frames
     )
-    print(train_dest)
-    print(val_dest)
-
+    
     add_frames(train_frames, train_dest)
     add_frames(val_frames, val_dest)
-
-
+    
+    
 if __name__ == "__main__":
     main()
