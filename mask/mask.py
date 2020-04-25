@@ -62,7 +62,7 @@ def get_shapes(shape_root, shape_type, shape_name):
     return shapes
 
 
-def get_mask(rstr, shapes, invert=False, filled=True):
+def get_mask(f, shapes, invert=False, filled=True):
     """
     ------------------------
     Input: 
@@ -72,7 +72,7 @@ def get_mask(rstr, shapes, invert=False, filled=True):
     img = raster.get_image(f)
 
     mask, transform = rasterio.mask.mask(
-        rstr, shapes, crop=False, invert=invert, filled=filled
+        img, shapes, crop=False, invert=invert, filled=filled
     )
 
     mask = (
@@ -81,7 +81,7 @@ def get_mask(rstr, shapes, invert=False, filled=True):
 
     mask.dtype = "uint8"
 
-    meta = rstr.meta
+    meta = img.meta
     meta["count"] = 1
 
     return (mask, transform, meta)
@@ -175,7 +175,7 @@ def main():
         counter += 1
         print(f)
         print(counter)
-        mask, trans, meta = get_mask(f)
+        mask, trans, meta = get_mask(f, shapes)
         f_name = os.path.splitext(os.path.basename(f))[0] + output_format
 
         try:
