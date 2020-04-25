@@ -6,62 +6,108 @@ import numpy as np
 from helpers import raster
 from helpers import common
 
-
-def main(
-    root,
-    image_type,
-    shape_root,
-    shape_type,
-    shape_name,
-    output_format,
-    extension,
-    storage,
-    prefix,
-    prefix_storage,
-):
+def get_existing_flat_files(root, image_type):
     """
     ------------------------
     Input: 
     Output:
     ------------------------
     """
-    print(prefix)
-    print(extension)
-    files = [img for img in common.get_matching_s3_keys(prefix, extension)]
+    path = get_s3_paths(root, image_type)
+    exists = common.get_matching_s3_keys(prefix=prefix, suffix=suffix)
 
-    existing = [
-        utils.get_basename(f)
-        for f in common.get_matching_s3_keys(prefix_storage, output_format)
-    ]
-
-    remaining = [
-        f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
-    ]
-    counter = 0
-
-    for f in remaining:
-
-        counter += 1
-
-        print(f)
-        print(counter)
-
-        try:
-            img = raster.get_image(f)
-            mask, _, _ = utils.get_masks(img, shape_root, shape_type, shape_name)
-
-            labels = (np.sum(mask, axis=0) > 0).astype(int).flatten()
-            f_name = os.path.splitext(os.path.basename(f))[0] + output_format
-
-            flat = utils.convert_img_to_flat_file(img, labels)
-            utils.write_flat_file(flat, root, storage, f_name)
-
-        except Exception as e:
-            print(e)
-            continue
+    return exists
 
 
-def parse_args():
+def get_masks(rstr, shape_root, shape_type, shape_name, invert=False, filled=False):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    shp = common.get_local_image_path(shape_root, shape_type, shape_name)
+    shape = vector.open_shape_file(shp)
+    shapes = vector.get_shapes(shape)
+
+    out_image, out_transform = rasterio.mask.mask(
+        rstr, shapes, crop=False, invert=invert, filled=filled
+    )
+
+    out_meta = rstr.meta
+
+    return (out_image, out_transform, out_meta)
+
+
+def convert_img_to_flat_file(img, labels):
+    """''
+    --------------------------
+    Input:
+    Output:
+    --------------------------
+    """ ""
+    arr = raster.convert_img_to_array(img)
+    height = range(img.height)
+    width = range(img.width)
+    bands = range(img.count)
+    trans = img.transform
+    flat = []
+
+    # Geographic coordinates get stored here
+    # Fix a row and iterate through all the columns
+    # Then move to the next row
+    geo = [trans * (row, col) for row in height for col in width]
+    x = []
+    y = []
+    for x_, y_ in geo:
+        x.append(x_)
+        y.append(y_)
+
+    # Get row and columns
+    # This fixes a row and goes through each column
+    # Then it goes to the next row
+    img_coords = [(row, col) for row in height for col in width]
+    row = []
+    col = []
+    for row_, col_ in img_coords:
+        row.append(row)
+        col.append(col)
+
+    # Put everything together here
+    flat.append(x)
+    flat.append(y)
+    flat.append(row)
+    flat.append(col)
+
+    # Now add the labels
+    for band in bands:
+        flat.append(np.array([arr[band][row, col] for row in height for col in width]))
+
+    flat.append(labels)
+
+    return flat
+
+
+def write_flat_file(
+    flat, root="Bing Gorakhpur", image_type="flat", image_name="qgis_test.0.npz"
+):
+    """
+        ------------------------
+        Input: 
+        Output:
+        ------------------------
+        """
+    file_from = common.get_local_image_path(root, image_type, image_name)
+    np.savez_compressed(file_from, flat)
+
+    _, access_key, secret_access_key = common.get_credentials()
+
+    s3_folder = common.get_s3_paths(root, image_type)
+    file_to = os.path.join(s3_folder, image_name)
+    common.upload_s3(file_from, file_to)
+
+
+def main():
     """
     ------------------------
     Input: 
@@ -100,23 +146,41 @@ def parse_args():
     shape_type = args.shape_type
     shape_name = args.shape_name
     output_format = args.output_format
+    
+    print(prefix)
+    print(extension)
+    files = [img for img in common.get_matching_s3_keys(prefix, extension)]
 
-    return (
-        root,
-        image_type,
-        shape_root,
-        shape_type,
-        shape_name,
-        output_format,
-        extension,
-        storage,
-        prefix,
-        prefix_storage,
-    )
+    existing = [
+        utils.get_basename(f)
+        for f in common.get_matching_s3_keys(prefix_storage, output_format)
+    ]
+
+    remaining = [
+        f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
+    ]
+    
+    counter = 0
+
+    for f in remaining:
+        counter += 1
+        print(f)
+        print(counter)
+        
+        try:
+            img = raster.get_image(f)
+            mask, _, _ = utils.get_masks(img, shape_root, shape_type, shape_name)
+
+            labels = (np.sum(mask, axis=0) > 0).astype(int).flatten()
+            f_name = os.path.splitext(os.path.basename(f))[0] + output_format
+
+            flat = utils.convert_img_to_flat_file(img, labels)
+            utils.write_flat_file(flat, root, storage, f_name)
+
+        except Exception as e:
+            print(e)
+            continue
 
 
 if __name__ == "__main__":
-
-    args = parse_args()
-    print(args)
-    main(*args, prefix, prefix_storage)
+    main()
