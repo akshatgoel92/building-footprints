@@ -4,6 +4,7 @@ import os
 import re
 
 from helpers import common
+from shutil import copyfile
 
 
 def shuffle_flat_files(prefix="GE Gorakhpur/tile", suffix=".tif"):
@@ -13,26 +14,23 @@ def shuffle_flat_files(prefix="GE Gorakhpur/tile", suffix=".tif"):
     Output:
     ------------------------
     """
+    files = [f for f in os.listdir(prefix) if f.endswith(suffix)]
     random.seed(a=243, version=2)
-    files = list(common.get_matching_s3_keys(prefix, suffix))
-
     random.shuffle(files)
-    chunksize = math.ceil(len(files) / 4)
-    chunks = range(0, len(files), chunksize)
-    files = [files[x : x + chunksize] for x in chunks]
-
+    
     return files
 
 
-def get_train_val(files):
+def get_train_val(files, train_split = 0.75):
     """
     ------------------------
     Input: 
     Output:
     ------------------------
     """
-    train_frames = [item for sublist in files[0:3] for item in sublist]
-    val_frames = files[-1]
+    last_img_train = train_split*len(files)
+    train_frames = [0:last_img_train]
+    val_frames = [last_img_train:]
 
     return (train_frames, val_frames)
 
@@ -45,10 +43,10 @@ def get_dest_files(train_target, val_target, train_frames, val_frames):
     ------------------------
     """
     train_dest_frames = [
-        common.get_s3_paths(train_target, os.path.basename(img)) for img in train_frames
+        os.path.join(train_target, os.path.basename(img)) for img in train_frames
     ]
     val_dest_frames = [
-        common.get_s3_paths(val_target, os.path.basename(img)) for img in val_frames
+        os.path.join(val_target, os.path.basename(img)) for img in val_frames
     ]
 
     return (train_dest_frames, val_dest_frames)
@@ -65,7 +63,7 @@ def add_frames(source_frames, dest_frames):
     for source, destination in zip(source_frames, dest_frames):
         counter += 1
         print(counter)
-        common.copy_object_s3(source, destination)
+        copyfile(source, destination)
     return
 
 
@@ -79,7 +77,8 @@ def main():
     root = "GE Gorakhpur"
     val_target = os.path.join(root, os.path.join("data", "val_frames"))
     train_target = os.path.join(root, os.path.join("data", "train_frames"))
-
+    
+    prefix = get_s3_path(root, image_type)
     files = shuffle_flat_files()
     train_frames, val_frames = get_train_val(files)
     train_dest, val_dest = get_dest_files(
