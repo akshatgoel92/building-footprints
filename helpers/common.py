@@ -259,3 +259,33 @@ def upload_s3(file_from, file_to):
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
     s3.upload_file(file_from, bucket_name, file_to)
+
+
+def upload_mask(root, image_type, image_name):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    _, access_key, secret_access_key = common.get_credentials()
+
+    s3_folder = common.get_s3_paths(root, image_type)
+    file_to = os.path.join(s3_folder, image_name)
+    common.upload_s3(file_from, file_to)
+
+
+def upload_chips(in_path, out_path):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    upload_files = [
+        os.path.join(out_path, img) for img in common.list_local_images(out_path, "")
+    ]
+
+    for img in upload_files:
+        file_to = common.get_s3_paths(in_path, out_path)
+        common.upload_s3(img, os.path.join(in_path, img))

@@ -63,23 +63,6 @@ def output_chip(
             with rasterio.open(outpath, "w", **meta) as outds:
                 outds.write(inds.read(window=window))
 
-
-def upload_chips(in_path, out_path):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    upload_files = [
-        os.path.join(out_path, img) for img in common.list_local_images(out_path, "")
-    ]
-
-    for img in upload_files:
-        file_to = common.get_s3_paths(in_path, out_path)
-        common.upload_s3(img, os.path.join(in_path, img))
-
-
 def main():
     """
     ------------------------

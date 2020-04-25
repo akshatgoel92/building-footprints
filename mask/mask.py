@@ -100,20 +100,6 @@ def write_mask(
     raster.write_image(file_from, mask, meta)
 
 
-def upload_mask(root, image_type, image_name):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    _, access_key, secret_access_key = common.get_credentials()
-
-    s3_folder = common.get_s3_paths(root, image_type)
-    file_to = os.path.join(s3_folder, image_name)
-    common.upload_s3(file_from, file_to)
-
-
 def main():
     """
     ------------------------
