@@ -27,13 +27,13 @@ def get_remaining(
     Output:
     ------------------------
     """
-    files = [img for img in common.get_matching_s3_keys(prefix, extension)]
-
+    files = [img for img in os.listdir(prefix) if img.endswith(extension)
+    
     try:
 
         existing = [
             os.path.splitext(os.path.basename(f))[0]
-            for f in common.get_matching_s3_keys(prefix_storage, output_format)
+            for f in os.listdir(prefix_storage) if f.endswith(output_format)
         ]
 
         remaining = [
@@ -130,8 +130,8 @@ def main():
     root = "GE Gorakhpur"
     extension = ".tif"
 
-    prefix = common.get_s3_paths(root, image_type)
-    prefix_storage = common.get_s3_paths(root, storage)
+    prefix = common.get_local_image_path(root, image_type)
+    prefix_storage = common.get_local_image_path(root, storage)
 
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("--root", type=str, default=root)
