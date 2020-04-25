@@ -30,7 +30,7 @@ cd ~
     
 python -m venv roof-env && cd ~/roof-classify && source ./../roof-env/bin/activate
 
-pip install --upgrade pip && pip install -r ./requirements.txt
+pip install --upgrade pip && pip install -r ./setup/requirements.txt
 
 
 
