@@ -23,20 +23,7 @@ from rasterio.plot import show
 from rasterio.session import AWSSession
 
 
-def get_existing_flat_files(root, image_type):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    path = get_s3_paths(root, image_type)
-    exists = common.get_matching_s3_keys(prefix=prefix, suffix=suffix)
-
-    return exists
-
-
-def convert_img_to_flat_file(img, labels):
+def convert_img_to_flat_file(img, mask):
     """''
     --------------------------
     Input:
@@ -69,7 +56,7 @@ def convert_img_to_flat_file(img, labels):
     for row_, col_ in img_coords:
         row.append(row)
         col.append(col)
-
+    
     # Put everything together here
     flat.append(x)
     flat.append(y)
@@ -79,7 +66,8 @@ def convert_img_to_flat_file(img, labels):
     # Now add the labels
     for band in bands:
         flat.append(np.array([arr[band][row, col] for row in height for col in width]))
-
+    
+    labels = (np.sum(mask, axis=0) > 0).astype(int).flatten()
     flat.append(labels)
 
     return flat
@@ -92,9 +80,6 @@ def main():
     Output:
     ------------------------
     """
-    shape_root = "Metal Shapefile"
-    shape_name = "Metal roof.shp"
-    shape_type = "Gorakhpur"
     output_format = ".npz"
     root = "GE Gorakhpur"
     image_type = "tiles"
@@ -109,9 +94,6 @@ def main():
     parser.add_argument("--storage", type=str, default=storage)
     parser.add_argument("--extension", type=str, default=extension)
     parser.add_argument("--image_type", type=str, default=image_type)
-    parser.add_argument("--shape_root", type=str, default=shape_root)
-    parser.add_argument("--shape_type", type=str, default=shape_type)
-    parser.add_argument("--shape_name", type=str, default=shape_name)
     parser.add_argument("--output_format", type=str, default=output_format)
 
     args = parser.parse_args()
@@ -125,35 +107,29 @@ def main():
     shape_name = args.shape_name
     output_format = args.output_format
     
-    print(prefix)
-    print(extension)
-    files = [img for img in common.get_matching_s3_keys(prefix, extension)]
-
-    existing = [
-        utils.get_basename(f)
-        for f in common.get_matching_s3_keys(prefix_storage, output_format)
-    ]
-
-    remaining = [
-        f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
-    ]
+    remaining = common.get_remaining(
+        output_format,
+        extension,
+        storage,
+        prefix,
+        prefix_storage,
+    ) 
+    
     
     counter = 0
 
-    for f in remaining:
+    for rast, mask in remaining:
         counter += 1
         print(f)
         print(counter)
         
         try:
-            img = raster.get_image(f)
-            mask, _, _ = utils.get_masks(img, shape_root, shape_type, shape_name)
-
-            labels = (np.sum(mask, axis=0) > 0).astype(int).flatten()
-            f_name = os.path.splitext(os.path.basename(f))[0] + output_format
-
-            flat = utils.convert_img_to_flat_file(img, labels)
-            utils.write_flat_file(flat, root, storage, f_name)
+            img = raster.get_image(rast)
+            mask = raster.get_image(mask)
+            flat = convert_img_to_flat_file(img, mask)
+            
+            os.path.splitext(os.path.basename(f))[0] + output_format
+            common.write_flat_file(flat, root, storage, f_name)
 
         except Exception as e:
             print(e)
