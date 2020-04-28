@@ -36,26 +36,6 @@ def get_existing_flat_files(root, image_type):
     return exists
 
 
-def get_masks(rstr, shape_root, shape_type, shape_name, invert=False, filled=False):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    shp = common.get_local_image_path(shape_root, shape_type, shape_name)
-    shape = vector.open_shape_file(shp)
-    shapes = vector.get_shapes(shape)
-
-    out_image, out_transform = rasterio.mask.mask(
-        rstr, shapes, crop=False, invert=invert, filled=filled
-    )
-
-    out_meta = rstr.meta
-
-    return (out_image, out_transform, out_meta)
-
-
 def convert_img_to_flat_file(img, labels):
     """''
     --------------------------
@@ -103,25 +83,6 @@ def convert_img_to_flat_file(img, labels):
     flat.append(labels)
 
     return flat
-
-
-def write_flat_file(
-    flat, root="Bing Gorakhpur", image_type="flat", image_name="qgis_test.0.npz"
-):
-    """
-        ------------------------
-        Input: 
-        Output:
-        ------------------------
-        """
-    file_from = common.get_local_image_path(root, image_type, image_name)
-    np.savez_compressed(file_from, flat)
-
-    _, access_key, secret_access_key = common.get_credentials()
-
-    s3_folder = common.get_s3_paths(root, image_type)
-    file_to = os.path.join(s3_folder, image_name)
-    common.upload_s3(file_from, file_to)
 
 
 def main():
