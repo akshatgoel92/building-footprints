@@ -102,12 +102,7 @@ def main():
     shape_name = args.shape_name
     output_format = args.output_format
 
-    remaining = get_remaining(
-        root,
-        image_type,
-        shape_root,
-        shape_type,
-        shape_name,
+    remaining = common.get_remaining(
         output_format,
         extension,
         storage,
@@ -121,6 +116,7 @@ def main():
     for f in remaining:
         
         counter += 1
+        
         print(f)
         print(counter)
         mask, trans, meta = get_mask(f, shapes)
