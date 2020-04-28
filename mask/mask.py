@@ -9,44 +9,6 @@ from helpers import vector
 from helpers import common
 
 
-def get_remaining(
-    root,
-    image_type,
-    shape_root,
-    shape_type,
-    shape_name,
-    output_format,
-    extension,
-    storage,
-    prefix,
-    prefix_storage,
-):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    files = [img for img in os.listdir(prefix) if img.endswith(extension)
-    
-    try:
-
-        existing = [
-            os.path.splitext(os.path.basename(f))[0]
-            for f in os.listdir(prefix_storage) if f.endswith(output_format)
-        ]
-
-        remaining = [
-            f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
-        ]
-
-    except Exception as e:
-        print(e)
-        existing = []
-        remaining = [f for f in files if os.path.splitext(os.path.basename(f))[0]]
-
-    return remaining
-
 
 def get_shapes(shape_root, shape_type, shape_name):
     """
