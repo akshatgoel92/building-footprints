@@ -326,7 +326,7 @@ def upload_chips(in_path, out_path):
 
 
 def upload_flat_file(
-    flat, root="Bing Gorakhpur", image_type="flat", image_name="qgis_test.0.npz"
+    flat, root, image_type, image_name
 ):
     """
         ------------------------
