@@ -1,8 +1,10 @@
 # Import packages
 import geopandas as gpd
 import numpy as np
+import shapely
 import pyproj
 import fiona
+import json
 
 # Import sub-modules for area calculation
 from area import area
@@ -11,6 +13,26 @@ from helpers import raster
 from functools import partial
 from shapely.ops import transform
 from shapely.geometry import shape
+
+
+def open_geojson(path):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    pass
+
+
+def merge_geojson(path):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    pass
 
 
 def open_shape_file(path):
@@ -49,3 +71,13 @@ def change_crs(path, target_crs, out_path):
     new_df = gpd.read_file(path)
     new_df = new_df.to_crs(target_crs)
     new_df.to_file(out_path)
+
+
+def write_shape_file(path):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    pass
