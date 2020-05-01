@@ -50,6 +50,22 @@ def write_geojson_to_shape(df, path):
     df.to_file(path)
 
 
+def execute_geosjon_to_shape(in_path, out_path):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    df_list = [open_geojson(vec) 
+               for vec in os.path.listdir(in_path)]
+    
+    df = merge_geojson(df_list)
+    write_geojson_to_shape(df, out_path)
+    
+    return
+
+
 def open_shape_file(path):
     """
     ------------------------
