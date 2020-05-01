@@ -34,7 +34,7 @@ def merge_vector(df_list):
     Output:
     ------------------------
     """
-    df = gpd.concat(df_list, axis = 1)
+    df = gpd.GeoDataFrame(pd.concat(df_list, axis = 1, ignore_index = True))
     
     return(df)
 
