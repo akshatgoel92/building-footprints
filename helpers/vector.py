@@ -22,18 +22,21 @@ def open_geojson(path):
     Output:
     ------------------------
     """
-    pass
+    df = gpd.read_file(path)
+    
+    return(df)
 
 
-def merge_geojson(path):
+def merge_geojson(df_list):
     """
     ------------------------
     Input: 
     Output:
     ------------------------
     """
-    pass
-
+    df = gpd.concat(df_list, axis = 1)
+    
+    return(df)
 
 def open_shape_file(path):
     """
@@ -73,11 +76,11 @@ def change_crs(path, target_crs, out_path):
     new_df.to_file(out_path)
 
 
-def write_shape_file(path):
+def write_shape_file(df, path):
     """
     ------------------------
     Input: 
     Output:
     ------------------------
     """
-    pass
+    df.to_file(path)
