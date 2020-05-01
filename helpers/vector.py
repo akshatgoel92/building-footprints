@@ -1,5 +1,6 @@
 # Import packages
 import geopandas as gpd
+import pandas as pd
 import numpy as np
 import shapely
 import pyproj
@@ -34,7 +35,7 @@ def merge_geojson(df_list):
     Output:
     ------------------------
     """
-    df = gpd.GeoDataFrame(pd.concat(df_list, axis = 1, ignore_index = True))
+    df = gpd.GeoDataFrame(pd.concat(df_list, ignore_index = True))
     
     return(df)
 
