@@ -95,7 +95,7 @@ def get_remaining(
     Output:
     ------------------------
     """
-    files = [img for img in os.listdir(prefix) if img.endswith(extension)
+    files = [img for img in os.listdir(prefix) if img.endswith(extension)]
     
     try:
 
