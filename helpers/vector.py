@@ -15,7 +15,7 @@ from shapely.ops import transform
 from shapely.geometry import shape
 
 
-def open_geojson(path):
+def open_vector(path):
     """
     ------------------------
     Input: 
@@ -27,7 +27,7 @@ def open_geojson(path):
     return(df)
 
 
-def merge_geojson(df_list):
+def merge_vector(df_list):
     """
     ------------------------
     Input: 
@@ -37,6 +37,17 @@ def merge_geojson(df_list):
     df = gpd.concat(df_list, axis = 1)
     
     return(df)
+
+
+def write_geojson_to_shape(df, path):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+    df.to_file(path)
+
 
 def open_shape_file(path):
     """
@@ -74,13 +85,3 @@ def change_crs(path, target_crs, out_path):
     new_df = gpd.read_file(path)
     new_df = new_df.to_crs(target_crs)
     new_df.to_file(out_path)
-
-
-def write_shape_file(df, path):
-    """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
-    """
-    df.to_file(path)
