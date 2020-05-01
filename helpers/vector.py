@@ -15,7 +15,7 @@ from shapely.ops import transform
 from shapely.geometry import shape
 
 
-def open_vector(path):
+def open_geojson(path):
     """
     ------------------------
     Input: 
@@ -27,7 +27,7 @@ def open_vector(path):
     return(df)
 
 
-def merge_vector(df_list):
+def merge_geojson(df_list):
     """
     ------------------------
     Input: 
