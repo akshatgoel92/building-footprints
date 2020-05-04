@@ -77,12 +77,14 @@ def main():
     output_format = ".tif"
     root = "GE Gorakhpur"
     extension = ".tif"
+    mode = "append"
 
     prefix = common.get_local_image_path(root, image_type)
     prefix_storage = common.get_local_image_path(root, storage)
 
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("--root", type=str, default=root)
+    parser.add_argument("--mode", type=str, default=mode)
     parser.add_argument("--storage", type=str, default=storage)
     parser.add_argument("--extension", type=str, default=extension)
     parser.add_argument("--image_type", type=str, default=image_type)
@@ -90,10 +92,13 @@ def main():
     parser.add_argument("--shape_type", type=str, default=shape_type)
     parser.add_argument("--shape_name", type=str, default=shape_name)
     parser.add_argument("--output_format", type=str, default=output_format)
+    
+    
 
     args = parser.parse_args()
 
     root = args.root
+    mode = args.mode
     storage = args.storage
     extension = args.extension
     image_type = args.image_type
@@ -109,16 +114,22 @@ def main():
         prefix,
         prefix_storage,
     )
-
+    
+    if mode == 'append':
+        in_path = common.get_local_image_path(shape_root, shape_type)
+        out_path = common.get_local_image_path(in_path, shape_name)
+        vector.execute_geojson_to_shape(in_path, out_path)
+    
     shapes = get_shapes(shape_root, shape_type, shape_name)
     counter = 0
-
+    
     for f in remaining:
         
         counter += 1
         
         print(f)
         print(counter)
+        
         mask, trans, meta = get_mask(f, shapes)
         f_name = os.path.splitext(os.path.basename(f))[0] + output_format
 
