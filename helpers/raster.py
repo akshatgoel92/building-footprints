@@ -32,26 +32,15 @@ def list_images(root, image_type):
     return images
 
 
-def get_image(path):
+def open_image(image_name):
     """
     ------------------------
     Input: 
     Output:
     ------------------------
     """
-
-    bucket_name, access_key, secret_access_key = common.get_credentials()
-
-    url = "s3://{}/{}".format(bucket_name, path)
-
-    session = boto3.Session(
-        aws_access_key_id=access_key, aws_secret_access_key=secret_access_key
-    )
-
-    with rasterio.Env(AWSSession(session)):
-        f = rasterio.open(url)
-
-    return f
+    f = rasterio.open(image_name)
+    return(f)
 
 
 def convert_img_to_array(img):

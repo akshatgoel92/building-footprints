@@ -4,6 +4,7 @@ tiles/
 archive/
 secrets.json
 .python*
+data
 
 .DS_Store
 __pycache__/
