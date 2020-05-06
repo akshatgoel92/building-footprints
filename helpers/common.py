@@ -17,7 +17,7 @@ def get_local_folder_path(root, image_type):
     return os.path.join(root, image_type)
 
 
-def get_local_image_path(root, image_type, image_name):
+def get_local_image_path(root, image_type, image_name = ''):
     """
     ------------------------
     Input: 
@@ -293,6 +293,28 @@ def upload_s3(file_from, file_to):
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
     s3.upload_file(file_from, bucket_name, file_to)
+    
+
+def get_raster_from_s3(path):
+    """
+    ------------------------
+    Input: 
+    Output:
+    ------------------------
+    """
+
+    bucket_name, access_key, secret_access_key = common.get_credentials()
+
+    url = "s3://{}/{}".format(bucket_name, path)
+
+    session = boto3.Session(
+        aws_access_key_id=access_key, aws_secret_access_key=secret_access_key
+    )
+
+    with rasterio.Env(AWSSession(session)):
+        f = rasterio.open(url)
+
+    return f
 
 
 def upload_mask(root, image_type, image_name):

@@ -6,6 +6,7 @@ import shapely
 import pyproj
 import fiona
 import json
+import os
 
 # Import sub-modules for area calculation
 from area import area
@@ -23,6 +24,7 @@ def open_geojson(path):
     Output:
     ------------------------
     """
+    print(path)
     df = gpd.read_file(path)
     
     return(df)
@@ -35,30 +37,30 @@ def merge_geojson(df_list):
     Output:
     ------------------------
     """
-    df = gpd.GeoDataFrame(pd.concat(df_list, ignore_index = True))
+    df = gpd.GeoDataFrame(pd.concat(df_list, ignore_index = True), geometry = 'geometry')
     
     return(df)
 
 
-def write_geojson_to_shape(df, path):
+def write_geojson_to_shape(df, path, driver = 'GeoJSON'):
     """
     ------------------------
     Input: 
     Output:
     ------------------------
     """
-    df.to_file(path)
+    df.to_file(path, driver)
 
 
-def execute_geosjon_to_shape(in_path, out_path):
+def execute_geojson_to_shape(in_path, out_path):
     """
     ------------------------
     Input: 
     Output:
     ------------------------
     """
-    df_list = [open_geojson(vec) 
-               for vec in os.path.listdir(in_path)]
+    df_list = [open_geojson(os.path.join(in_path, vec)) 
+               for vec in os.listdir(in_path)]
     
     df = merge_geojson(df_list)
     write_geojson_to_shape(df, out_path)
