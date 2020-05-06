@@ -31,7 +31,7 @@ def get_mask(f, shapes, invert=False, filled=True):
     Output:
     ------------------------
     """
-    img = raster.open_raster(f)
+    img = raster.open_image(f)
 
     mask, transform = rasterio.mask.mask(
         img, shapes, crop=False, invert=invert, filled=filled
@@ -45,6 +45,8 @@ def get_mask(f, shapes, invert=False, filled=True):
 
     meta = img.meta
     meta["count"] = 1
+    meta["dtype"] = mask.dtype
+    meta["nodata"] = 0
 
     return (mask, transform, meta)
 
@@ -77,7 +79,7 @@ def main():
     shape_name = "vegas.geojson"
     shape_type = "geojson_buildings"
     
-    mode = "append"
+    mode = "standard"
     extension = ".tif"
     
     storage = "train_masks_ps_ms"
@@ -106,21 +108,24 @@ def main():
     shape_type = args.shape_type
     shape_name = args.shape_name
     output_format = args.output_format
-
-    remaining = common.get_remaining(
-        output_format,
-        extension,
-        storage,
-        prefix,
-        prefix_storage,
-    )
     
     if mode == 'append':
-        in_path = common.get_local_image_path(shape_root, shape_type)
         out_path = common.get_local_image_path(shape_root, shape_type, shape_name)
+        in_path = common.get_local_image_path(shape_root, shape_type)
         vector.execute_geojson_to_shape(in_path, out_path)
     
     shapes = get_shapes(shape_root, shape_type, shape_name)
+
+    remaining = [common.get_local_image_path(root, image_type, f)\
+                for f in common.\
+                get_remaining(
+                output_format,
+                extension,
+                storage,
+                prefix,
+                prefix_storage,
+    )]
+
     counter = 0
     
     for f in remaining:
