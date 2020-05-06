@@ -45,8 +45,9 @@ def get_mask(f, shapes, invert=False, filled=True):
 
     meta = img.meta
     meta["count"] = 1
+    meta["nodata"] = 1
     meta["dtype"] = mask.dtype
-    meta["nodata"] = 0
+    
 
     return (mask, transform, meta)
 
