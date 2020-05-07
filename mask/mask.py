@@ -73,7 +73,7 @@ def main():
     ------------------------
     """
     root = "data"
-    image_type = "train_frames_ps_ms"
+    image_type = "val_frames_ps_ms"
     
     shape_root = "data"
     output_format = ".tif"
@@ -83,7 +83,7 @@ def main():
     mode = "standard"
     extension = ".tif"
     
-    storage = "train_masks_ps_ms"
+    storage = "val_masks_ps_ms"
     prefix = common.get_local_image_path(root, image_type)
     prefix_storage = common.get_local_image_path(root, storage)
 
