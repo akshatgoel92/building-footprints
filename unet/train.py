@@ -12,7 +12,42 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
 from utils import *
 
+def get_checkpoint_callback():
+    """
+    ---------------------------------------------
+    Input: None
+    Output: None
+    Run the test harness for evaluating a model
+    ---------------------------------------------
+    """
+    # Create absolute path to checkpoint
+    checkpoint_path = os.path.join("results", checkpoint_path)
+    
+    # Add checkpoints for regular saving
+    checkpoint_cb = keras.\
+                    callbacks.\
+                    ModelCheckpoint(checkpoint_path, 
+                                    save_best_only=True)
+    
+    return(checkpoint_cb)
 
+
+def get_early_stopping_callback():
+    """
+    ---------------------------------------------
+    Input: None
+    Output: None
+    Run the test harness for evaluating a model
+    ---------------------------------------------
+    """
+    early_stopping_cb = keras.\
+                        callbacks.\
+                        EarlyStopping(patience=10, restore_best_weights=True)
+    
+    
+    return(early_stopping_cb)
+    
+    
 def train(
     epochs=2,
     pretrained=False,
@@ -26,26 +61,18 @@ def train(
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    # Create absolute path to checkpoint
-    checkpoint_path = os.path.join("results", checkpoint_path)
-    # Add checkpoints for regular saving
-    checkpoint_cb = keras.callbacks.ModelCheckpoint(
-        checkpoint_path, save_best_only=True
-    )
-
-    early_stopping_cb = keras.callbacks.EarlyStopping(
-        patience=10, restore_best_weights=True
-    )
-
-    # Add TensorBoard logging
-    tensorboard_cb = keras.callbacks.TensorBoard(make_tensorboard_directory())
-
+    callbacks = []
+    
+    
+    callbacks.append(get_checkpoint_callback())
+    callbacks.append(get_early_stopping_callback)
+    callbacks.append())
+    
     # Prepare iterators
     train_it, test_it = load_dataset()
 
     if pretrained:
         # Load model:
-
         model = keras.models.load_model(checkpoint_path)
     else:
         # Get a new model
@@ -57,7 +84,7 @@ def train(
         steps_per_epoch=675,
         validation_data=test_it,
         validation_steps=225,
-        callbacks=[checkpoint_cb, early_stopping_cb, tensorboard_cb],
+        callbacks=callbacks,
         epochs=epochs,
         verbose=1,
     )

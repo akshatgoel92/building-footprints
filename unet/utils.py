@@ -12,6 +12,20 @@ from matplotlib import pyplot
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
 
+def check_input_directories(frames, masks):
+    """
+    ---------------------------------------------
+    Input: Keras history project
+    Output: Display diagnostic learning curves
+    ---------------------------------------------
+    """
+    frames = set(os.listdir(frames))
+    masks = set(os.listdir(masks))
+    
+    for frame in list(frames - masks):
+        os.remove(os.path.join(frames, frame)
+    
+    return
 
 def iou_coef(y_true, y_pred, smooth=1):
     """
@@ -22,8 +36,10 @@ def iou_coef(y_true, y_pred, smooth=1):
     """
     axes = list(range(1, len(y_true.shape)))
     intersection = backend.sum(backend.abs(y_true * y_pred), axis=axes)
+    
     union = backend.sum(y_true, axes) + backend.sum(y_pred, axes) - intersection
     iou = backend.mean((intersection + smooth) / (union + smooth), axis=0)
+    
     print(iou)
 
     return iou
@@ -84,11 +100,78 @@ def make_tensorboard_directory():
     """
     root_logdir = os.path.join(os.curdir, "logs")
     run_id = time.strftime("run_%Y_%m_%d-%H_%M_%S")
+    path = keras.callbacks.TensorBoard(os.path.join(root_logdir, run_id))
+    return path
 
-    return os.path.join(root_logdir, run_id)
 
-
-def load_dataset(batch_size=16, target_size=(256, 256)):
+def create_gen(train,
+               mask,
+               mode = "train",
+               rescale=1.0 / 255, 
+               shear_range=0.2, 
+               zoom_range=0.2, 
+               horizontal_flip=True,
+               batch_size=16, 
+               class_mode="input", 
+               target_size=(256, 256), 
+               mask_color = 'grayscale'):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    
+    if mode == "train":
+        gen = ImageDataGenerator(
+            rescale=rescale, 
+            shear_range=shear_range, 
+            zoom_range=zoom_range, 
+            horizontal_flip=horizontal_flip
+    )
+    
+    else mode == "validate":
+        gen = ImageDataGenerator(rescale=rescale)
+                     
+    
+    train_gen = (img[0] for img in gen.\
+                                   flow_from_directory(
+                                      train, 
+                                      batch_size=batch_size, 
+                                      class_mode=class_mode, 
+                                      target_size=target_size
+                                      ))
+    
+    mask_gen = (img[0] for img in gen.\
+                                  flow_from_directory(
+                                      mask, 
+                                      batch_size=batch_size, 
+                                      class_mode=class_mode, 
+                                      target_size=target_size,
+                                      color_mode = mask_color,
+                                      ))
+    
+    gen = (pair for pair in zip(train_gen, mask_gen))
+    
+    return(gen)
+    
+    
+def load_dataset(
+                 train_frames,
+                 train_masks,
+                 val_frames,
+                 val_masks,
+                 batch_size=16, 
+                 target_size=(256, 256), 
+                 rescale=1.0 / 255, 
+                 shear_range=0.2, 
+                 zoom_range=0.2, 
+                 horizontal_flip=True,
+                 batch_size=16, 
+                 class_mode="input", 
+                 target_size=(256, 256), 
+                 mask_color = 'grayscale',
+                 ):
     """
     ---------------------------------------------
     Input: N/A
@@ -96,52 +179,7 @@ def load_dataset(batch_size=16, target_size=(256, 256)):
     ---------------------------------------------
     """
     # Train data generator
-    train_datagen = ImageDataGenerator(
-        rescale=1.0 / 255, shear_range=0.2, zoom_range=0.2, horizontal_flip=True
-    )
+    train = create_gen(train_frames, train_masks)
+    val = create_gen(val_frames, val_masks)
 
-    val_datagen = ImageDataGenerator(rescale=1.0 / 255)
-
-    # Load dataset
-    train_image_generator = train_datagen.flow_from_directory(
-        "GE Gorakhpur/data/train_frames/",
-        batch_size=batch_size,
-        class_mode="input",
-        target_size=target_size,
-    )
-    train_image_generator = (img[0] for img in train_image_generator)
-
-    train_mask_generator = train_datagen.flow_from_directory(
-        "GE Gorakhpur/data/train_masks/",
-        batch_size=batch_size,
-        class_mode="input",
-        target_size=target_size,
-        color_mode="grayscale",
-    )
-    train_mask_generator = (img[0] for img in train_mask_generator)
-
-    val_image_generator = val_datagen.flow_from_directory(
-        "GE Gorakhpur/data/val_frames/",
-        batch_size=batch_size,
-        class_mode="input",
-        target_size=target_size,
-    )
-    val_image_generator = (img[0] for img in val_image_generator)
-
-    val_mask_generator = val_datagen.flow_from_directory(
-        "GE Gorakhpur/data/val_masks/",
-        batch_size=batch_size,
-        class_mode="input",
-        target_size=target_size,
-        color_mode="grayscale",
-    )
-    val_mask_generator = (img[0] for img in val_mask_generator)
-
-    train_generator = (
-        pair for pair in zip(train_image_generator, train_mask_generator)
-    )
-
-    val_generator = (pair for pair in zip(val_image_generator, val_mask_generator))
-
-    # Return both forms of data-sets
-    return (train_generator, val_generator)
+    return (train, val)
