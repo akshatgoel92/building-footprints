@@ -21,8 +21,8 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
 
 from keras import backend
-from utils import iou_coef
-from utils import dice_coef
+from unet.utils import iou_coef
+from unet.utils import dice_coef
 
 
 def bn_conv_relu(input, filters, bachnorm_momentum, **conv2d_args):
@@ -50,7 +50,7 @@ def bn_upconv_relu(input, filters, bachnorm_momentum, **conv2d_trans_args):
 
 
 def define_model(
-    input_shape=(256, 256, 3), num_classes=1, output_activation="softmax", num_layers=3
+    input_shape=(650, 650, 8), num_classes=1, output_activation="softmax", num_layers=4
 ):
     """
     ---------------------------------------------
@@ -82,7 +82,7 @@ def define_model(
         "activation": activation,
         "strides": (2, 2),
         "padding": padding,
-        "output_padding": (1, 1),
+        "output_padding": (0,0),
     }
 
     bachnorm_momentum = 0.01
@@ -114,10 +114,13 @@ def define_model(
     x = bn_conv_relu(x, filters, bachnorm_momentum, **conv2d_args)
     x = bn_conv_relu(x, filters, bachnorm_momentum, **conv2d_args)
     x = bn_upconv_relu(x, filters, bachnorm_momentum, **conv2d_trans_args)
-
+    print(x.shape)
+    
     for conv in reversed(down_layers):
+        print(conv.shape)
         x = concatenate([x, conv])
         x = bn_conv_relu(x, upconv_filters, bachnorm_momentum, **conv2d_args)
+
         x = bn_conv_relu(x, filters, bachnorm_momentum, **conv2d_args)
         x = bn_upconv_relu(x, filters, bachnorm_momentum, **conv2d_trans_args)
 

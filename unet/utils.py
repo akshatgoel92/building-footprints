@@ -4,14 +4,32 @@ import sys
 import unet
 import time
 import keras
-
-
+    
+    
 from numpy import load
 from keras import backend
+from helpers import common
 from matplotlib import pyplot
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
 
+    
+    
+def get_paths(train_frames, train_masks, val_frames, val_masks):
+    """
+    ---------------------------------------------
+    Input: Keras history project
+    Output: Display diagnostic learning curves
+    ---------------------------------------------
+    """
+    paths =[]
+    
+    for folder in [train_frames, train_masks, val_frames, val_masks]:
+        paths.append(common.get_local_image_path("data", folder))
+        
+    return(paths)
+    
+    
 def check_input_directories(frames, masks):
     """
     ---------------------------------------------
@@ -19,14 +37,95 @@ def check_input_directories(frames, masks):
     Output: Display diagnostic learning curves
     ---------------------------------------------
     """
-    frames = set(os.listdir(frames))
-    masks = set(os.listdir(masks))
+    frames_to_remove = set(os.listdir(frames)) - set(os.listdir(masks))
     
-    for frame in list(frames - masks):
-        os.remove(os.path.join(frames, frame)
+    for frame in frames_to_remove:
+        os.remove(os.path.join(frames, frame))
     
     return
+    
+    
+def check_folders(paths, extension='.tif'):
+    """
+    ---------------------------------------------
+    Input: None
+    Output: None
+    Run the test harness for evaluating a model
+    ---------------------------------------------
+    """
+    # Get the filepaths
+    
+    # Make sure train and test folders have the same data-sets
+    for args in [(paths[0], paths[1]), (paths[2], paths[3])]:
+        check_input_directories(*args)
+    
+    for folder in paths:
+        new_folder = folder.split("/")[1].split("_")[0]
+        try:
+            os.makedirs(common.get_local_image_path(folder, new_folder))
+        except FileExistsError as e:
+            print("Directory exists so not making a new one...")
+            continue
 
+    for folder in paths:
+        for f in os.listdir(folder):
+            if f.endswith(extension):
+                new = folder.split("/")[1].split("_")[0]
+                dest = os.path.join(folder, new)
+                source = os.path.join(folder, f)
+                os.rename(source, os.path.join(dest, f))
+    
+    
+def get_checkpoint_callback(checkpoint_path):
+    """
+    ---------------------------------------------
+    Input: None
+    Output: None
+    Run the test harness for evaluating a model
+    ---------------------------------------------
+    """
+    # Create absolute path to checkpoint
+    checkpoint_path = os.path.join("results", checkpoint_path)
+    
+    # Add checkpoints for regular saving
+    checkpoint_cb = keras.\
+                    callbacks.\
+                    ModelCheckpoint(checkpoint_path, 
+                                    save_best_only=True)
+    
+    return(checkpoint_cb)
+    
+    
+def get_early_stopping_callback():
+    """
+    ---------------------------------------------
+    Input: None
+    Output: None
+    Run the test harness for evaluating a model
+    ---------------------------------------------
+    """
+    early_stopping_cb = keras.\
+                        callbacks.\
+                        EarlyStopping(patience=10, restore_best_weights=True)
+    
+    
+    return(early_stopping_cb)
+    
+    
+def get_tensorboard_directory_callback():
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    root_logdir = os.path.join(os.curdir, "logs")
+    run_id = time.strftime("run_%Y_%m_%d-%H_%M_%S")
+    callback = keras.callbacks.TensorBoard(os.path.join(root_logdir, run_id))
+    
+    return callback
+    
+    
 def iou_coef(y_true, y_pred, smooth=1):
     """
     ---------------------------------------------
@@ -59,8 +158,8 @@ def dice_coef(y_true, y_pred, smooth=1):
     print(dice)
 
     return dice
-
-
+    
+    
 def summarize_diagnostics(history):
     """
     ---------------------------------------------
@@ -91,19 +190,6 @@ def summarize_diagnostics(history):
     pyplot.close()
 
 
-def make_tensorboard_directory():
-    """
-    ---------------------------------------------
-    Input: N/A
-    Output: Tensorboard directory path
-    ---------------------------------------------
-    """
-    root_logdir = os.path.join(os.curdir, "logs")
-    run_id = time.strftime("run_%Y_%m_%d-%H_%M_%S")
-    path = keras.callbacks.TensorBoard(os.path.join(root_logdir, run_id))
-    return path
-
-
 def create_gen(train,
                mask,
                mode = "train",
@@ -127,10 +213,10 @@ def create_gen(train,
             rescale=rescale, 
             shear_range=shear_range, 
             zoom_range=zoom_range, 
-            horizontal_flip=horizontal_flip
+            horizontal_flip=horizontal_flip,
     )
     
-    else mode == "validate":
+    elif mode == "validate":
         gen = ImageDataGenerator(rescale=rescale)
                      
     
@@ -162,14 +248,12 @@ def load_dataset(
                  val_frames,
                  val_masks,
                  batch_size=16, 
-                 target_size=(256, 256), 
+                 target_size=(650, 650), 
                  rescale=1.0 / 255, 
                  shear_range=0.2, 
                  zoom_range=0.2, 
                  horizontal_flip=True,
-                 batch_size=16, 
                  class_mode="input", 
-                 target_size=(256, 256), 
                  mask_color = 'grayscale',
                  ):
     """
@@ -180,6 +264,6 @@ def load_dataset(
     """
     # Train data generator
     train = create_gen(train_frames, train_masks)
-    val = create_gen(val_frames, val_masks)
-
+    val = create_gen(val_frames, val_masks, mode = "validate")
+    
     return (train, val)
