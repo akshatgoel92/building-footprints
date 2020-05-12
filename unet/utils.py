@@ -200,13 +200,15 @@ def create_gen(train,
                batch_size=16, 
                class_mode="input", 
                target_size=(256, 256), 
-               mask_color = 'grayscale'):
+               mask_color = 'grayscale',
+               data_format = "channels_last"):
     """
     ---------------------------------------------
     Input: N/A
     Output: Tensorboard directory path
     ---------------------------------------------
     """
+    keras.backend.set_image_data_format(data_format)
     
     if mode == "train":
         gen = ImageDataGenerator(
@@ -248,7 +250,7 @@ def load_dataset(
                  val_frames,
                  val_masks,
                  batch_size=16, 
-                 target_size=(650, 650), 
+                 target_size=(256, 256), 
                  rescale=1.0 / 255, 
                  shear_range=0.2, 
                  zoom_range=0.2, 

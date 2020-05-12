@@ -4,16 +4,18 @@ import sys
 import unet
 import time
 import keras
-
+    
+    
 from numpy import load
 from keras import backend
 from helpers import common
 from matplotlib import pyplot
-
+    
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
 from unet.utils import *
 from unet import unet
+
 
     
 def train(
@@ -56,9 +58,9 @@ def train(
     # Fit model
     history = model.fit_generator(
         train_it,
-        steps_per_epoch=675,
+        steps_per_epoch=16,
         validation_data=test_it,
-        validation_steps=225,
+        validation_steps=2,
         callbacks=callbacks,
         epochs=epochs,
         verbose=1,
