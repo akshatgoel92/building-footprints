@@ -50,7 +50,7 @@ def bn_upconv_relu(input, filters, bachnorm_momentum, **conv2d_trans_args):
 
 
 def define_model(
-    input_shape=(640, 640, 8), num_classes=1, output_activation="softmax", num_layers=2
+    input_shape=(640, 640, 8), num_classes=1, output_activation="softmax", num_layers=4
 ):
     """
     ---------------------------------------------
@@ -114,10 +114,8 @@ def define_model(
     x = bn_conv_relu(x, filters, bachnorm_momentum, **conv2d_args)
     x = bn_conv_relu(x, filters, bachnorm_momentum, **conv2d_args)
     x = bn_upconv_relu(x, filters, bachnorm_momentum, **conv2d_trans_args)
-    print(x.shape)
 
     for conv in reversed(down_layers):
-        print(conv.shape)
         x = concatenate([x, conv])
         x = bn_conv_relu(x, upconv_filters, bachnorm_momentum, **conv2d_args)
 
