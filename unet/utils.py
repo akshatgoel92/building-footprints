@@ -245,7 +245,7 @@ def create_default_gen(
     return gen
 
 
-def create_custom_gen(img_folder, mask_folder, batch_size, target_size, n_channels=8):
+def create_custom_gen(img_folder, mask_folder, batch_size, target_size, channels):
     """
     ---------------------------------------------
     Input: N/A
@@ -261,11 +261,9 @@ def create_custom_gen(img_folder, mask_folder, batch_size, target_size, n_channe
     c = 0
 
     while True:
-        img = np.zeros((batch_size, target_size[0], target_size[1], n_channels)).astype(
-            "float"
-        )
+        img = np.zeros((batch_size, target_size[0], target_size[1], channels)).astype("float")
         mask = np.zeros((batch_size, target_size[0], target_size[1], 1)).astype("float")
-
+        
         for i in range(c, c + batch_size):
 
             img_path = common.get_local_image_path(img_folder, img_type, n[i])
@@ -276,7 +274,7 @@ def create_custom_gen(img_folder, mask_folder, batch_size, target_size, n_channe
             img[i - c] = train_img
 
             # Need to add extra dimension to mask for channel dimension
-            train_mask = skimage.io.imread(mask_path) / 649.0
+            train_mask = skimage.io.imread(mask_path) / 649
             train_mask = skimage.transform.resize(train_mask, target_size)
             train_mask = train_mask.reshape(target_size[0], target_size[1], 1)
             mask[i - c] = train_mask
