@@ -2,6 +2,10 @@
 import os
 import time
 import keras
+import sys
+import utils
+
+
 from keras.models import Model
 from keras.layers import (
     BatchNormalization,
@@ -12,19 +16,15 @@ from keras.layers import (
     Input,
     concatenate,
 )
-
-import sys
-from numpy import load
 from keras import backend
-from matplotlib import pyplot
-from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
+from keras.preprocessing.image import ImageDataGenerator
 
-from keras import backend
-from unet.utils import iou_coef
-from unet.utils import dice_coef
-
-
+from numpy import load
+from matplotlib import pyplot
+    
+    
+    
 def bn_conv_relu(input, filters, bachnorm_momentum, **conv2d_args):
     """
     ---------------------------------------------
@@ -140,7 +140,7 @@ def define_model(
     model.compile(
         optimizer="Adam",
         loss="binary_crossentropy",
-        metrics=[iou_coef, dice_coef, keras.metrics.accuracy],
+        metrics=[utils.iou_coef, utils.dice_coef, keras.metrics.accuracy],
     )
 
     return model
