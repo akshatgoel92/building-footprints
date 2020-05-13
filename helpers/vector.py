@@ -26,8 +26,8 @@ def open_geojson(path):
     """
     print(path)
     df = gpd.read_file(path)
-    
-    return(df)
+
+    return df
 
 
 def merge_geojson(df_list):
@@ -37,12 +37,12 @@ def merge_geojson(df_list):
     Output:
     ------------------------
     """
-    df = gpd.GeoDataFrame(pd.concat(df_list, ignore_index = True), geometry = 'geometry')
-    
-    return(df)
+    df = gpd.GeoDataFrame(pd.concat(df_list, ignore_index=True), geometry="geometry")
+
+    return df
 
 
-def write_geojson_to_shape(df, path, driver = 'GeoJSON'):
+def write_geojson_to_shape(df, path, driver="GeoJSON"):
     """
     ------------------------
     Input: 
@@ -59,12 +59,11 @@ def execute_geojson_to_shape(in_path, out_path):
     Output:
     ------------------------
     """
-    df_list = [open_geojson(os.path.join(in_path, vec)) 
-               for vec in os.listdir(in_path)]
-    
+    df_list = [open_geojson(os.path.join(in_path, vec)) for vec in os.listdir(in_path)]
+
     df = merge_geojson(df_list)
     write_geojson_to_shape(df, out_path)
-    
+
     return
 
 

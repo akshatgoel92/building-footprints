@@ -4,20 +4,19 @@ import sys
 import unet
 import time
 import keras
-    
-    
+
+
 from numpy import load
 from keras import backend
 from helpers import common
 from matplotlib import pyplot
-    
+
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
 from unet.utils import *
 from unet import unet
 
 
-    
 def train(
     train_frames,
     train_masks,
@@ -27,7 +26,7 @@ def train(
     pretrained=False,
     results_folder="results",
     checkpoint_path="my_keras_model.h5",
-    data_format = 'channels_last'
+    data_format="channels_last",
 ):
     """
     ---------------------------------------------
@@ -38,16 +37,16 @@ def train(
     """
     # Data format setting
     keras.backend.set_image_data_format(data_format)
-    
+
     # Callbacks
     callbacks = []
     callbacks.append(get_early_stopping_callback())
     callbacks.append(get_tensorboard_directory_callback())
     callbacks.append(get_checkpoint_callback(checkpoint_path))
-    
+
     # Prepare iterators
     train_it, test_it = load_dataset(train_frames, train_masks, val_frames, val_masks)
-    
+
     # Load model if there are pretrained wets
     if pretrained:
         model = keras.models.load_model(checkpoint_path)
@@ -67,17 +66,17 @@ def train(
     )
     # Evaluate model
     return (history, model)
-    
-    
+
+
 if __name__ == "__main__":
-    
+
     train_frames = "train_frames"
     train_masks = "train_masks"
     val_frames = "val_frames"
     val_masks = "val_masks"
-    
-    paths = get_paths(train_frames, train_masks, val_frames, val_masks)    
+
+    paths = get_paths(train_frames, train_masks, val_frames, val_masks)
     check_folders(paths)
-    
+
     history, model = train(*paths, epochs=2)
     summarize_diagnostics(history)

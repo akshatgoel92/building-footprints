@@ -82,7 +82,7 @@ def define_model(
         "activation": activation,
         "strides": (2, 2),
         "padding": padding,
-        "output_padding": (1,1),
+        "output_padding": (1, 1),
     }
 
     bachnorm_momentum = 0.01
@@ -115,7 +115,7 @@ def define_model(
     x = bn_conv_relu(x, filters, bachnorm_momentum, **conv2d_args)
     x = bn_upconv_relu(x, filters, bachnorm_momentum, **conv2d_trans_args)
     print(x.shape)
-    
+
     for conv in reversed(down_layers):
         print(conv.shape)
         x = concatenate([x, conv])

@@ -4,8 +4,11 @@ import sys
 import unet
 import time
 import keras
-    
-    
+import random
+import skimage
+import numpy as np
+
+
 from numpy import load
 from keras import backend
 from helpers import common
@@ -13,8 +16,10 @@ from matplotlib import pyplot
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
 
-    
-    
+from skimage import io
+from skimage import transform
+
+
 def get_paths(train_frames, train_masks, val_frames, val_masks):
     """
     ---------------------------------------------
@@ -22,14 +27,14 @@ def get_paths(train_frames, train_masks, val_frames, val_masks):
     Output: Display diagnostic learning curves
     ---------------------------------------------
     """
-    paths =[]
-    
+    paths = []
+
     for folder in [train_frames, train_masks, val_frames, val_masks]:
         paths.append(common.get_local_image_path("data", folder))
-        
-    return(paths)
-    
-    
+
+    return paths
+
+
 def check_input_directories(frames, masks):
     """
     ---------------------------------------------
@@ -38,14 +43,14 @@ def check_input_directories(frames, masks):
     ---------------------------------------------
     """
     frames_to_remove = set(os.listdir(frames)) - set(os.listdir(masks))
-    
+
     for frame in frames_to_remove:
         os.remove(os.path.join(frames, frame))
-    
+
     return
-    
-    
-def check_folders(paths, extension='.tif'):
+
+
+def check_folders(paths, extension=".tif"):
     """
     ---------------------------------------------
     Input: None
@@ -54,11 +59,11 @@ def check_folders(paths, extension='.tif'):
     ---------------------------------------------
     """
     # Get the filepaths
-    
+
     # Make sure train and test folders have the same data-sets
     for args in [(paths[0], paths[1]), (paths[2], paths[3])]:
         check_input_directories(*args)
-    
+
     for folder in paths:
         new_folder = folder.split("/")[1].split("_")[0]
         try:
@@ -74,8 +79,8 @@ def check_folders(paths, extension='.tif'):
                 dest = os.path.join(folder, new)
                 source = os.path.join(folder, f)
                 os.rename(source, os.path.join(dest, f))
-    
-    
+
+
 def get_checkpoint_callback(checkpoint_path):
     """
     ---------------------------------------------
@@ -86,16 +91,15 @@ def get_checkpoint_callback(checkpoint_path):
     """
     # Create absolute path to checkpoint
     checkpoint_path = os.path.join("results", checkpoint_path)
-    
+
     # Add checkpoints for regular saving
-    checkpoint_cb = keras.\
-                    callbacks.\
-                    ModelCheckpoint(checkpoint_path, 
-                                    save_best_only=True)
-    
-    return(checkpoint_cb)
-    
-    
+    checkpoint_cb = keras.callbacks.ModelCheckpoint(
+        checkpoint_path, save_best_only=True
+    )
+
+    return checkpoint_cb
+
+
 def get_early_stopping_callback():
     """
     ---------------------------------------------
@@ -104,14 +108,13 @@ def get_early_stopping_callback():
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    early_stopping_cb = keras.\
-                        callbacks.\
-                        EarlyStopping(patience=10, restore_best_weights=True)
-    
-    
-    return(early_stopping_cb)
-    
-    
+    early_stopping_cb = keras.callbacks.EarlyStopping(
+        patience=10, restore_best_weights=True
+    )
+
+    return early_stopping_cb
+
+
 def get_tensorboard_directory_callback():
     """
     ---------------------------------------------
@@ -122,10 +125,10 @@ def get_tensorboard_directory_callback():
     root_logdir = os.path.join(os.curdir, "logs")
     run_id = time.strftime("run_%Y_%m_%d-%H_%M_%S")
     callback = keras.callbacks.TensorBoard(os.path.join(root_logdir, run_id))
-    
+
     return callback
-    
-    
+
+
 def iou_coef(y_true, y_pred, smooth=1):
     """
     ---------------------------------------------
@@ -135,10 +138,10 @@ def iou_coef(y_true, y_pred, smooth=1):
     """
     axes = list(range(1, len(y_true.shape)))
     intersection = backend.sum(backend.abs(y_true * y_pred), axis=axes)
-    
+
     union = backend.sum(y_true, axes) + backend.sum(y_pred, axes) - intersection
     iou = backend.mean((intersection + smooth) / (union + smooth), axis=0)
-    
+
     print(iou)
 
     return iou
@@ -158,8 +161,8 @@ def dice_coef(y_true, y_pred, smooth=1):
     print(dice)
 
     return dice
-    
-    
+
+
 def summarize_diagnostics(history):
     """
     ---------------------------------------------
@@ -190,18 +193,20 @@ def summarize_diagnostics(history):
     pyplot.close()
 
 
-def create_gen(train,
-               mask,
-               mode = "train",
-               rescale=1.0 / 255, 
-               shear_range=0.2, 
-               zoom_range=0.2, 
-               horizontal_flip=True,
-               batch_size=16, 
-               class_mode="input", 
-               target_size=(256, 256), 
-               mask_color = 'grayscale',
-               data_format = "channels_last"):
+def create_default_gen(
+    train,
+    mask,
+    mode="train",
+    rescale=1.0 / 255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    batch_size=16,
+    class_mode="input",
+    target_size=(256, 256),
+    mask_color="grayscale",
+    data_format="channels_last",
+):
     """
     ---------------------------------------------
     Input: N/A
@@ -209,55 +214,97 @@ def create_gen(train,
     ---------------------------------------------
     """
     keras.backend.set_image_data_format(data_format)
-    
-    if mode == "train":
-        gen = ImageDataGenerator(
-            rescale=rescale, 
-            shear_range=shear_range, 
-            zoom_range=zoom_range, 
-            horizontal_flip=horizontal_flip,
+
+    gen = ImageDataGenerator(
+        rescale=rescale,
+        shear_range=shear_range,
+        zoom_range=zoom_range,
+        horizontal_flip=horizontal_flip,
     )
-    
-    elif mode == "validate":
-        gen = ImageDataGenerator(rescale=rescale)
-                     
-    
-    train_gen = (img[0] for img in gen.\
-                                   flow_from_directory(
-                                      train, 
-                                      batch_size=batch_size, 
-                                      class_mode=class_mode, 
-                                      target_size=target_size
-                                      ))
-    
-    mask_gen = (img[0] for img in gen.\
-                                  flow_from_directory(
-                                      mask, 
-                                      batch_size=batch_size, 
-                                      class_mode=class_mode, 
-                                      target_size=target_size,
-                                      color_mode = mask_color,
-                                      ))
-    
+
+    train_gen = (
+        img[0]
+        for img in gen.flow_from_directory(
+            train, batch_size=batch_size, class_mode=class_mode, target_size=target_size
+        )
+    )
+
+    mask_gen = (
+        img[0]
+        for img in gen.flow_from_directory(
+            mask,
+            batch_size=batch_size,
+            class_mode=class_mode,
+            target_size=target_size,
+            color_mode=mask_color,
+        )
+    )
+
     gen = (pair for pair in zip(train_gen, mask_gen))
-    
-    return(gen)
-    
-    
+
+    return gen
+
+
+def create_custom_gen(img_folder, mask_folder, batch_size, target_size, n_channels=8):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    # List of training images
+    img_type = img_folder.split("/")[1].split("_")[0]
+    mask_type = mask_folder.split("/")[1].split("_")[0]
+
+    n = common.list_local_images(img_folder, img_type)
+    random.shuffle(n)
+    c = 0
+
+    while True:
+        img = np.zeros((batch_size, target_size[0], target_size[1], n_channels)).astype(
+            "float"
+        )
+        mask = np.zeros((batch_size, target_size[0], target_size[1], 1)).astype("float")
+
+        for i in range(c, c + batch_size):
+
+            img_path = common.get_local_image_path(img_folder, img_type, n[i])
+            mask_path = common.get_local_image_path(mask_folder, img_type, n[i])
+
+            train_img = skimage.io.imread(img_path) / 649
+            train_img = skimage.transform.resize(train_img, target_size)
+            img[i - c] = train_img
+
+            # Need to add extra dimension to mask for channel dimension
+            train_mask = skimage.io.imread(mask_path) / 649.0
+            train_mask = skimage.transform.resize(train_mask, target_size)
+            train_mask = train_mask.reshape(target_size[0], target_size[1], 1)
+            mask[i - c] = train_mask
+
+        # Need to recheck this
+        c += batch_size
+        if c + batch_size >= len(n):
+            c = 0
+            random.shuffle(n)
+
+        yield img, mask
+
+
 def load_dataset(
-                 train_frames,
-                 train_masks,
-                 val_frames,
-                 val_masks,
-                 batch_size=16, 
-                 target_size=(256, 256), 
-                 rescale=1.0 / 255, 
-                 shear_range=0.2, 
-                 zoom_range=0.2, 
-                 horizontal_flip=True,
-                 class_mode="input", 
-                 mask_color = 'grayscale',
-                 ):
+    train_frames,
+    train_masks,
+    val_frames,
+    val_masks,
+    custom=1,
+    batch_size=16,
+    target_size=(640, 640),
+    rescale=1.0 / 255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    class_mode="input",
+    mask_color="grayscale",
+):
     """
     ---------------------------------------------
     Input: N/A
@@ -265,7 +312,12 @@ def load_dataset(
     ---------------------------------------------
     """
     # Train data generator
-    train = create_gen(train_frames, train_masks)
-    val = create_gen(val_frames, val_masks, mode = "validate")
-    
+    if custom == 1:
+        create_gen = create_custom_gen
+    else:
+        create_gen = create_default_gen
+
+    train = create_gen(train_frames, train_masks, batch_size, target_size)
+    val = create_gen(val_frames, val_masks, batch_size, target_size)
+
     return (train, val)
