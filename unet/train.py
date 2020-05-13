@@ -57,7 +57,7 @@ def train(
     # Fit model
     history = model.fit_generator(
         train_it,
-        steps_per_epoch=16,
+        steps_per_epoch=1,
         validation_data=test_it,
         validation_steps=2,
         callbacks=callbacks,

@@ -245,7 +245,7 @@ def create_default_gen(
     return gen
 
 
-def create_custom_gen(img_folder, mask_folder, batch_size, target_size, channels):
+def create_custom_gen(img_folder, mask_folder, batch_size, target_size, channels=8):
     """
     ---------------------------------------------
     Input: N/A
@@ -294,7 +294,7 @@ def load_dataset(
     val_frames,
     val_masks,
     custom=1,
-    batch_size=16,
+    batch_size=1,
     target_size=(640, 640),
     rescale=1.0 / 255,
     shear_range=0.2,
