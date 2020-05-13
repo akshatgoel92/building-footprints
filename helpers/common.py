@@ -17,7 +17,7 @@ def get_local_folder_path(root, image_type):
     return os.path.join(root, image_type)
 
 
-def get_local_image_path(root, image_type, image_name = ''):
+def get_local_image_path(root, image_type, image_name=""):
     """
     ------------------------
     Input: 
@@ -83,11 +83,7 @@ def make_folders(root, image_type):
 
 
 def get_remaining(
-    output_format,
-    extension,
-    storage,
-    prefix,
-    prefix_storage,
+    output_format, extension, storage, prefix, prefix_storage,
 ):
     """
     ------------------------
@@ -96,12 +92,13 @@ def get_remaining(
     ------------------------
     """
     files = [img for img in os.listdir(prefix) if img.endswith(extension)]
-    
+
     try:
 
         existing = [
             os.path.splitext(os.path.basename(f))[0]
-            for f in os.listdir(prefix_storage) if f.endswith(output_format)
+            for f in os.listdir(prefix_storage)
+            if f.endswith(output_format)
         ]
 
         remaining = [
@@ -293,7 +290,7 @@ def upload_s3(file_from, file_to):
     s3 = get_s3_client()
     bucket_name = get_bucket_name()
     s3.upload_file(file_from, bucket_name, file_to)
-    
+
 
 def get_raster_from_s3(path):
     """
@@ -347,9 +344,7 @@ def upload_chips(in_path, out_path):
         common.upload_s3(img, os.path.join(in_path, img))
 
 
-def upload_flat_file(
-    flat, root, image_type, image_name
-):
+def upload_flat_file(flat, root, image_type, image_name):
     """
         ------------------------
         Input: 

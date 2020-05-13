@@ -63,6 +63,7 @@ def output_chip(
             with rasterio.open(outpath, "w", **meta) as outds:
                 outds.write(inds.read(window=window))
 
+
 def main():
     """
     ------------------------

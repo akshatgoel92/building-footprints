@@ -40,7 +40,7 @@ def open_image(image_name):
     ------------------------
     """
     f = rasterio.open(image_name)
-    return(f)
+    return f
 
 
 def convert_img_to_array(img):
