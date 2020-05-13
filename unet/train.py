@@ -1,4 +1,7 @@
 # Import packages
+from unet import utils
+import unet
+
 import os
 import sys
 import unet
@@ -13,8 +16,7 @@ from matplotlib import pyplot
 
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
-from unet.utils import *
-from unet import unet
+
 
 
 def train(
@@ -40,12 +42,12 @@ def train(
 
     # Callbacks
     callbacks = []
-    callbacks.append(get_early_stopping_callback())
-    callbacks.append(get_tensorboard_directory_callback())
-    callbacks.append(get_checkpoint_callback(checkpoint_path))
+    callbacks.append(utils.get_early_stopping_callback())
+    callbacks.append(utils.get_tensorboard_directory_callback())
+    callbacks.append(utils.get_checkpoint_callback(checkpoint_path))
 
     # Prepare iterators
-    train_it, test_it = load_dataset(train_frames, train_masks, val_frames, val_masks)
+    train_it, test_it = utils.load_dataset(train_frames, train_masks, val_frames, val_masks)
 
     # Load model if there are pretrained wets
     if pretrained:
@@ -75,8 +77,8 @@ if __name__ == "__main__":
     val_frames = "val_frames"
     val_masks = "val_masks"
 
-    paths = get_paths(train_frames, train_masks, val_frames, val_masks)
-    check_folders(paths)
+    paths = utils.get_paths(train_frames, train_masks, val_frames, val_masks)
+    utils.check_folders(paths)
 
     history, model = train(*paths, epochs=2)
-    summarize_diagnostics(history)
+    utils.summarize_diagnostics(history)
