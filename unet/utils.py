@@ -305,7 +305,7 @@ def load_dataset(
     val_frames,
     val_masks,
     custom=1,
-    batch_size=1,
+    batch_size=16,
     target_size=(640, 640),
     rescale=1.0 / 255,
     shear_range=0.2,
