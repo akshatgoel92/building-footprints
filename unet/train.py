@@ -59,9 +59,9 @@ def train(
     # Fit model
     history = model.fit_generator(
         train_it,
-        steps_per_epoch=1,
+        steps_per_epoch=241,
         validation_data=test_it,
-        validation_steps=2,
+        validation_steps=81,
         callbacks=callbacks,
         epochs=epochs,
         verbose=1,
@@ -80,5 +80,5 @@ if __name__ == "__main__":
     paths = utils.get_paths(train_frames, train_masks, val_frames, val_masks)
     utils.check_folders(paths)
 
-    history, model = train(*paths, epochs=2)
+    history, model = train(*paths, epochs=10)
     utils.summarize_diagnostics(history)

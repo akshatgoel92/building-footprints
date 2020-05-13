@@ -261,22 +261,33 @@ def create_custom_gen(img_folder, mask_folder, batch_size, target_size, channels
     c = 0
 
     while True:
-        img = np.zeros((batch_size, target_size[0], target_size[1], channels)).astype("float")
-        mask = np.zeros((batch_size, target_size[0], target_size[1], 1)).astype("float")
+        
+        img = np.zeros((batch_size, 
+                        target_size[0], 
+                        target_size[1], 
+                        channels)).astype("float")
+        
+        mask = np.zeros((batch_size, 
+                         target_size[0], 
+                         target_size[1], 1)).astype("float")
         
         for i in range(c, c + batch_size):
 
-            img_path = common.get_local_image_path(img_folder, img_type, n[i])
-            mask_path = common.get_local_image_path(mask_folder, img_type, n[i])
+            img_path = common.\
+                       get_local_image_path(img_folder, img_type, n[i])
+            mask_path = common.\
+                        get_local_image_path(mask_folder, img_type, n[i])
 
             train_img = skimage.io.imread(img_path) / 649
             train_img = skimage.transform.resize(train_img, target_size)
+            
             img[i - c] = train_img
 
             # Need to add extra dimension to mask for channel dimension
             train_mask = skimage.io.imread(mask_path) / 649
             train_mask = skimage.transform.resize(train_mask, target_size)
             train_mask = train_mask.reshape(target_size[0], target_size[1], 1)
+            
             mask[i - c] = train_mask
 
         # Need to recheck this
@@ -294,7 +305,7 @@ def load_dataset(
     val_frames,
     val_masks,
     custom=1,
-    batch_size=1,
+    batch_size=16,
     target_size=(640, 640),
     rescale=1.0 / 255,
     shear_range=0.2,
