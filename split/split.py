@@ -7,7 +7,7 @@ import os
 import re
 
 
-def shuffle_flat_files(prefix="GE Gorakhpur/tile", suffix=".tif"):
+def shuffle_files(files):
     """
     ------------------------
     Input: 
@@ -74,24 +74,23 @@ def main():
     Output:
     ------------------------
     """
-    root = "GE Gorakhpur"
-    image_type = "tile"
-
-    val_target = os.path.join(root, os.path.join("data", "val_frames"))
+    root = "data"
+    image_type = "frames"
+    
     train_target = os.path.join(root, os.path.join("data", "train_frames"))
-
-    prefix = common.get_local_image_path(root, image_type, "")
-    files = shuffle_flat_files()
-
+    val_target = os.path.join(root, os.path.join("data", "val_frames"))
+    
+    prefix = common.get_local_image_path(root, image_type)
+    files = [os.path.join(prefix, f) for f in common.list_local_images(root, image_type)]
+    
+    files = shuffle_files(files)
     train_frames, val_frames = get_train_val(files)
-
-    train_dest, val_dest = get_dest_files(
-        train_target, val_target, train_frames, val_frames
-    )
+    train_dest, val_dest = get_dest_files(train_target, val_target, 
+                                          train_frames, val_frames)
 
     add_frames(train_frames, train_dest)
     add_frames(val_frames, val_dest)
-
-
+    
+    
 if __name__ == "__main__":
     main()
