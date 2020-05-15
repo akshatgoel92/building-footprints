@@ -75,10 +75,10 @@ def main():
     ------------------------
     """
     root = "data"
-    image_type = "masks"
+    image_type = "frames"
     
-    train_target = os.path.join(root,"train_masks")
-    val_target = os.path.join(root, "val_masks")
+    train_target = os.path.join(root,"train_frames")
+    val_target = os.path.join(root, "val_frames")
     
     prefix = common.get_local_image_path(root, image_type)
     files = [os.path.join(prefix, f) for f in common.list_local_images(root, image_type)]
