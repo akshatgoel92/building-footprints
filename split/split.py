@@ -1,10 +1,11 @@
-from helpers import common
-import shutil.copyfile
-
+import shutil
 import random
 import math
 import os
 import re
+
+from helpers import common
+
 
 
 def shuffle_files(files):
@@ -14,7 +15,6 @@ def shuffle_files(files):
     Output:
     ------------------------
     """
-    files = [f for f in os.listdir(prefix) if f.endswith(suffix)]
     random.seed(a=243, version=2)
     random.shuffle(files)
 
@@ -75,10 +75,10 @@ def main():
     ------------------------
     """
     root = "data"
-    image_type = "frames"
+    image_type = "masks"
     
-    train_target = os.path.join(root, os.path.join("data", "train_frames"))
-    val_target = os.path.join(root, os.path.join("data", "val_frames"))
+    train_target = os.path.join(root,"train_masks")
+    val_target = os.path.join(root, "val_masks")
     
     prefix = common.get_local_image_path(root, image_type)
     files = [os.path.join(prefix, f) for f in common.list_local_images(root, image_type)]
