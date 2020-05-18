@@ -20,6 +20,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from skimage import io
 from skimage import transform
 
+
 def get_settings(path=os.path.join('unet', 'settings.json')):
     """
     ---------------------------------------------
@@ -32,14 +33,24 @@ def get_settings(path=os.path.join('unet', 'settings.json')):
     with open(path) as f:
         settings = json.load(f)
     
+    for config in settings.values():
+        config.update(
+              {
+                setting: tuple(val) 
+                for setting, val in config.items() 
+                if type(val) == list
+              }
+        )
+        
     model_args = settings['model_args']
     output_args = settings['output_args']
     training_args = settings['training_args']
     load_dataset_args = settings['load_dataset_args']
     
     return(model_args, output_args, training_args, load_dataset_args)
-
-
+    
+    
+    
 def get_paths(train_frames, train_masks, val_frames, val_masks):
     """
     ---------------------------------------------
@@ -214,18 +225,11 @@ def summarize_diagnostics(history):
 
 
 def create_default_gen(
-    train,
-    mask,
-    mode="train",
-    rescale=1.0 / 255,
-    shear_range=0.2,
-    zoom_range=0.2,
-    horizontal_flip=True,
-    batch_size=16,
-    class_mode="input",
-    target_size=(256, 256),
-    mask_color="grayscale",
-    data_format="channels_last",
+    train, mask,
+    mode, rescale, shear_range,
+    zoom_range, horizontal_flip,
+    batch_size, class_mode, target_size,
+    mask_color, data_format, channels
 ):
     """
     ---------------------------------------------
@@ -236,7 +240,7 @@ def create_default_gen(
     keras.backend.set_image_data_format(data_format)
 
     gen = ImageDataGenerator(
-        rescale=rescale,
+        rescale=1.0 / rescale,
         shear_range=shear_range,
         zoom_range=zoom_range,
         horizontal_flip=horizontal_flip,
@@ -245,7 +249,10 @@ def create_default_gen(
     train_gen = (
         img[0]
         for img in gen.flow_from_directory(
-            train, batch_size=batch_size, class_mode=class_mode, target_size=target_size
+            train, 
+            batch_size=batch_size, 
+            class_mode=class_mode, 
+            target_size=target_size
         )
     )
 
@@ -265,7 +272,11 @@ def create_default_gen(
     return gen
 
 
-def create_custom_gen(img_folder, mask_folder, batch_size, target_size, channels=8):
+def create_custom_gen(img_folder, 
+                      mask_folder, 
+                      batch_size, 
+                      target_size, 
+                      channels):
     """
     ---------------------------------------------
     Input: N/A

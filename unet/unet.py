@@ -26,7 +26,7 @@ from matplotlib import pyplot
 
 def get_layers_args(kernel_size, 
                     activation, strides, 
-                    padding, kernel_initializer, layers_strides,):
+                    padding, kernel_initializer, layers_strides):
     """
     ---------------------------------------------
     Input: Remove hard-coding somehow
@@ -49,7 +49,13 @@ def get_layers_args(kernel_size,
         "output_padding": (1, 1),
     }
     
-    return(conv2d_args, conv2d_trans_args)
+    maxpool2d_args = {
+        "pool_size": pool_size,
+        "strides": pool_strides,
+        "padding": pool_padding,
+    }
+    
+    return(conv2d_args, conv2d_trans_args, maxpool2d_args)
     
     
 def bn_conv_relu(input, filters, bachnorm_momentum, **conv2d_args):
@@ -81,8 +87,7 @@ def define_model(
     output_activation, num_layers, 
     filters, upconv_filters, kernel_size, 
     activation, strides, padding, kernel_initializer,
-    bachnorm_momentum, pool_size, pool_strides, pool_padding, 
-    conv2d_args, conv2d_trans_args, maxpool2d_args, output_args   
+    bachnorm_momentum, pool_size, pool_strides, pool_padding, output_args   
 ):
     """
     ---------------------------------------------
@@ -91,6 +96,13 @@ def define_model(
     ---------------------------------------------
     """
     inputs = Input(input_shape)
+    conv2d_args, conv2d_trans_args, maxpool2d_args = get_layers_args(
+                                                            kernel_size, 
+                                                            activation, 
+                                                            strides, 
+                                                            padding, 
+                                                            kernel_initializer, 
+                                                            layers_strides)
     
     x = Conv2D(filters, **conv2d_args)(inputs)
     c1 = bn_conv_relu(x, filters, bachnorm_momentum, **conv2d_args)

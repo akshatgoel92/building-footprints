@@ -12,7 +12,8 @@
         "zoom_range":0.2,
         "horizontal_flip":true,
         "class_mode":"input",
-        "mask_color":"grayscale"},
+        "mask_color":"grayscale",
+        "channels":8},
     
     "model_args":{
         "input_shape":[640, 640, 8], 
