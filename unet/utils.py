@@ -3,6 +3,7 @@ import os
 import sys
 import unet
 import time
+import json
 import keras
 import random
 import skimage
@@ -18,6 +19,35 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from skimage import io
 from skimage import transform
+
+def get_settings(path=os.path.join('unet', 'settings.json')):
+    """
+    ---------------------------------------------
+    Input: Keras history project
+    Output: Display diagnostic learning curves
+    ---------------------------------------------
+    """
+    with open(path) as f:
+        settings = json.load(f)
+    
+    model_args = settings['model_args']
+    output_args = settings['output_args']
+    training_args = settings['training_args']
+    load_dataset_args = settings['load_dataset_args']
+    
+    return(model_args, output_args, training_args, load_dataset_args)
+
+
+def get_layers_settings():
+    """
+    ---------------------------------------------
+    Input: Keras history project
+    Output: Display diagnostic learning curves
+    ---------------------------------------------
+    """
+    pass
+    "return(conv2d_args, conv_trans2d_args)"
+
 
 
 def get_paths(train_frames, train_masks, val_frames, val_masks):

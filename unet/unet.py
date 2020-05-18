@@ -94,9 +94,9 @@ def define_model(
     x = bn_conv_relu(x, upconv_filters, bachnorm_momentum, **conv2d_args)
     x = bn_conv_relu(x, filters, bachnorm_momentum, **conv2d_args)
 
-    outputs = Conv2D(output_args)(x)
-
+    outputs = Conv2D(num_classes,**output_args)(x)
     model = Model(inputs=[inputs], outputs=[outputs])
+    
     model.compile(
         optimizer="Adam",
         loss="binary_crossentropy",

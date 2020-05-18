@@ -38,7 +38,7 @@
         "results_folder":"results",
         "checkpoint_path":"my_keras_model.h5",
         "steps_per_epoch":964,
-        "validation_steps":324,
+        "validation_steps":324
         }, 
     
     "output_args":{
