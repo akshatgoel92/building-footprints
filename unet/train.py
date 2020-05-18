@@ -20,17 +20,15 @@ from keras.optimizers import SGD
 
 
 def train(
-    train_frames,
-    train_masks,
-    val_frames,
-    val_masks,
-    epochs=2,
-    pretrained=False,
-    steps_per_epoch=964,
-    validation_steps=324,
-    results_folder="results",
-    checkpoint_path="my_keras_model.h5",
-    data_format="channels_last",
+    epochs,
+    pretrained,
+    data_format,
+    results_folder,
+    checkpoint_path,
+    steps_per_epoch,
+    validation_steps,
+    model_args, output_args,
+    load_data_set_args,
 ):
     """
     ---------------------------------------------

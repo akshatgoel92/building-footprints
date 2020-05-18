@@ -6,7 +6,6 @@
         "val_masks": "val_masks",
         "custom":1,
         "batch_size": 4,
-        "batch_size":4,
         "target_size":[640, 640],
         "rescale": 255,
         "shear_range":0.2,
@@ -35,15 +34,16 @@
     "training_args":{
         "epochs":2,
         "pretrained":true,
-        "steps_per_epoch":964,
-        "validation_steps":324,
+        "data_format": "channels_last",
         "results_folder":"results",
         "checkpoint_path":"my_keras_model.h5",
-        "data_format": "channels_last"}, 
+        "steps_per_epoch":964,
+        "validation_steps":324,
+        }, 
     
     "output_args":{
         "kernel_size":[1, 1],
         "strides":[1, 1],
         "activation":"output_activation",
-        "padding":"valid",}
+        "padding":"valid"}
 }
