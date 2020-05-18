@@ -50,7 +50,41 @@ def bn_upconv_relu(input, filters, bachnorm_momentum, **conv2d_trans_args):
 
 
 def define_model(
-    input_shape=(640, 640, 8), num_classes=1, output_activation="softmax", num_layers=4
+    input_shape=(640, 640, 8), 
+    num_classes=1, 
+    output_activation="softmax", 
+    num_layers=4,
+    filters = 64, 
+    upconv_filters = 96, 
+    kernel_size = (3, 3), 
+    activation = "relu", 
+    strides = (1,1), 
+    padding = "same", 
+    kernel_initializer = "he_normal", 
+    conv2d_args = {
+        "kernel_size": kernel_size,
+        "activation": activation,
+        "strides": strides,
+        "padding": padding,
+        "kernel_initializer": kernel_initializer,
+    },
+    conv2d_trans_args = {
+        "kernel_size": kernel_size,
+        "activation": activation,
+        "strides": (2, 2),
+        "padding": padding,
+        "output_padding": (1, 1),
+    }, 
+    bachnorm_momentum = 0.1,
+    pool_size = (2, 2),
+    pool_strides = (2, 2),
+    pool_padding = "valid",
+    maxpool2d_args = {
+        "pool_size": pool_size,
+        "strides": pool_strides,
+        "padding": pool_padding,
+    }
+    
 ):
     """
     ---------------------------------------------

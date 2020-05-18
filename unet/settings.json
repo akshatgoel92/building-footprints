@@ -1,0 +1,42 @@
+{
+    
+    "load_dataset_args":{
+        "train_frames": "train_frames",
+        "train_masks": "train_masks", 
+        "val_frames": "val_frames",
+        "val_masks": "val_masks",
+        "batch_size": 4
+    },
+    
+    "model_args":{ 
+        "filters": 64,
+        "upconv_filters": 96, 
+        "kernel_size": [3, 3],
+        "activation": "relu",
+        "strides": [1, 1],
+        "padding": "same",
+        "kernel_initializer": "he_normal",
+        "bachnorm_momentum": 0.1,
+        "pool_size":[2, 2],
+        "pool_strides": [2, 2],
+        "pool_padding": "valid"
+    },
+    
+    "training_args":{
+        "epochs":2,
+        "pretrained":true,
+        "steps_per_epoch":964,
+        "validation_steps":324,
+        "results_folder":"results",
+        "checkpoint_path":"my_keras_model.h5",
+        "data_format": "channels_last",
+        "custom":1,
+        "batch_size":4,
+        "target_size":[640, 640],
+        "rescale": 255,
+        "shear_range":0.2,
+        "zoom_range":0.2,
+        "horizontal_flip":true,
+        "class_mode":"input",
+        "mask_color":"grayscale"}
+}

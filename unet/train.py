@@ -26,6 +26,8 @@ def train(
     val_masks,
     epochs=2,
     pretrained=False,
+    steps_per_epoch=964,
+    validation_steps=324,
     results_folder="results",
     checkpoint_path="my_keras_model.h5",
     data_format="channels_last",
@@ -47,7 +49,10 @@ def train(
     callbacks.append(utils.get_checkpoint_callback(checkpoint_path))
 
     # Prepare iterators
-    train_it, test_it = utils.load_dataset(train_frames, train_masks, val_frames, val_masks)
+    train_it, test_it = utils.load_dataset(train_frames, 
+                                           train_masks, 
+                                           val_frames, 
+                                           val_masks)
 
     # Load model if there are pretrained wets
     if pretrained:
@@ -59,9 +64,9 @@ def train(
     # Fit model
     history = model.fit_generator(
         train_it,
-        steps_per_epoch=964,
+        steps_per_epoch=steps_per_epoch,
         validation_data=test_it,
-        validation_steps=324,
+        validation_steps=validation_steps,
         callbacks=callbacks,
         epochs=epochs,
         verbose=1,
@@ -70,15 +75,44 @@ def train(
     return (history, model)
 
 
-if __name__ == "__main__":
+def main(settings):
+    
+    # These are the arguments for downsampling
+    conv2d_args = {
+        "kernel_size": kernel_size,
+        "activation": activation,
+        "strides": strides,
+        "padding": padding,
+        "kernel_initializer": kernel_initializer,
+    }
+    
+    # These are the arguments for upsampling
+    conv2d_trans_args = {
+        "kernel_size": kernel_size,
+        "activation": activation,
+        "strides": (2, 2),
+        "padding": padding,
+        "output_padding": (1, 1),
+    }
+    
+    # These are the arguments for max. pooling
+    maxpool2d_args = {
+        "pool_size": pool_size,
+        "strides": pool_strides,
+        "padding": pool_padding,
+    }
 
-    train_frames = "train_frames"
-    train_masks = "train_masks"
-    val_frames = "val_frames"
-    val_masks = "val_masks"
-
-    paths = utils.get_paths(train_frames, train_masks, val_frames, val_masks)
+    paths = utils.get_paths(train_frames, 
+                            train_masks, 
+                            val_frames, 
+                            val_masks)
+    
     utils.check_folders(paths)
 
     history, model = train(*paths, epochs=10)
     utils.summarize_diagnostics(history)
+
+
+if __name__ == '__main__':
+    settings = utils.load_settings()
+    main(**settings)
