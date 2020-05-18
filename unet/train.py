@@ -47,10 +47,7 @@ def train(
     callbacks.append(utils.get_checkpoint_callback(checkpoint_path))
 
     # Prepare iterators
-    train_it, test_it = utils.load_dataset(train_frames, 
-                                           train_masks, 
-                                           val_frames, 
-                                           val_masks)
+    train_it, test_it = utils.load_dataset(**load_dataset_args)
 
     # Load model if there are pretrained wets
     if pretrained:

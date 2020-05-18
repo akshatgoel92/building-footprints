@@ -22,7 +22,34 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from numpy import load
 from matplotlib import pyplot
+
+
+def get_layers_args(kernel_size, 
+                    activation, strides, 
+                    padding, kernel_initializer, layers_strides,):
+    """
+    ---------------------------------------------
+    Input: Remove hard-coding somehow
+    Output: Display diagnostic learning curves
+    ---------------------------------------------
+    """
+    conv2d_args = {
+        "kernel_size": kernel_size,
+        "activation": activation,
+        "strides": strides,
+        "padding": padding,
+        "kernel_initializer": kernel_initializer,
+    }
+
+    conv2d_trans_args = {
+        "kernel_size": kernel_size,
+        "activation": activation,
+        "strides": (2, 2),
+        "padding": padding,
+        "output_padding": (1, 1),
+    }
     
+    return(conv2d_args, conv2d_trans_args)
     
     
 def bn_conv_relu(input, filters, bachnorm_momentum, **conv2d_args):

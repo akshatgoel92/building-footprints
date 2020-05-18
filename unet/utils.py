@@ -23,6 +23,8 @@ from skimage import transform
 def get_settings(path=os.path.join('unet', 'settings.json')):
     """
     ---------------------------------------------
+    Deal with recale argument: need to reciprocate
+    Deal with converting lists to tuples
     Input: Keras history project
     Output: Display diagnostic learning curves
     ---------------------------------------------
@@ -36,36 +38,6 @@ def get_settings(path=os.path.join('unet', 'settings.json')):
     load_dataset_args = settings['load_dataset_args']
     
     return(model_args, output_args, training_args, load_dataset_args)
-
-
-def get_layers_settings(kernel_size, 
-                        activation, strides, 
-                        padding, kernel_initializer, 
-                        layers_strides, padding, output_padding):
-    """
-    ---------------------------------------------
-    Input: Keras history project
-    Output: Display diagnostic learning curves
-    ---------------------------------------------
-    """
-    conv2d_args = {
-        "kernel_size": kernel_size,
-        "activation": activation,
-        "strides": strides,
-        "padding": padding,
-        "kernel_initializer": kernel_initializer,
-    }
-
-    conv2d_trans_args = {
-        "kernel_size": kernel_size,
-        "activation": activation,
-        "strides": (2, 2),
-        "padding": padding,
-        "output_padding": (1, 1),
-    }
-    
-    return(conv2d_args, conv_trans2d_args)
-
 
 
 def get_paths(train_frames, train_masks, val_frames, val_masks):
