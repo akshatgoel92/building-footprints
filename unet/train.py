@@ -18,9 +18,14 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
 
 
-
-def train(path_args, training_args, model_args, 
-          output_args, load_data_set_args, checkpoint_args):
+def train(
+    path_args,
+    training_args,
+    model_args,
+    output_args,
+    load_data_set_args,
+    checkpoint_args,
+):
     """
     ---------------------------------------------
     Input: None
@@ -31,7 +36,7 @@ def train(path_args, training_args, model_args,
     checkpoint_path = checkpoint_args[checkpoint_path]
     paths = utils.get_paths(path_args)
     utils.check_folders(paths)
-    
+
     # Data format setting
     keras.backend.set_image_data_format(data_format)
 
@@ -50,10 +55,10 @@ def train(path_args, training_args, model_args,
     # Else start a new model
     else:
         model = unet.define_model(**model_args)
-    
+
     # Fit model
-    history = model.fit_generator(train_it,**training_args)
-    
+    history = model.fit_generator(train_it, **training_args)
+
     return (history, model)
 
 
@@ -69,7 +74,7 @@ def main(settings):
     utils.summarize_diagnostics(history)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     settings = os.path.join("unet", "settings.json")
     settings = utils.load_settings(settings)
     main(settings)

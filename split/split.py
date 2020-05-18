@@ -7,7 +7,6 @@ import re
 from helpers import common
 
 
-
 def shuffle_files(files):
     """
     ------------------------
@@ -76,21 +75,24 @@ def main():
     """
     root = "data"
     image_type = "frames"
-    
-    train_target = os.path.join(root,"train_frames")
+
+    train_target = os.path.join(root, "train_frames")
     val_target = os.path.join(root, "val_frames")
-    
+
     prefix = common.get_local_image_path(root, image_type)
-    files = [os.path.join(prefix, f) for f in common.list_local_images(root, image_type)]
-    
+    files = [
+        os.path.join(prefix, f) for f in common.list_local_images(root, image_type)
+    ]
+
     files = shuffle_files(files)
     train_frames, val_frames = get_train_val(files)
-    train_dest, val_dest = get_dest_files(train_target, val_target, 
-                                          train_frames, val_frames)
+    train_dest, val_dest = get_dest_files(
+        train_target, val_target, train_frames, val_frames
+    )
 
     add_frames(train_frames, train_dest)
     add_frames(val_frames, val_dest)
-    
-    
+
+
 if __name__ == "__main__":
     main()
