@@ -12,6 +12,7 @@
     
     "load_dataset_args":{
         "custom":1,
+        "mode": "train",
         "batch_size": 4,
         "target_size":[640, 640],
         "rescale": 255,
