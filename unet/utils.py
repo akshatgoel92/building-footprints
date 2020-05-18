@@ -32,25 +32,24 @@ def get_settings(path):
     """
     with open(path) as f:
         settings = json.load(f)
-    
+
     for config in settings.values():
         config.update(
-              {
-                setting: tuple(val) 
-                for setting, val in config.items() 
+            {
+                setting: tuple(val)
+                for setting, val in config.items()
                 if type(val) == list
-              }
+            }
         )
-        
-    model_args = settings['model_args']
-    output_args = settings['output_args']
-    training_args = settings['training_args']
-    load_dataset_args = settings['load_dataset_args']
-    
-    return(model_args, output_args, training_args, load_dataset_args)
-    
-    
-    
+
+    model_args = settings["model_args"]
+    output_args = settings["output_args"]
+    training_args = settings["training_args"]
+    load_dataset_args = settings["load_dataset_args"]
+
+    return (model_args, output_args, training_args, load_dataset_args)
+
+
 def get_paths(train_frames, train_masks, val_frames, val_masks):
     """
     ---------------------------------------------
@@ -224,11 +223,20 @@ def summarize_diagnostics(history):
     pyplot.close()
 
 
-def create_default_gen(train, mask, mode, 
-                       rescale, shear_range, 
-                       zoom_range, horizontal_flip, 
-                       batch_size, class_mode, target_size, 
-                       mask_color, data_format):
+def create_default_gen(
+    train,
+    mask,
+    mode,
+    rescale,
+    shear_range,
+    zoom_range,
+    horizontal_flip,
+    batch_size,
+    class_mode,
+    target_size,
+    mask_color,
+    data_format,
+):
     """
     ---------------------------------------------
     Input: N/A
@@ -247,10 +255,7 @@ def create_default_gen(train, mask, mode,
     train_gen = (
         img[0]
         for img in gen.flow_from_directory(
-            train, 
-            batch_size=batch_size, 
-            class_mode=class_mode, 
-            target_size=target_size
+            train, batch_size=batch_size, class_mode=class_mode, target_size=target_size
         )
     )
 
@@ -270,11 +275,20 @@ def create_default_gen(train, mask, mode,
     return gen
 
 
-def create_custom_gen(train, mask, mode, 
-                      rescale, shear_range, 
-                      zoom_range, horizontal_flip, 
-                      batch_size, class_mode, target_size, 
-                      mask_color, data_format):
+def create_custom_gen(
+    train,
+    mask,
+    mode,
+    rescale,
+    shear_range,
+    zoom_range,
+    horizontal_flip,
+    batch_size,
+    class_mode,
+    target_size,
+    mask_color,
+    data_format,
+):
     """
     ---------------------------------------------
     Input: N/A
@@ -290,33 +304,28 @@ def create_custom_gen(train, mask, mode,
     c = 0
 
     while True:
-        
-        img = np.zeros((batch_size, 
-                        target_size[0], 
-                        target_size[1], 
-                        channels)).astype("float")
-        
-        mask = np.zeros((batch_size, 
-                         target_size[0], 
-                         target_size[1], 1)).astype("float")
-        
+
+        img = np.zeros((batch_size, target_size[0], target_size[1], channels)).astype(
+            "float"
+        )
+
+        mask = np.zeros((batch_size, target_size[0], target_size[1], 1)).astype("float")
+
         for i in range(c, c + batch_size):
 
-            img_path = common.\
-                       get_local_image_path(img_folder, img_type, n[i])
-            mask_path = common.\
-                        get_local_image_path(mask_folder, img_type, n[i])
+            img_path = common.get_local_image_path(img_folder, img_type, n[i])
+            mask_path = common.get_local_image_path(mask_folder, img_type, n[i])
 
             train_img = skimage.io.imread(img_path) / rescale
             train_img = skimage.transform.resize(train_img, target_size)
-            
+
             img[i - c] = train_img
 
             # Need to add extra dimension to mask for channel dimension
             train_mask = skimage.io.imread(mask_path) / rescale
             train_mask = skimage.transform.resize(train_mask, target_size)
             train_mask = train_mask.reshape(target_size[0], target_size[1], 1)
-            
+
             mask[i - c] = train_mask
 
         # Need to recheck this
