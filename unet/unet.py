@@ -85,7 +85,7 @@ def define_model(
         "output_padding": (1, 1),
     }
 
-    bachnorm_momentum = 0.01
+    bachnorm_momentum = 0.1
 
     pool_size = (2, 2)
     pool_strides = (2, 2)
