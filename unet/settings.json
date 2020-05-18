@@ -38,7 +38,8 @@
         "bachnorm_momentum": 0.1,
         "pool_size":[2, 2],
         "pool_strides": [2, 2],
-        "pool_padding": "valid"},
+        "pool_padding": "valid"
+    },
     
     "training_args":{
         "epochs":2,
