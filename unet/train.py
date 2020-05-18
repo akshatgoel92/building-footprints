@@ -19,17 +19,8 @@ from keras.optimizers import SGD
 
 
 
-def train(
-    train_frames,
-    train_masks,
-    val_frames,
-    val_masks,
-    epochs=2,
-    pretrained=False,
-    results_folder="results",
-    checkpoint_path="my_keras_model.h5",
-    data_format="channels_last",
-):
+def train(path_args, training_args, model_args, 
+          output_args, load_data_set_args, checkpoint_args):
     """
     ---------------------------------------------
     Input: None
@@ -37,6 +28,10 @@ def train(
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
+    checkpoint_path = checkpoint_args[checkpoint_path]
+    paths = utils.get_paths(path_args)
+    utils.check_folders(paths)
+    
     # Data format setting
     keras.backend.set_image_data_format(data_format)
 
@@ -47,38 +42,34 @@ def train(
     callbacks.append(utils.get_checkpoint_callback(checkpoint_path))
 
     # Prepare iterators
-    train_it, test_it = utils.load_dataset(train_frames, train_masks, val_frames, val_masks)
+    train_it, test_it = utils.load_dataset(**load_dataset_args)
 
     # Load model if there are pretrained wets
     if pretrained:
         model = keras.models.load_model(checkpoint_path)
     # Else start a new model
     else:
-        model = unet.define_model()
-
+        model = unet.define_model(**model_args)
+    
     # Fit model
-    history = model.fit_generator(
-        train_it,
-        steps_per_epoch=964,
-        validation_data=test_it,
-        validation_steps=324,
-        callbacks=callbacks,
-        epochs=epochs,
-        verbose=1,
-    )
-    # Evaluate model
+    history = model.fit_generator(train_it,**training_args)
+    
     return (history, model)
 
 
-if __name__ == "__main__":
-
-    train_frames = "train_frames"
-    train_masks = "train_masks"
-    val_frames = "val_frames"
-    val_masks = "val_masks"
-
-    paths = utils.get_paths(train_frames, train_masks, val_frames, val_masks)
-    utils.check_folders(paths)
-
-    history, model = train(*paths, epochs=10)
+def main(settings):
+    """
+    ---------------------------------------------
+    Input: None
+    Output: None
+    Run the test harness for evaluating a model
+    ---------------------------------------------
+    """
+    history, model = train()
     utils.summarize_diagnostics(history)
+
+
+if __name__ == '__main__':
+    settings = os.path.join("unet", "settings.json")
+    settings = utils.load_settings(settings)
+    main(settings)
