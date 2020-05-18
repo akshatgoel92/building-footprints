@@ -1,9 +1,16 @@
-{
-    "load_dataset_args":{
+{   
+    "path_args": {
         "train_frames": "train_frames",
         "train_masks": "train_masks", 
         "val_frames": "val_frames",
-        "val_masks": "val_masks",
+        "val_masks": "val_masks"
+    },
+    
+    "checkpoint_args":{
+        "checkpoint_path": "my_keras_model.h5"
+    },
+    
+    "load_dataset_args":{
         "custom":1,
         "batch_size": 4,
         "target_size":[640, 640],
@@ -37,7 +44,6 @@
         "pretrained":true,
         "data_format": "channels_last",
         "results_folder":"results",
-        "checkpoint_path":"my_keras_model.h5",
         "steps_per_epoch":964,
         "validation_steps":324
         }, 

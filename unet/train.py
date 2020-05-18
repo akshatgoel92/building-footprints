@@ -19,17 +19,8 @@ from keras.optimizers import SGD
 
 
 
-def train(
-    epochs,
-    pretrained,
-    data_format,
-    results_folder,
-    checkpoint_path,
-    steps_per_epoch,
-    validation_steps,
-    model_args, output_args,
-    load_data_set_args,
-):
+def train(path_args, training_args, model_args, 
+          output_args, load_data_set_args, checkpoint_args):
     """
     ---------------------------------------------
     Input: None
@@ -37,6 +28,10 @@ def train(
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
+    checkpoint_path = checkpoint_args[checkpoint_path]
+    paths = utils.get_paths(path_args)
+    utils.check_folders(paths)
+    
     # Data format setting
     keras.backend.set_image_data_format(data_format)
 
@@ -54,60 +49,27 @@ def train(
         model = keras.models.load_model(checkpoint_path)
     # Else start a new model
     else:
-        model = unet.define_model()
-
+        model = unet.define_model(**model_args)
+    
     # Fit model
-    history = model.fit_generator(
-        train_it,
-        steps_per_epoch=steps_per_epoch,
-        validation_data=test_it,
-        validation_steps=validation_steps,
-        callbacks=callbacks,
-        epochs=epochs,
-        verbose=1,
-    )
-    # Evaluate model
+    history = model.fit_generator(train_it,**training_args)
+    
     return (history, model)
 
 
 def main(settings):
-    
-    # These are the arguments for downsampling
-    conv2d_args = {
-        "kernel_size": kernel_size,
-        "activation": activation,
-        "strides": strides,
-        "padding": padding,
-        "kernel_initializer": kernel_initializer,
-    }
-    
-    # These are the arguments for upsampling
-    conv2d_trans_args = {
-        "kernel_size": kernel_size,
-        "activation": activation,
-        "strides": (2, 2),
-        "padding": padding,
-        "output_padding": (1, 1),
-    }
-    
-    # These are the arguments for max. pooling
-    maxpool2d_args = {
-        "pool_size": pool_size,
-        "strides": pool_strides,
-        "padding": pool_padding,
-    }
-
-    paths = utils.get_paths(train_frames, 
-                            train_masks, 
-                            val_frames, 
-                            val_masks)
-    
-    utils.check_folders(paths)
-
-    history, model = train(*paths, epochs=10)
+    """
+    ---------------------------------------------
+    Input: None
+    Output: None
+    Run the test harness for evaluating a model
+    ---------------------------------------------
+    """
+    history, model = train()
     utils.summarize_diagnostics(history)
 
 
 if __name__ == '__main__':
-    settings = utils.load_settings()
-    main(**settings)
+    settings = os.path.join("unet", "settings.json")
+    settings = utils.load_settings(settings)
+    main(settings)
