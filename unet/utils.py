@@ -8,6 +8,7 @@ import keras
 import random
 import skimage
 import numpy as np
+import tensorflow as tf
 
 
 from numpy import load
@@ -41,13 +42,8 @@ def get_settings(path):
                 if type(val) == list
             }
         )
-
-    model_args = settings["model_args"]
-    output_args = settings["output_args"]
-    training_args = settings["training_args"]
-    load_dataset_args = settings["load_dataset_args"]
-
-    return (model_args, output_args, training_args, load_dataset_args)
+    
+    return (settings)
 
 
 def get_paths(train_frames, train_masks, val_frames, val_masks):
@@ -159,69 +155,6 @@ def get_tensorboard_directory_callback():
     return callback
 
 
-def iou_coef(y_true, y_pred, smooth=1):
-    """
-    ---------------------------------------------
-    Input: Keras history project
-    Output: Display diagnostic learning curves
-    ---------------------------------------------
-    """
-    axes = list(range(1, len(y_true.shape)))
-    intersection = backend.sum(backend.abs(y_true * y_pred), axis=axes)
-
-    union = backend.sum(y_true, axes) + backend.sum(y_pred, axes) - intersection
-    iou = backend.mean((intersection + smooth) / (union + smooth), axis=0)
-
-    print(iou)
-
-    return iou
-
-
-def dice_coef(y_true, y_pred, smooth=1):
-    """
-    ---------------------------------------------
-    Input: Keras history project
-    Output: Display diagnostic learning curves
-    ---------------------------------------------
-    """
-    axes = list(range(1, len(y_true.shape)))
-    intersection = backend.sum(y_true * y_pred, axis=axes)
-    union = backend.sum(y_true, axis=axes) + backend.sum(y_pred, axis=axes)
-    dice = backend.mean((2.0 * intersection + smooth) / (union + smooth), axis=0)
-    print(dice)
-
-    return dice
-
-
-def summarize_diagnostics(history):
-    """
-    ---------------------------------------------
-    Input: Keras history project
-    Output: Display diagnostic learning curves
-    ---------------------------------------------
-    """
-    # Plot loss
-    pyplot.subplot(211)
-    pyplot.title("Cross Entropy Loss")
-    pyplot.plot(history.history["loss"], color="blue", label="train")
-    pyplot.plot(history.history["val_loss"], color="orange", label="test")
-
-    # Plot accuracy
-    pyplot.subplot(212)
-    pyplot.title("Dice")
-    pyplot.plot(history.history["dice_coef"], color="blue", label="train")
-    pyplot.plot(history.history["val_dice_coef"], color="orange", label="test")
-
-    pyplot.subplot(213)
-    pyplot.title("Intersection over Union")
-    pyplot.plot(history.history["iou_coef"], color="blue", label="train")
-    pyplot.plot(history.history["val_iou_coef"], color="orange", label="test")
-
-    # Save plot to file
-    filename = sys.argv[0].split("/")[-1]
-    pyplot.savefig(filename + "_plot.png")
-    pyplot.close()
-
 
 def create_default_gen(
     train,
@@ -236,6 +169,7 @@ def create_default_gen(
     target_size,
     mask_color,
     data_format,
+    custom,
 ):
     """
     ---------------------------------------------
@@ -255,7 +189,10 @@ def create_default_gen(
     train_gen = (
         img[0]
         for img in gen.flow_from_directory(
-            train, batch_size=batch_size, class_mode=class_mode, target_size=target_size
+            train, 
+            batch_size=batch_size, 
+            class_mode=class_mode, 
+            target_size=target_size
         )
     )
 
@@ -276,8 +213,10 @@ def create_default_gen(
 
 
 def create_custom_gen(
-    train,
-    mask,
+    train_frame,
+    train_mask,
+    val_frame, 
+    val_mask
     mode,
     rescale,
     shear_range,
@@ -288,6 +227,7 @@ def create_custom_gen(
     target_size,
     mask_color,
     data_format,
+    custom,
 ):
     """
     ---------------------------------------------
@@ -295,9 +235,17 @@ def create_custom_gen(
     Output: Tensorboard directory path
     ---------------------------------------------
     """
+    if mode == 'train':
+        frame = train_frame
+        mask = train_mask
+    
+    elif mode == 'val':
+        frame = val_frame
+        mask = val_mask
+        
     # List of training images
-    img_type = img_folder.split("/")[1].split("_")[0]
-    mask_type = mask_folder.split("/")[1].split("_")[0]
+    img_type = frame.split("/")[1].split("_")[0]
+    mask_type = mask.split("/")[1].split("_")[0]
 
     n = common.list_local_images(img_folder, img_type)
     random.shuffle(n)
@@ -305,26 +253,22 @@ def create_custom_gen(
 
     while True:
 
-        img = np.zeros((batch_size, target_size[0], target_size[1], channels)).astype(
-            "float"
-        )
-
+        img = np.zeros((batch_size, target_size[0], target_size[1], channels)).astype("float")
         mask = np.zeros((batch_size, target_size[0], target_size[1], 1)).astype("float")
 
         for i in range(c, c + batch_size):
 
-            img_path = common.get_local_image_path(img_folder, img_type, n[i])
-            mask_path = common.get_local_image_path(mask_folder, img_type, n[i])
+            img_path = common.get_local_image_path(frame, img_type, n[i])
+            mask_path = common.get_local_image_path(mask, img_type, n[i])
 
             train_img = skimage.io.imread(img_path) / rescale
             train_img = skimage.transform.resize(train_img, target_size)
 
-            img[i - c] = train_img
-
             # Need to add extra dimension to mask for channel dimension
-            train_mask = skimage.io.imread(mask_path) / rescale
-            train_mask = skimage.transform.resize(train_mask, target_size)
-            train_mask = train_mask.reshape(target_size[0], target_size[1], 1)
+            img[i - c] = train_img
+            mask_img = skimage.io.imread(mask_path) / rescale
+            mask_img = skimage.transform.resize(mask_img, target_size)
+            mask_img = mask_img.reshape(target_size[0], target_size[1], 1)
 
             mask[i - c] = train_mask
 
@@ -337,7 +281,7 @@ def create_custom_gen(
         yield img, mask
 
 
-def load_dataset(**load_dataset_args):
+def load_dataset(args1, args2):
     """
     ---------------------------------------------
     Input: N/A
@@ -345,12 +289,12 @@ def load_dataset(**load_dataset_args):
     ---------------------------------------------
     """
     # Train data generator
-    if custom == 1:
+    if args2['custom'] == 1:
         create_gen = create_custom_gen
     else:
         create_gen = create_default_gen
 
-    train = create_gen(**load_dataset_args)
-    val = create_gen(**load_dataset_args)
+    train = create_gen(*args1, **args2)
+    val = create_gen(*args1, **args2)
 
     return (train, val)

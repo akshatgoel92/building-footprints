@@ -25,7 +25,12 @@ from matplotlib import pyplot
 
 
 def get_layers_args(
-    kernel_size, activation, strides, padding, kernel_initializer, layers_strides
+    kernel_initializer,
+    layers_strides
+    kernel_size, 
+    activation, 
+    strides, 
+    padding, 
 ):
     """
     ---------------------------------------------
@@ -146,7 +151,7 @@ def define_model(
     model.compile(
         optimizer="Adam",
         loss="binary_crossentropy",
-        metrics=[utils.iou_coef, utils.dice_coef, keras.metrics.accuracy],
+        metrics=[utils.iou, utils.dice_coef],
     )
 
     return model

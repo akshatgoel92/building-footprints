@@ -10,6 +10,10 @@
         "checkpoint_path": "my_keras_model.h5"
     },
     
+    "extension_args": {
+        "extension": ".tif"
+    },
+    
     "load_dataset_args":{
         "custom":1,
         "mode": "train",

@@ -23,8 +23,9 @@ def train(
     training_args,
     model_args,
     output_args,
-    load_data_set_args,
+    load_dataset_args,
     checkpoint_args,
+    extension_args,
 ):
     """
     ---------------------------------------------
@@ -33,9 +34,11 @@ def train(
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    checkpoint_path = checkpoint_args[checkpoint_path]
-    paths = utils.get_paths(path_args)
-    utils.check_folders(paths)
+    checkpoint_path = checkpoint_args['checkpoint_path']
+    data_format = training_args['data_format']
+    
+    paths = utils.get_paths(**path_args)
+    utils.check_folders(paths, **extension_args)
 
     # Data format setting
     keras.backend.set_image_data_format(data_format)
@@ -62,7 +65,7 @@ def train(
     return (history, model)
 
 
-def main(settings):
+def main(model_type="unet"):
     """
     ---------------------------------------------
     Input: None
@@ -70,11 +73,11 @@ def main(settings):
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    history, model = train()
-    utils.summarize_diagnostics(history)
+    settings = os.path.join(model_type, "settings.json")
+    settings = utils.get_settings(settings)
+    history, model = train(**settings)
+    utils.summarize_training(history)
 
 
 if __name__ == "__main__":
-    settings = os.path.join("unet", "settings.json")
-    settings = utils.load_settings(settings)
-    main(settings)
+    main()
