@@ -1,6 +1,6 @@
 # Import packages
-from unet import metrics
-from unet import utils
+import metrics
+import utils
     
 import os
 import sys
@@ -34,31 +34,27 @@ def train(
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    # Unpack arguments
     pretrained = training_args['pretrained']
     data_format = load_dataset_args['data_format']
     checkpoint_path = checkpoint_args['checkpoint_path']
     
-    # Set paths
     paths = utils.get_paths(**path_args)
     utils.check_folders(paths, **extension_args)
     keras.backend.set_image_data_format(data_format)
-
-    # Callbacks
+    
     callbacks = []
     callbacks.append(utils.get_early_stopping_callback())
     callbacks.append(utils.get_tensorboard_directory_callback())
     callbacks.append(utils.get_checkpoint_callback(checkpoint_path))
     
-    # Load model if there are pretrained weights 
-    # else start a new model
     if pretrained:
         model = keras.models.load_model(checkpoint_path)
     else:
         model = unet.define_model(output_args, **model_args)
     
     train, test= utils.load_dataset(paths, 
-                                    **load_dataset_args)
+                                    load_dataset_args)
+    
     history = model.fit_generator(train, 
                                   validation_data = test, 
                                   callbacks = callbacks, 

@@ -4,8 +4,8 @@ import time
 import keras
 import sys
 
-from unet import utils
-from unet import metrics
+import utils
+import metrics
 
 from keras.models import Model
 from keras.layers import (
