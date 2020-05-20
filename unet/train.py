@@ -1,14 +1,14 @@
 # Import packages
-from unet import utils
-import unet
-
+import metrics
+import utils
+    
 import os
 import sys
 import unet
 import time
 import keras
-
-
+    
+    
 from numpy import load
 from keras import backend
 from helpers import common
@@ -23,8 +23,9 @@ def train(
     training_args,
     model_args,
     output_args,
-    load_data_set_args,
+    load_dataset_args,
     checkpoint_args,
+    extension_args,
 ):
     """
     ---------------------------------------------
@@ -33,48 +34,38 @@ def train(
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    checkpoint_path = checkpoint_args[checkpoint_path]
-    paths = utils.get_paths(path_args)
-    utils.check_folders(paths)
-
-    # Data format setting
+    
+    pretrained = training_args.pop('pretrained')
+    results_folder = training_args.pop('results_folder')
+    
+    data_format = load_dataset_args['data_format']
+    checkpoint_path = checkpoint_args['checkpoint_path']
+    
+    paths = utils.get_paths(**path_args)
+    utils.check_folders(paths, **extension_args)
     keras.backend.set_image_data_format(data_format)
-
-    # Callbacks
+    
     callbacks = []
     callbacks.append(utils.get_early_stopping_callback())
     callbacks.append(utils.get_tensorboard_directory_callback())
     callbacks.append(utils.get_checkpoint_callback(checkpoint_path))
-
-    # Prepare iterators
-    train_it, test_it = utils.load_dataset(**load_dataset_args)
-
-    # Load model if there are pretrained wets
+    
     if pretrained:
         model = keras.models.load_model(checkpoint_path)
-    # Else start a new model
     else:
-        model = unet.define_model(**model_args)
-
-    # Fit model
-    history = model.fit_generator(train_it, **training_args)
-
+        model = unet.define_model(output_args, **model_args)
+    
+    train, test= utils.load_dataset(paths, 
+                                    load_dataset_args)
+    
+    history = model.fit_generator(train, 
+                                  validation_data = test, 
+                                  callbacks = callbacks, 
+                                  **training_args)
+    
     return (history, model)
-
-
-def main(settings):
-    """
-    ---------------------------------------------
-    Input: None
-    Output: None
-    Run the test harness for evaluating a model
-    ---------------------------------------------
-    """
-    history, model = train()
-    utils.summarize_diagnostics(history)
-
-
+    
+    
 if __name__ == "__main__":
-    settings = os.path.join("unet", "settings.json")
-    settings = utils.load_settings(settings)
-    main(settings)
+    model_type="unet"
+    history, model = train(**utils.get_settings(model_type))

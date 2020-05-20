@@ -3,8 +3,9 @@ import os
 import time
 import keras
 import sys
-import utils
 
+import utils
+import metrics
 
 from keras.models import Model
 from keras.layers import (
@@ -25,7 +26,14 @@ from matplotlib import pyplot
 
 
 def get_layers_args(
-    kernel_size, activation, strides, padding, kernel_initializer, layers_strides
+    kernel_initializer,
+    kernel_size, 
+    activation, 
+    strides, 
+    padding,
+    pool_strides,
+    pool_padding,
+    pool_size, 
 ):
     """
     ---------------------------------------------
@@ -83,6 +91,7 @@ def bn_upconv_relu(input, filters, bachnorm_momentum, **conv2d_trans_args):
 
 
 def define_model(
+    output_args,
     input_shape,
     num_classes,
     output_activation,
@@ -98,7 +107,7 @@ def define_model(
     pool_size,
     pool_strides,
     pool_padding,
-    output_args,
+    
 ):
     """
     ---------------------------------------------
@@ -108,8 +117,8 @@ def define_model(
     """
     inputs = Input(input_shape)
     conv2d_args, conv2d_trans_args, maxpool2d_args = get_layers_args(
-        kernel_size, activation, strides, padding, kernel_initializer, layers_strides
-    )
+        kernel_initializer, kernel_size, activation, strides, padding,  
+        pool_strides, pool_padding, pool_size)
 
     x = Conv2D(filters, **conv2d_args)(inputs)
     c1 = bn_conv_relu(x, filters, bachnorm_momentum, **conv2d_args)
@@ -146,7 +155,7 @@ def define_model(
     model.compile(
         optimizer="Adam",
         loss="binary_crossentropy",
-        metrics=[utils.iou_coef, utils.dice_coef, keras.metrics.accuracy],
+        metrics=[metrics.iou, metrics.dice_coef, metrics.jaccard_coef, metrics.iou_thresholded],
     )
 
     return model
