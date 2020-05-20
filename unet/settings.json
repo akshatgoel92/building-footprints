@@ -25,7 +25,8 @@
         "horizontal_flip":true,
         "class_mode":"input",
         "mask_color":"grayscale",
-        "channels":8
+        "channels":8, 
+        "data_format": "channels_last"
     },
     
     "model_args":{
@@ -48,17 +49,17 @@
     
     "training_args":{
         "epochs":2,
-        "pretrained":true,
-        "data_format": "channels_last",
+        "pretrained":false,
         "results_folder":"results",
         "steps_per_epoch":964,
-        "validation_steps":324
+        "validation_steps":324,
+        "verbose":1
     }, 
     
     "output_args":{
         "kernel_size":[1, 1],
         "strides":[1, 1],
-        "activation":"output_activation",
+        "activation":"sigmoid",
         "padding":"valid"
     }
 }

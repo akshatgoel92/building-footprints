@@ -22,7 +22,7 @@ from skimage import io
 from skimage import transform
 
 
-def get_settings(path):
+def get_settings(model_type):
     """
     ---------------------------------------------
     Deal with recale argument: need to reciprocate
@@ -31,6 +31,8 @@ def get_settings(path):
     Output: Display diagnostic learning curves
     ---------------------------------------------
     """
+    path = os.path.join(model_type, "settings.json")
+    
     with open(path) as f:
         settings = json.load(f)
 
@@ -216,7 +218,7 @@ def create_custom_gen(
     train_frame,
     train_mask,
     val_frame, 
-    val_mask
+    val_mask,
     mode,
     rescale,
     shear_range,
@@ -228,6 +230,7 @@ def create_custom_gen(
     mask_color,
     data_format,
     custom,
+    channels
 ):
     """
     ---------------------------------------------
@@ -293,8 +296,8 @@ def load_dataset(args1, args2):
         create_gen = create_custom_gen
     else:
         create_gen = create_default_gen
-
+    
     train = create_gen(*args1, **args2)
     val = create_gen(*args1, **args2)
-
+    
     return (train, val)
