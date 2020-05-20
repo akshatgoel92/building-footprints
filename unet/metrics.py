@@ -67,7 +67,9 @@ def iou(y_true, y_pred, smooth=1.):
     y_true_f = backend.flatten(y_true)
     y_pred_f = backend.flatten(y_pred)
     intersection = backend.sum(y_true_f * y_pred_f)
-    return (intersection + smooth) / (backend.sum(y_true_f) + backend.sum(y_pred_f) - intersection + smooth)
+    iou = (intersection + smooth) / (backend.sum(y_true_f) + backend.sum(y_pred_f) - intersection + smooth)
+    print(iou)
+    return(iou)
 
     
 def jaccard_coef(y_true, y_pred):
@@ -119,8 +121,9 @@ def dice_coef(y_true, y_pred, smooth=1.):
     y_true_f = backend.flatten(y_true)
     y_pred_f = backend.flatten(y_pred)
     intersection = backend.sum(y_true_f * y_pred_f)
-    return (2. * intersection + smooth) / (
-                backend.sum(y_true_f) + backend.sum(y_pred_f) + smooth)
+    coef = (2. * intersection + smooth) / (backend.sum(y_true_f) + backend.sum(y_pred_f) + smooth)
+    print(coef)
+    return(coef)
                 
                 
 def summarize_training(history):

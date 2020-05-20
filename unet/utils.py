@@ -239,21 +239,20 @@ def create_custom_gen(
     ---------------------------------------------
     """
     if mode == 'train':
-        frame = train_frame
-        mask = train_mask
+        frame_root = train_frame
+        mask_root = train_mask
     
     elif mode == 'val':
-        frame = val_frame
-        mask = val_mask
-        
-    # List of training images
-    img_type = frame.split("/")[1].split("_")[0]
-    mask_type = mask.split("/")[1].split("_")[0]
-
-    n = common.list_local_images(img_folder, img_type)
+        frame_root = val_frame
+        mask_root = val_mask
+    
+    # List out all the images
+    img_type = mode
+    n = common.list_local_images(frame_root, img_type)
+    
     random.shuffle(n)
     c = 0
-
+    
     while True:
 
         img = np.zeros((batch_size, target_size[0], target_size[1], channels)).astype("float")
@@ -261,8 +260,8 @@ def create_custom_gen(
 
         for i in range(c, c + batch_size):
 
-            img_path = common.get_local_image_path(frame, img_type, n[i])
-            mask_path = common.get_local_image_path(mask, img_type, n[i])
+            img_path = common.get_local_image_path(frame_root, img_type, n[i])
+            mask_path = common.get_local_image_path(mask_root, img_type, n[i])
 
             train_img = skimage.io.imread(img_path) / rescale
             train_img = skimage.transform.resize(train_img, target_size)
@@ -272,8 +271,7 @@ def create_custom_gen(
             mask_img = skimage.io.imread(mask_path) / rescale
             mask_img = skimage.transform.resize(mask_img, target_size)
             mask_img = mask_img.reshape(target_size[0], target_size[1], 1)
-
-            mask[i - c] = train_mask
+            mask[i - c] = mask_img
 
         # Need to recheck this
         c += batch_size

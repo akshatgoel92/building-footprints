@@ -34,7 +34,10 @@ def train(
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    pretrained = training_args['pretrained']
+    
+    pretrained = training_args.pop('pretrained')
+    results_folder = training_args.pop('results_folder')
+    
     data_format = load_dataset_args['data_format']
     checkpoint_path = checkpoint_args['checkpoint_path']
     
