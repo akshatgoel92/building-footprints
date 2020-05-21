@@ -94,7 +94,6 @@ def define_model(
     output_args,
     input_shape,
     num_classes,
-    output_activation,
     num_layers,
     filters,
     upconv_filters,

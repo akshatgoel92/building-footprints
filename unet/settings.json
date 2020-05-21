@@ -32,7 +32,6 @@
     "model_args":{
         "input_shape":[640, 640, 8], 
         "num_classes":1, 
-        "output_activation":"softmax", 
         "num_layers":4, 
         "filters": 64,
         "upconv_filters": 96, 
