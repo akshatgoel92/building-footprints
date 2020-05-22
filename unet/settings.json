@@ -46,7 +46,7 @@
     },
     
     "training_args":{
-        "epochs":2,
+        "epochs":10,
         "pretrained":false,
         "results_folder":"results",
         "steps_per_epoch":964,
