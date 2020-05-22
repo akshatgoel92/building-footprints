@@ -248,20 +248,29 @@ def create_custom_gen(
     
     # List out all the images
     img_type = mode
-    n = common.list_local_images(frame_root, img_type)
     
+    n = common.list_local_images(frame_root, img_type)
     random.shuffle(n)
     c = 0
     
     while True:
 
-        img = np.zeros((batch_size, target_size[0], target_size[1], channels)).astype("float")
-        mask = np.zeros((batch_size, target_size[0], target_size[1], 1)).astype("float")
+        img = np.zeros((batch_size, 
+                        target_size[0], 
+                        target_size[1], 
+                        channels)).astype("float")
+        
+        mask = np.zeros((batch_size, 
+                         target_size[0], 
+                         target_size[1], 1)).astype("float")
 
         for i in range(c, c + batch_size):
 
-            img_path = common.get_local_image_path(frame_root, img_type, n[i])
-            mask_path = common.get_local_image_path(mask_root, img_type, n[i])
+            img_path = common.\
+                       get_local_image_path(frame_root, img_type, n[i])
+            
+            mask_path = common.\
+                        get_local_image_path(mask_root, img_type, n[i])
 
             train_img = skimage.io.imread(img_path) / rescale
             train_img = skimage.transform.resize(train_img, target_size)
