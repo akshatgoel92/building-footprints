@@ -1,10 +1,10 @@
 # Import packages
-import metrics
-import utils
+from unet import metrics
+from unet import utils
+from unet import unet
     
 import os
 import sys
-import unet
 import time
 import keras
     
@@ -34,7 +34,6 @@ def train(
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    
     pretrained = training_args.pop('pretrained')
     results_folder = training_args.pop('results_folder')
     

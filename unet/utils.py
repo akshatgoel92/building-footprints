@@ -301,7 +301,7 @@ def load_dataset(args1, args2):
     else:
         create_gen = create_default_gen
     
-    train = create_gen(*args1, **args, img_type = 'train')
+    train = create_gen(*args1, **args2, img_type = 'train')
     val = create_gen(*args1, **args2, img_type = 'val')
     
     return (train, val)
