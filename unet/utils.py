@@ -122,8 +122,8 @@ def get_checkpoint_callback(checkpoint_path):
 
     # Add checkpoints for regular saving
     checkpoint_cb = keras.callbacks.ModelCheckpoint(
-        checkpoint_path, save_best_only=True
-    )
+        checkpoint_path, 
+        save_best_only=True)
 
     return checkpoint_cb
 
@@ -137,8 +137,8 @@ def get_early_stopping_callback():
     ---------------------------------------------
     """
     early_stopping_cb = keras.callbacks.EarlyStopping(
-        patience=10, restore_best_weights=True
-    )
+        patience=10, 
+        restore_best_weights=True)
 
     return early_stopping_cb
 
@@ -219,7 +219,7 @@ def create_custom_gen(
     train_mask,
     val_frame, 
     val_mask,
-    mode,
+    img_type,
     rescale,
     shear_range,
     zoom_range,
@@ -238,30 +238,36 @@ def create_custom_gen(
     Output: Tensorboard directory path
     ---------------------------------------------
     """
-    if mode == 'train':
+    if img_type == 'train':
         frame_root = train_frame
         mask_root = train_mask
     
-    elif mode == 'val':
+    elif img_type == 'val':
         frame_root = val_frame
         mask_root = val_mask
     
-    # List out all the images
-    img_type = mode
     n = common.list_local_images(frame_root, img_type)
-    
     random.shuffle(n)
     c = 0
     
     while True:
 
-        img = np.zeros((batch_size, target_size[0], target_size[1], channels)).astype("float")
-        mask = np.zeros((batch_size, target_size[0], target_size[1], 1)).astype("float")
+        img = np.zeros((batch_size, 
+                        target_size[0], 
+                        target_size[1], 
+                        channels)).astype("float")
+        
+        mask = np.zeros((batch_size, 
+                         target_size[0], 
+                         target_size[1], 1)).astype("float")
 
         for i in range(c, c + batch_size):
 
-            img_path = common.get_local_image_path(frame_root, img_type, n[i])
-            mask_path = common.get_local_image_path(mask_root, img_type, n[i])
+            img_path = common.\
+                       get_local_image_path(frame_root, img_type, n[i])
+            
+            mask_path = common.\
+                        get_local_image_path(mask_root, img_type, n[i])
 
             train_img = skimage.io.imread(img_path) / rescale
             train_img = skimage.transform.resize(train_img, target_size)
@@ -295,7 +301,7 @@ def load_dataset(args1, args2):
     else:
         create_gen = create_default_gen
     
-    train = create_gen(*args1, **args2)
-    val = create_gen(*args1, **args2)
+    train = create_gen(*args1, **args2, img_type = 'train')
+    val = create_gen(*args1, **args2, img_type = 'val')
     
     return (train, val)
