@@ -15,9 +15,9 @@ from keras import backend
 from matplotlib import pyplot
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
-
-
-def get_monitoring_callbacks():
+    
+    
+def parse_args(model):
     """
     ---------------------------------------------
     Input: None
@@ -25,36 +25,24 @@ def get_monitoring_callbacks():
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    iou = keras.callbacks.callbacks.LambdaCallback(iou_coef)
-    dice = keras.callbacks.callbacks.LambdaCallback(dice_coef)
-
-    return (iou, dice)
-
-
-def predict_model(model="my_keras_model.h5"):
+    pass
+    
+def predict_model(model, track):
     """
     ---------------------------------------------
     Input: None
     Output: None
     Run the test harness for evaluating a model
     ---------------------------------------------
-    """
-    model = keras.models.load_model(
-        model, custom_objects={"iou_coef": iou_coef, "dice_coef": dice_coef}
-    )
-    model.summary()
+    """ 
+    model = keras.models.load_model(model, custom_objects=track)
     _, test_it = load_dataset()
-
-    y_pred = model.predict_generator(test_it, steps=225, verbose=1)
-    np.savez_compressed("y_pred.npz", y_pred)
-
-    print(y_pred.shape)
-    print(y_pred)
-
-    return y_pred
-
-
-def evaluate_model(model="my_keras_model.h5"):
+    
+    predictions = model.predict_generator(test_it, verbose=1)
+    return predictions
+    
+    
+def evaluate_model(model, track):
     """
     ---------------------------------------------
     Input: None
@@ -62,22 +50,25 @@ def evaluate_model(model="my_keras_model.h5"):
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    model = keras.models.load_model(
-        model, custom_objects={"iou_coef": iou_coef, "dice_coef": dice_coef}
-    )
-    model.summary()
-
-    _, test_it = load_dataset()
-
-    loss, accuracy, iou, dice = model.evaluate_generator(test_it, steps=225, verbose=1)
-    print(
-        "> loss=%.3f, > accuracy=%.3f, > iou=%.3f, dice=%.3f"
-        % (loss, accuracy, iou, dice)
-    )
-
-    return (loss, iou, dice, accuracy)
-
-
+    model = keras.models.load_model(model, custom_objects=track)
+    _, test_it = load_dataset(track)
+    
+    results = model.evaluate_generator(test_it, verbose=1)
+    return (results)
+    
+    
+def save_model(preds, results):
+    """
+    ---------------------------------------------
+    Input: None
+    Output: None
+    Run the test harness for evaluating a model
+    ---------------------------------------------
+    """
+    np.savez_compressed("pred.npz", preds)
+    np.savez_compressed("results.npz", results)
+    
+    
 def main():
     """
     ---------------------------------------------
@@ -86,11 +77,14 @@ def main():
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    loss, iou, dice, accuracy = evaluate_model("my_keras_model.h5")
-    y_pred = predict_model()
-
-    return (y_pred, loss, iou, dice, accuracy)
+    model = "my_keras_model.h5"
+    track = {"iou_coef": iou_coef, "dice_coef": dice_coef}
+    
+    results = evaluate_model(model, track)
+    y_pred = predict_model(model, track)
+    
+    return (y_pred, results)
 
 
 if __name__ == "__main__":
-    y_pred, loss, iou, dice, accuracy = main()
+    results = main()
