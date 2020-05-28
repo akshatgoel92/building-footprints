@@ -1,0 +1,16 @@
+{   
+	"predict_args":{
+        "custom":1,
+        "batch_size": 4,
+        "target_size":[640, 640],
+        "rescale": 255,
+        "shear_range":0.2,
+        "zoom_range":0.2,
+        "horizontal_flip":true,
+        "class_mode":"input",
+        "mask_color":"grayscale",
+        "channels":8, 
+        "data_format": "channels_last"
+    }
+
+}
