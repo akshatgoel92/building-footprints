@@ -130,19 +130,17 @@ def main():
     ---------------------------------------------
     """
     settings = get_settings()
-    steps = settings['step_args']['steps']
+    steps = settings['misc_args']['steps']
     predict_args = settings['predict_args']
     
-    predict = settings['step_args']['predict']
-    evaluate = settings['step_args']['evaluate']
-    results = os.path.join("results", settings["step_args"]["model_name"])
+    predict = settings['misc_args']['predict']
+    evaluate = settings['misc_args']['evaluate']
+    results = os.path.join("results", settings["misc_args"]["model_name"])
     
-    track = {"iou": iou, "dice_coef": dice_coef, 
-             "iou_thresholded": iou_thresholded,
-             "jaccard_coef": jaccard_coef}
-    
-
-   
+    track = {"iou": iou, 
+             "dice_coef": dice_coef, 
+             "jaccard_coef": jaccard_coef,
+             "iou_thresholded": iou_thresholded}
     
     if evaluate:
         results = evaluate_model(model, track, predict_args, steps)
