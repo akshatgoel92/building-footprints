@@ -99,7 +99,7 @@ def predict_model(model, track, settings, steps):
     test_it = create_test_gen(**settings)
     
     predictions = model.predict_generator(test_it, steps = steps, verbose=1)
-    np.savez_compressed("pred.npz", predictions)
+    np.savez_compressed(os.path.join("results", "pred.npz"), predictions)
     
     return predictions
     
@@ -116,7 +116,7 @@ def evaluate_model(model, track, settings, steps):
     _, test_it = create_test_gen(**settings)
     
     results = model.evaluate_generator(test_it, steps = steps, verbose=1)
-    np.savez_compressed("results.npz", preds)
+    np.savez_compressed(os.path.join("results", "results.npz"), results)
     
     return (results)
     
@@ -130,9 +130,9 @@ def main():
     ---------------------------------------------
     """
     settings = get_settings()
+    
     steps = settings['misc_args']['steps']
     predict_args = settings['predict_args']
-    
     predict = settings['misc_args']['predict']
     evaluate = settings['misc_args']['evaluate']
     results = os.path.join("results", settings["misc_args"]["model_name"])
