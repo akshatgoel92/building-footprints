@@ -3,9 +3,13 @@ import os
 import sys
 import unet
 import time
+import json
 import keras
+import random
+import skimage
 import numpy as np
 
+from helpers import common
 from unet.metrics import iou
 from unet.metrics import dice_coef
 from unet.metrics import jaccard_coef
@@ -19,16 +23,31 @@ from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
     
 
-def parse_args(model, track):
+def get_settings(model_type="predict"):
     """
     ---------------------------------------------
-    Input: None
-    Output: None
-    Run the test harness for evaluating a model
+    Deal with recale argument: need to reciprocate
+    Deal with converting lists to tuples
+    Input: Keras history project
+    Output: Display diagnostic learning curves
     ---------------------------------------------
     """
-    pass
+    path = os.path.join(model_type, "settings.json")
+    
+    with open(path) as f:
+        settings = json.load(f)
 
+    for config in settings.values():
+        config.update(
+            {
+                setting: tuple(val)
+                for setting, val in config.items()
+                if type(val) == list
+            }
+        )
+    
+    return (settings)
+    
     
 def create_test_gen(root, img_type, batch_size, target_size, channels):
     """
@@ -37,7 +56,9 @@ def create_test_gen(root, img_type, batch_size, target_size, channels):
     Output: Tensorboard directory path
     ---------------------------------------------
     """
+    root = os.path.join("data", root)
     n = common.list_local_images(root, img_type)
+    
     random.shuffle(n)
     c = 0
     
@@ -52,10 +73,10 @@ def create_test_gen(root, img_type, batch_size, target_size, channels):
         for i in range(c, c + batch_size):
             
             img_path = common.get_local_image_path(root, img_type, n[i])
-            test_img = skimage.io.imread(img_path) / rescale
+            test_img = skimage.io.imread(img_path)
             
-            test_img = skimage.transform.resize(train_img, target_size)
-            img[i - c] = train_img
+            test_img = skimage.transform.resize(test_img, target_size)
+            img[i - c] = test_img
         
         c += batch_size
         
@@ -66,7 +87,7 @@ def create_test_gen(root, img_type, batch_size, target_size, channels):
         yield img
     
     
-def predict_model(model, track):
+def predict_model(model, track, settings, steps):
     """
     ---------------------------------------------
     Input: None
@@ -75,13 +96,15 @@ def predict_model(model, track):
     ---------------------------------------------
     """ 
     model = keras.models.load_model(model, custom_objects = track)
-    _, test_it = load_dataset()
+    test_it = create_test_gen(**settings)
     
-    predictions = model.predict_generator(test_it, verbose=1)
+    predictions = model.predict_generator(test_it, steps = steps, verbose=1)
+    np.savez_compressed("pred.npz", predictions)
+    
     return predictions
     
     
-def evaluate_model(model, track):
+def evaluate_model(model, track, settings, steps):
     """
     ---------------------------------------------
     Input: None
@@ -90,21 +113,12 @@ def evaluate_model(model, track):
     ---------------------------------------------
     """
     model = keras.models.load_model(model, custom_objects =  track)
-    _, test_it = load_dataset(track)
+    _, test_it = create_test_gen(**settings)
     
-    results = model.evaluate_generator(test_it, verbose=1)
+    results = model.evaluate_generator(test_it, steps = steps, verbose=1)
+    np.savez_compressed("results.npz", preds)
+    
     return (results)
-    
-    
-def save_model(preds):
-    """
-    ---------------------------------------------
-    Input: None
-    Output: None
-    Run the test harness for evaluating a model
-    ---------------------------------------------
-    """
-    np.savez_compressed("pred.npz", preds)
     
     
 def main():
@@ -115,19 +129,26 @@ def main():
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    evaluate = False
-    predict = True
+    settings = get_settings()
+    steps = settings['step_args']['steps']
+    predict_args = settings['predict_args']
     
-    model = os.path.join("results" ,"my_keras_model.h5")
+    predict = settings['step_args']['predict']
+    evaluate = settings['step_args']['evaluate']
+    results = os.path.join("results", settings["step_args"]["model_name"])
+    
     track = {"iou": iou, "dice_coef": dice_coef, 
              "iou_thresholded": iou_thresholded,
              "jaccard_coef": jaccard_coef}
     
+
+   
+    
     if evaluate:
-        results = evaluate_model(model, track)
+        results = evaluate_model(model, track, predict_args, steps)
     
     if predict:
-        y_pred = predict_model(model, track)
+        y_pred = predict_model(model, track, predict_args, steps)
     
     
 if __name__ == "__main__":
