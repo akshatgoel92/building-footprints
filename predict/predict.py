@@ -58,10 +58,7 @@ def create_test_gen(root, img_type, batch_size, target_size, channels):
     """
     root = os.path.join("data", root)
     n = common.list_local_images(root, img_type)
-    
-    random.shuffle(n)
     c = 0
-    
     while True:
         
         img = np.zeros((batch_size, 
@@ -79,10 +76,8 @@ def create_test_gen(root, img_type, batch_size, target_size, channels):
             img[i - c] = test_img
         
         c += batch_size
-        
         if c + batch_size >= len(n):
             c = 0
-            random.shuffle(n)
 
         yield img
     
@@ -135,7 +130,7 @@ def main():
     predict_args = settings['predict_args']
     predict = settings['misc_args']['predict']
     evaluate = settings['misc_args']['evaluate']
-    results = os.path.join("results", settings["misc_args"]["model_name"])
+    model = os.path.join("results", settings["misc_args"]["model_name"])
     
     track = {"iou": iou, 
              "dice_coef": dice_coef, 
