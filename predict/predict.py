@@ -71,7 +71,8 @@ def prep_test_img(img_path):
     test_img = skimage.transform.resize(test_img, target_size)
     
     return (test_img)
-
+    
+    
 def get_model(model, track):
     """
     ---------------------------------------------
@@ -104,6 +105,16 @@ def add_pred_band(prediction, img):
     return(np.dstack((img, prediction)))
     
     
+def add_mask_band(mask, img):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    return(np.dstack(prediction, img, mask))
+    
+    
 def write_prediction(prediction_img, transform, meta):
     """
     ---------------------------------------------
@@ -113,6 +124,27 @@ def write_prediction(prediction_img, transform, meta):
     """
     img = raster.open_img(source_path)
     raster.write_image(dest_path, prediction, meta)
+    
+    
+def load_prediction(prediction_img, transform, meta):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    img = raster.open_img(source_path)
+    return(img)
+    
+    
+def evaluate_prediction(pred_img):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    return(img)
     
     
 def run_pred(model, track, predict_args, steps):
