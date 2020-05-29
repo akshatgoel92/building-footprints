@@ -6,7 +6,7 @@
         "target_size":[640, 640],
         "channels":8
     }, 
-    "misc_args": {"steps": 321,
+    "misc_args": {"steps": 9,
                   "evaluate": false,
                   "predict": true, 
                   "model_name": "my_keras_model.h5"}

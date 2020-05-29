@@ -22,7 +22,7 @@ from matplotlib import pyplot
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
     
-
+    
 def get_settings(model_type="predict"):
     """
     ---------------------------------------------
@@ -49,71 +49,91 @@ def get_settings(model_type="predict"):
     return (settings)
     
     
-def create_test_gen(root, img_type, batch_size, target_size, channels):
+def get_metadata(img_path):
     """
     ---------------------------------------------
     Input: N/A
     Output: Tensorboard directory path
     ---------------------------------------------
     """
-    root = os.path.join("data", root)
-    n = common.list_local_images(root, img_type)
-    c = 0
-    while True:
-        
-        img = np.zeros((batch_size, 
-                        target_size[0], 
-                        target_size[1], 
-                        channels)).astype("float")
-                        
-                        
-        for i in range(c, c + batch_size):
-            
-            img_path = common.get_local_image_path(root, img_type, n[i])
-            test_img = skimage.io.imread(img_path)
-            
-            test_img = skimage.transform.resize(test_img, target_size)
-            img[i - c] = test_img
-        
-        c += batch_size
-        if c + batch_size >= len(n):
-            c = 0
+    img = raster.open_image(img_path)
+    return (img.transform, img.meta)
+     
+     
+def prep_test_img(img_path):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    test_img = skimage.io.imread(img_path)
+    test_img = skimage.transform.resize(test_img, target_size)
+    
+    return (test_img)
 
-        yield img
-    
-    
-def predict_model(model, track, settings, steps):
+def get_model(model, track):
     """
     ---------------------------------------------
-    Input: None
-    Output: None
-    Run the test harness for evaluating a model
-    ---------------------------------------------
-    """ 
-    model = keras.models.load_model(model, custom_objects = track)
-    test_it = create_test_gen(**settings)
-    
-    predictions = model.predict_generator(test_it, steps = steps, verbose=1)
-    np.savez_compressed(os.path.join("results", "pred.npz"), predictions)
-    
-    return predictions
-    
-    
-def evaluate_model(model, track, settings, steps):
-    """
-    ---------------------------------------------
-    Input: None
-    Output: None
-    Run the test harness for evaluating a model
+    Input: N/A
+    Output: Tensorboard directory path
     ---------------------------------------------
     """
-    model = keras.models.load_model(model, custom_objects =  track)
-    _, test_it = create_test_gen(**settings)
+    model = keras.models.load_model(model, custom_objects=track)
+    return(model)
+
     
-    results = model.evaluate_generator(test_it, steps = steps, verbose=1)
-    np.savez_compressed(os.path.join("results", "results.npz"), results)
+def get_prediction(test_img, model, track, settings):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    prediction = model.predict(test_img)
+    return (prediction)
     
-    return (results)
+    
+def add_pred_band(prediction, img):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    return(np.dstack((img, prediction)))
+    
+    
+def write_prediction(prediction_img, transform, meta):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    img = raster.open_img(source_path)
+    raster.write_image(dest_path, prediction, meta)
+    
+    
+def run_pred(model, track, predict_args, steps):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    weights = get_model(model, track)
+    root = os.path.join("data", root)
+    test_imgs = common.list_local_images(root, img_type)
+    
+    for test_img in test_imgs:
+        img_path = common.get_local_image_path(root, img_type, test_img)
+        transform, meta = get_metadata(img_path)
+        test_img = prep_test_img(img_path)
+        
+        pred = get_prediction(weights, test_img)
+        stack_image = add_pred_band(pred, test_img)
+        write_prediction(stack_image, dest_path, meta)
     
     
 def main():
@@ -125,7 +145,6 @@ def main():
     ---------------------------------------------
     """
     settings = get_settings()
-    
     steps = settings['misc_args']['steps']
     predict_args = settings['predict_args']
     predict = settings['misc_args']['predict']
@@ -141,8 +160,9 @@ def main():
         results = evaluate_model(model, track, predict_args, steps)
     
     if predict:
-        y_pred = predict_model(model, track, predict_args, steps)
+        results = predict_model(model, track, predict_args, steps)
     
+    return(results)
     
 if __name__ == "__main__":
     results = main()
