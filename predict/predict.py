@@ -133,15 +133,6 @@ def write_prediction(prediction_img, dest_path, meta):
     raster.write_image(dest_path, prediction_img, meta)
     
     
-def evaluate_prediction(pred_img):
-    """
-    ---------------------------------------------
-    Input: N/A
-    Output: Tensorboard directory path
-    ---------------------------------------------
-    """
-    pass
-    
     
 def run_pred(model, track, tests, masks, outputs, target_size, channels):
     """
@@ -177,7 +168,6 @@ def main():
     outputs = ['/Users/akshatgoel/Desktop/output.tif']
     
     predict = True
-    score = False
     channels = 8
 
     target_size = (640, 640)
@@ -189,12 +179,7 @@ def main():
              "jaccard_coef": jaccard_coef,
              "iou_thresholded": iou_thresholded}
     
-    if predict:
-        results = predict_model(model, track, predict_args, steps)
-    
-    if score
-        results = evaluate_model(model, track, predict_args, steps)
-    
+    results = run_pred(model, track, predict_args, steps)
     return(results)
     
 if __name__ == "__main__":
