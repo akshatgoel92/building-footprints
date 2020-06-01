@@ -9,6 +9,7 @@ import random
 import skimage
 import numpy as np
 
+from skimage import filters
 from helpers import common
 from helpers import raster
 from unet.metrics import iou
@@ -22,32 +23,7 @@ from keras import backend
 from matplotlib import pyplot
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
-    
-    
-def get_settings(model_type="predict"):
-    """
-    ---------------------------------------------
-    Deal with recale argument: need to reciprocate
-    Deal with converting lists to tuples
-    Input: Keras history project
-    Output: Display diagnostic learning curves
-    ---------------------------------------------
-    """
-    path = os.path.join(model_type, "settings.json")
-    
-    with open(path) as f:
-        settings = json.load(f)
 
-    for config in settings.values():
-        config.update(
-            {
-                setting: tuple(val)
-                for setting, val in config.items()
-                if type(val) == list
-            }
-        )
-    
-    return (settings)
     
     
 def get_metadata(img_path):
@@ -69,7 +45,7 @@ def prep_img(img_path, target_size, channels):
     ---------------------------------------------
     """
     img = skimage.io.imread(img_path)
-    img = skimage.transform.resize(test_img, 
+    img = skimage.transform.resize(img, 
                                   (1, *target_size, channels), 
                                    anti_aliasing = True,
                                    preserve_range = True)
@@ -88,18 +64,17 @@ def get_model(model, track):
     return(weights)
     
     
-def get_prediction(model, test_img):
+def get_prediction(model, img):
     """
     ---------------------------------------------
     Input: N/A
     Output: Tensorboard directory path
     ---------------------------------------------
     """
-    pred = model.predict(test_img)[0]
-    
-    thresh = skimage.filters.threshold_otsu(pred)
-    pred = pred > thresh
-    return (pred)
+    pred = model.predict(img)[0]
+    threshold = filters.threshold_otsu(pred)
+    prediction = (pred > threshold).astype('uint8')
+    return (prediction)
     
     
 def add_pred_band(prediction, img):
@@ -122,6 +97,22 @@ def add_mask_band(mask, img):
     return(np.dstack(prediction, img, mask))
     
     
+def stack_image(img, pred, mask_path, target_size):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    mask_img = prep_img(mask_path, target_size, channels = 1)
+    mask_img = mask_img[0]
+            
+    pred = add_pred_band(pred, img)
+    pred = add_mask_band(mask_img, img)
+    
+    return(pred)
+    
+    
 def write_prediction(dest_path, pred, meta):
     """
     ---------------------------------------------
@@ -129,13 +120,12 @@ def write_prediction(dest_path, pred, meta):
     Output: Tensorboard directory path
     ---------------------------------------------
     """
+    meta['dtype'] = 'uint8'
+    meta['width'] = pred.shape[1]
     meta['count'] = pred.shape[-1]
     meta['height'] = pred.shape[0]
-    meta['width'] = pred.shape[1]
-    meta['dtype'] = 'float32'
-    pred = np.moveaxis(prediction_img, -1, 0)
+    pred = np.moveaxis(pred, -1, 0)
     raster.write_image(dest_path, pred, meta)
-    
     
     
 def run_pred(model, track, tests, masks, outputs, target_size, channels, stack):
@@ -146,25 +136,17 @@ def run_pred(model, track, tests, masks, outputs, target_size, channels, stack):
     ---------------------------------------------
     """
     weights = get_model(model, track)
-    
-    for img_path, mask_path, output_path in zip(tests, masks, outputs):
+    count = 0
+    for img_path, mask_path, dest_path in zip(tests, masks, outputs):
         
-        
+        count += 1
+        print(count)
         test_img = prep_img(img_path, target_size, channels)
         pred = get_prediction(weights, test_img)
+        meta = get_metadata(img_path)
         
         test_img = test_img[0]
-        
-        meta = get_metadata(img_path)
-        if stack:
-            mask_img = prep_img(mask_path, target_size, channels = 1)
-            mask_img = mask_img[0]
-            
-            pred = add_pred_band(pred, test_img)
-            pred = add_mask_band(mask_img, test_img)
-        
-        write_prediction(output_path, pred, meta)
-    
+        write_prediction(dest_path, pred, meta)
     
 def main():
     """
@@ -178,20 +160,25 @@ def main():
              "dice_coef": dice_coef, 
              "jaccard_coef": jaccard_coef,
              "iou_thresholded": iou_thresholded}
+             
+    test_outputs_path = os.path.join("data", "test_outputs")
+    test_frames_path = os.path.join("data", "test_frames")
+    test_masks_path = os.path.join("data", "test_masks")
+    img_type = "test"
     
-    tests = ['/Users/akshatgoel/Desktop/test.tif']
-    masks = ['/Users/akshatgoel/Desktop/mask.tif']
-    outputs = ['/Users/akshatgoel/Desktop/output.tif']
+    test_masks = raster.list_images(test_masks_path, "test")
+    test_frames = raster.list_images(test_frames_path, "test")
     
-    predict = True
+    tests = [common.get_local_image_path(test_frames_path, img_type, f) for f in test_frames]
+    outputs = [common.get_local_image_path(test_outputs_path, img_type, f) for f in test_frames]
+    masks = [common.get_local_image_path(test_masks_path, img_type, f)  for f in test_masks if f in test_frames]
+    
     channels = 8
-
     target_size = (640, 640)
     model_name = 'my_keras_model.h5'
     model = os.path.join("results", model_name)
-
-    
     results = run_pred(model, track, tests, masks, outputs, target_size, channels, stack = False)
+    
     return(results)
     
 if __name__ == "__main__":
