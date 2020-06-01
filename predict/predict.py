@@ -61,20 +61,20 @@ def get_metadata(img_path):
     return (img.meta)
      
      
-def prep_test_img(img_path, target_size, channels):
+def prep_img(img_path, target_size, channels):
     """
     ---------------------------------------------
     Input: N/A
     Output: Tensorboard directory path
     ---------------------------------------------
     """
-    test_img = skimage.io.imread(img_path)
-    test_img = skimage.transform.resize(test_img, 
-                                        (1, *target_size, channels), 
-                                        anti_aliasing = True,
-                                        preserve_range = True)
-    
-    return (test_img)
+    img = skimage.io.imread(img_path)
+    img = skimage.transform.resize(test_img, 
+                                  (1, *target_size, channels), 
+                                   anti_aliasing = True,
+                                   preserve_range = True)
+    img = np.round(img)
+    return (img)
     
     
 def get_model(model, track):
@@ -86,7 +86,7 @@ def get_model(model, track):
     """
     weights = keras.models.load_model(model, custom_objects=track)
     return(weights)
-
+    
     
 def get_prediction(model, test_img):
     """
@@ -96,6 +96,9 @@ def get_prediction(model, test_img):
     ---------------------------------------------
     """
     pred = model.predict(test_img)[0]
+    
+    thresh = skimage.filters.threshold_otsu(pred)
+    pred = pred > thresh
     return (pred)
     
     
@@ -119,22 +122,23 @@ def add_mask_band(mask, img):
     return(np.dstack(prediction, img, mask))
     
     
-def write_prediction(prediction_img, dest_path, meta):
+def write_prediction(dest_path, pred, meta):
     """
     ---------------------------------------------
     Input: N/A
     Output: Tensorboard directory path
     ---------------------------------------------
     """
-    meta['count'] = prediction_img.shape[-1]
-    meta['height'] = prediction_img.shape[0]
-    meta['width'] = prediction_img.shape[1]
-    meta['dtype'] = str(prediction_img.dtype)
-    raster.write_image(dest_path, prediction_img, meta)
+    meta['count'] = pred.shape[-1]
+    meta['height'] = pred.shape[0]
+    meta['width'] = pred.shape[1]
+    meta['dtype'] = 'float32'
+    pred = np.moveaxis(prediction_img, -1, 0)
+    raster.write_image(dest_path, pred, meta)
     
     
     
-def run_pred(model, track, tests, masks, outputs, target_size, channels):
+def run_pred(model, track, tests, masks, outputs, target_size, channels, stack):
     """
     ---------------------------------------------
     Input: N/A
@@ -145,14 +149,21 @@ def run_pred(model, track, tests, masks, outputs, target_size, channels):
     
     for img_path, mask_path, output_path in zip(tests, masks, outputs):
         
-        mask_img = prep_img(mask_path, target_size, channels = 1)
+        
         test_img = prep_img(img_path, target_size, channels)
         pred = get_prediction(weights, test_img)
         
         test_img = test_img[0]
-        mask_img = mask_img[0]
-        stack_image = add_pred_band(pred, test_img)
-        write_prediction(stack_image, output_img, meta)
+        
+        meta = get_metadata(img_path)
+        if stack:
+            mask_img = prep_img(mask_path, target_size, channels = 1)
+            mask_img = mask_img[0]
+            
+            pred = add_pred_band(pred, test_img)
+            pred = add_mask_band(mask_img, test_img)
+        
+        write_prediction(output_path, pred, meta)
     
     
 def main():
@@ -163,6 +174,11 @@ def main():
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
+    track = {"iou": iou, 
+             "dice_coef": dice_coef, 
+             "jaccard_coef": jaccard_coef,
+             "iou_thresholded": iou_thresholded}
+    
     tests = ['/Users/akshatgoel/Desktop/test.tif']
     masks = ['/Users/akshatgoel/Desktop/mask.tif']
     outputs = ['/Users/akshatgoel/Desktop/output.tif']
@@ -173,13 +189,9 @@ def main():
     target_size = (640, 640)
     model_name = 'my_keras_model.h5'
     model = os.path.join("results", model_name)
+
     
-    track = {"iou": iou, 
-             "dice_coef": dice_coef, 
-             "jaccard_coef": jaccard_coef,
-             "iou_thresholded": iou_thresholded}
-    
-    results = run_pred(model, track, predict_args, steps)
+    results = run_pred(model, track, tests, masks, outputs, target_size, channels, stack = False)
     return(results)
     
 if __name__ == "__main__":
