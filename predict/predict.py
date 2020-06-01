@@ -9,112 +9,144 @@ import random
 import skimage
 import numpy as np
 
+from skimage import filters
 from helpers import common
+from helpers import raster
 from unet.metrics import iou
 from unet.metrics import dice_coef
 from unet.metrics import jaccard_coef
 from unet.metrics import iou_thresholded
-from unet.utils import load_dataset
+
 
 from numpy import load
 from keras import backend
 from matplotlib import pyplot
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
-    
 
-def get_settings(model_type="predict"):
-    """
-    ---------------------------------------------
-    Deal with recale argument: need to reciprocate
-    Deal with converting lists to tuples
-    Input: Keras history project
-    Output: Display diagnostic learning curves
-    ---------------------------------------------
-    """
-    path = os.path.join(model_type, "settings.json")
-    
-    with open(path) as f:
-        settings = json.load(f)
-
-    for config in settings.values():
-        config.update(
-            {
-                setting: tuple(val)
-                for setting, val in config.items()
-                if type(val) == list
-            }
-        )
-    
-    return (settings)
     
     
-def create_test_gen(root, img_type, batch_size, target_size, channels):
+def get_metadata(img_path):
     """
     ---------------------------------------------
     Input: N/A
     Output: Tensorboard directory path
     ---------------------------------------------
     """
-    root = os.path.join("data", root)
-    n = common.list_local_images(root, img_type)
-    c = 0
-    while True:
-        
-        img = np.zeros((batch_size, 
-                        target_size[0], 
-                        target_size[1], 
-                        channels)).astype("float")
-                        
-                        
-        for i in range(c, c + batch_size):
+    img = raster.open_image(img_path)
+    return (img.meta)
+     
+     
+def prep_img(img_path, target_size, channels):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    img = skimage.io.imread(img_path)
+    img = skimage.transform.resize(img, 
+                                  (1, *target_size, channels), 
+                                   anti_aliasing = True,
+                                   preserve_range = True)
+    img = np.round(img)
+    return (img)
+    
+    
+def get_model(model, track):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    weights = keras.models.load_model(model, custom_objects=track)
+    return(weights)
+    
+    
+def get_prediction(model, img):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    pred = model.predict(img)[0]
+    threshold = filters.threshold_otsu(pred)
+    prediction = (pred > threshold).astype('uint8')
+    return (prediction)
+    
+    
+def add_pred_band(prediction, img):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    return(np.dstack((img, prediction)))
+    
+    
+def add_mask_band(mask, img):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    return(np.dstack(prediction, img, mask))
+    
+    
+def stack_image(img, pred, mask_path, target_size):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    mask_img = prep_img(mask_path, target_size, channels = 1)
+    mask_img = mask_img[0]
             
-            img_path = common.get_local_image_path(root, img_type, n[i])
-            test_img = skimage.io.imread(img_path)
-            
-            test_img = skimage.transform.resize(test_img, target_size)
-            img[i - c] = test_img
+    pred = add_pred_band(pred, img)
+    pred = add_mask_band(mask_img, img)
+    
+    return(pred)
+    
+    
+def write_prediction(dest_path, pred, meta):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    meta['dtype'] = 'uint8'
+    meta['width'] = pred.shape[1]
+    meta['count'] = pred.shape[-1]
+    meta['height'] = pred.shape[0]
+    pred = np.moveaxis(pred, -1, 0)
+    raster.write_image(dest_path, pred, meta)
+    
+    
+def run_pred(model, track, tests, masks, outputs, target_size, channels, stack):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    weights = get_model(model, track)
+    count = 0
+    for img_path, mask_path, dest_path in zip(tests, masks, outputs):
         
-        c += batch_size
-        if c + batch_size >= len(n):
-            c = 0
-
-        yield img
-    
-    
-def predict_model(model, track, settings, steps):
-    """
-    ---------------------------------------------
-    Input: None
-    Output: None
-    Run the test harness for evaluating a model
-    ---------------------------------------------
-    """ 
-    model = keras.models.load_model(model, custom_objects = track)
-    test_it = create_test_gen(**settings)
-    
-    predictions = model.predict_generator(test_it, steps = steps, verbose=1)
-    np.savez_compressed(os.path.join("results", "pred.npz"), predictions)
-    
-    return predictions
-    
-    
-def evaluate_model(model, track, settings, steps):
-    """
-    ---------------------------------------------
-    Input: None
-    Output: None
-    Run the test harness for evaluating a model
-    ---------------------------------------------
-    """
-    model = keras.models.load_model(model, custom_objects =  track)
-    _, test_it = create_test_gen(**settings)
-    
-    results = model.evaluate_generator(test_it, steps = steps, verbose=1)
-    np.savez_compressed(os.path.join("results", "results.npz"), results)
-    
-    return (results)
-    
+        count += 1
+        print(count)
+        test_img = prep_img(img_path, target_size, channels)
+        pred = get_prediction(weights, test_img)
+        meta = get_metadata(img_path)
+        
+        test_img = test_img[0]
+        write_prediction(dest_path, pred, meta)
     
 def main():
     """
@@ -124,25 +156,30 @@ def main():
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    settings = get_settings()
-    
-    steps = settings['misc_args']['steps']
-    predict_args = settings['predict_args']
-    predict = settings['misc_args']['predict']
-    evaluate = settings['misc_args']['evaluate']
-    model = os.path.join("results", settings["misc_args"]["model_name"])
-    
     track = {"iou": iou, 
              "dice_coef": dice_coef, 
              "jaccard_coef": jaccard_coef,
              "iou_thresholded": iou_thresholded}
+             
+    test_outputs_path = os.path.join("data", "test_outputs")
+    test_frames_path = os.path.join("data", "test_frames")
+    test_masks_path = os.path.join("data", "test_masks")
+    img_type = "test"
     
-    if evaluate:
-        results = evaluate_model(model, track, predict_args, steps)
+    test_masks = raster.list_images(test_masks_path, "test")
+    test_frames = raster.list_images(test_frames_path, "test")
     
-    if predict:
-        y_pred = predict_model(model, track, predict_args, steps)
+    tests = [common.get_local_image_path(test_frames_path, img_type, f) for f in test_frames]
+    outputs = [common.get_local_image_path(test_outputs_path, img_type, f) for f in test_frames]
+    masks = [common.get_local_image_path(test_masks_path, img_type, f)  for f in test_masks if f in test_frames]
     
+    channels = 8
+    target_size = (640, 640)
+    model_name = 'my_keras_model.h5'
+    model = os.path.join("results", model_name)
+    results = run_pred(model, track, tests, masks, outputs, target_size, channels, stack = False)
+    
+    return(results)
     
 if __name__ == "__main__":
     results = main()
