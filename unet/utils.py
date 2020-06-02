@@ -275,7 +275,8 @@ def create_custom_gen(
             # Need to add extra dimension to mask for channel dimension
             img[i - c] = train_img
             mask_img = skimage.io.imread(mask_path)
-            mask_img = skimage.transform.resize(mask_img, target_size)
+            mask_img = skimage.transform.resize(mask_img, target_size, 
+                                                preserve_range = True)
             mask_img = mask_img.reshape(target_size[0], target_size[1], 1)
             mask[i - c] = mask_img
 

@@ -68,7 +68,7 @@ def iou(y_true, y_pred, smooth=1.):
     y_pred_f = backend.flatten(y_pred)
     intersection = backend.sum(y_true_f * y_pred_f)
     iou = (intersection + smooth) / (backend.sum(y_true_f) + backend.sum(y_pred_f) - intersection + smooth)
-    print(iou)
+    
     return(iou)
 
     
@@ -83,8 +83,8 @@ def jaccard_coef(y_true, y_pred):
     union = backend.sum(y_true + y_pred)
     jac = (intersection + 1.) / (union - intersection + 1.)
     return backend.mean(jac)
-
-
+    
+    
 def threshold_binarize(x, threshold=0.5):
     """
     ---------------------------------------------
@@ -122,7 +122,7 @@ def dice_coef(y_true, y_pred, smooth=1.):
     y_pred_f = backend.flatten(y_pred)
     intersection = backend.sum(y_true_f * y_pred_f)
     coef = (2. * intersection + smooth) / (backend.sum(y_true_f) + backend.sum(y_pred_f) + smooth)
-    print(coef)
+    
     return(coef)
                 
                 
