@@ -154,7 +154,7 @@ def define_model(
     model.compile(
         optimizer="Adam",
         loss="binary_crossentropy",
-        metrics=[metrics.iou, metrics.dice_coef, metrics.jaccard_coef, metrics.iou_thresholded],
+        metrics=[metrics.iou, metrics.dice_coef, metrics.iou_thresholded],
     )
-
+    
     return model
