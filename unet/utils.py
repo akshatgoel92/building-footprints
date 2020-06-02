@@ -158,21 +158,10 @@ def get_tensorboard_directory_callback():
 
 
 
-def create_default_gen(
-    train,
-    mask,
-    mode,
-    rescale,
-    shear_range,
-    zoom_range,
-    horizontal_flip,
-    batch_size,
-    class_mode,
-    target_size,
-    mask_color,
-    data_format,
-    custom,
-):
+def create_default_gen(train, mask, mode, rescale, shear_range, 
+                       zoom_range, horizontal_flip, batch_size, 
+                       class_mode, target_size, mask_color, 
+                       data_format, custom,):
     """
     ---------------------------------------------
     Input: N/A
@@ -214,24 +203,11 @@ def create_default_gen(
     return gen
 
 
-def create_custom_gen(
-    train_frame,
-    train_mask,
-    val_frame, 
-    val_mask,
-    img_type,
-    rescale,
-    shear_range,
-    zoom_range,
-    horizontal_flip,
-    batch_size,
-    class_mode,
-    target_size,
-    mask_color,
-    data_format,
-    custom,
-    channels
-):
+def create_custom_gen(train_frame, train_mask, val_frame, val_mask, 
+                      img_type, rescale, shear_range, zoom_range, 
+                      horizontal_flip, batch_size, class_mode, 
+                      target_size, mask_color, data_format, 
+                      custom, channels):
     """
     ---------------------------------------------
     Input: N/A
@@ -263,29 +239,24 @@ def create_custom_gen(
 
         for i in range(c, c + batch_size):
 
-            img_path = common.\
-                       get_local_image_path(frame_root, img_type, n[i])
-            
-            mask_path = common.\
-                        get_local_image_path(mask_root, img_type, n[i])
+            img_path = common.get_local_image_path(frame_root, img_type, n[i])
+            mask_path = common.get_local_image_path(mask_root, img_type, n[i])
 
             train_img = skimage.io.imread(img_path) / rescale
             train_img = skimage.transform.resize(train_img, target_size)
-
-            # Need to add extra dimension to mask for channel dimension
             img[i - c] = train_img
+            
+            # Need to add extra dimension to mask for channel dimension
             mask_img = skimage.io.imread(mask_path)
-            mask_img = skimage.transform.resize(mask_img, target_size, 
-                                                preserve_range = True)
+            mask_img = skimage.transform.resize(mask_img, target_size, preserve_range = True)
             mask_img = mask_img.reshape(target_size[0], target_size[1], 1)
             mask[i - c] = mask_img
 
-        # Need to recheck this
         c += batch_size
         if c + batch_size >= len(n):
             c = 0
             random.shuffle(n)
-
+        
         yield img, mask
 
 
@@ -296,10 +267,9 @@ def load_dataset(args1, args2):
     Output: Planet data split into train and test
     ---------------------------------------------
     """
-    # Train data generator
     if args2['custom'] == 1:
         create_gen = create_custom_gen
-    else:
+    elif args2['custom'] == 0:
         create_gen = create_default_gen
     
     train = create_gen(*args1, **args2, img_type = 'train')
