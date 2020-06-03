@@ -157,17 +157,16 @@ def main():
     ---------------------------------------------
     """
     track = {"iou": iou, 
-             "dice_coef": dice_coef, 
-             "jaccard_coef": jaccard_coef,
+             "dice_coef": dice_coef,
              "iou_thresholded": iou_thresholded}
              
-    test_outputs_path = os.path.join("data", "test_outputs")
-    test_frames_path = os.path.join("data", "test_frames")
-    test_masks_path = os.path.join("data", "test_masks")
-    img_type = "test"
+    test_outputs_path = os.path.join("data", "val_outputs")
+    test_frames_path = os.path.join("data", "val_frames")
+    test_masks_path = os.path.join("data", "val_masks")
+    img_type = "val"
     
-    test_masks = raster.list_images(test_masks_path, "test")
-    test_frames = raster.list_images(test_frames_path, "test")
+    test_masks = raster.list_images(test_masks_path, "val")
+    test_frames = raster.list_images(test_frames_path, "val")
     
     tests = [common.get_local_image_path(test_frames_path, img_type, f) for f in test_frames]
     outputs = [common.get_local_image_path(test_outputs_path, img_type, f) for f in test_frames]
