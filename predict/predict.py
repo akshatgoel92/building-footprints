@@ -46,10 +46,8 @@ def prep_img(img_path, target_size, channels):
     """
     img = skimage.io.imread(img_path)
     img = skimage.transform.resize(img, 
-                                  (1, *target_size, channels), 
-                                   anti_aliasing = True,
-                                   preserve_range = True)
-    img = np.round(img)
+                                  (1, *target_size, channels))
+    
     return (img)
     
     
