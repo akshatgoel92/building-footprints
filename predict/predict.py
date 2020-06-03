@@ -70,7 +70,8 @@ def get_prediction(model, img):
     ---------------------------------------------
     """
     pred = model.predict(img)[0]
-    threshold = filters.threshold_otsu(pred)
+    print(pred)
+    threshold = 0.5
     prediction = (pred > threshold).astype('uint8')
     return (prediction)
     
@@ -177,6 +178,11 @@ def main():
         test_outputs_path = os.path.join("data", "test_outputs")
         test_frames_path = os.path.join("data", "test_frames")
         test_masks_path = os.path.join("data", "test_masks")
+    
+    elif img_type == 'train':
+        test_outputs_path = os.path.join("data", "train_outputs")
+        test_frames_path = os.path.join("data", "train_frames")
+        test_masks_path = os.path.join("data", "train_masks")
     
     test_masks = raster.list_images(test_masks_path, img_type)
     test_frames = raster.list_images(test_frames_path, img_type)
