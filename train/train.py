@@ -43,7 +43,6 @@ def train(
     paths = utils.get_paths(**path_args)
     utils.check_folders(paths, **extension_args)
     keras.backend.set_image_data_format(data_format)
-    keras.tensorflow_backend._get_available_gpus()
     
     callbacks = []
     callbacks.append(utils.get_early_stopping_callback())
