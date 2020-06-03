@@ -73,7 +73,7 @@ def get_prediction(model, img):
     pred = model.predict(img)[0]
     threshold = filters.threshold_otsu(pred)
     prediction = (pred > threshold).astype('uint8')
-    print(pred.sum())
+    print(prediction.sum())
     return (prediction)
     
     
