@@ -46,10 +46,8 @@ def prep_img(img_path, target_size, channels):
     """
     img = skimage.io.imread(img_path)
     img = skimage.transform.resize(img, 
-                                  (1, *target_size, channels), 
-                                   anti_aliasing = True,
-                                   preserve_range = True)
-    img = np.round(img)
+                                  (1, *target_size, channels))
+    
     return (img)
     
     
@@ -148,6 +146,7 @@ def run_pred(model, track, tests, masks, outputs, target_size, channels, stack):
         test_img = test_img[0]
         write_prediction(dest_path, pred, meta)
     
+    
 def main():
     """
     ---------------------------------------------
@@ -156,26 +155,36 @@ def main():
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    track = {"iou": iou, 
-             "dice_coef": dice_coef,
-             "iou_thresholded": iou_thresholded}
-             
-    test_outputs_path = os.path.join("data", "val_outputs")
-    test_frames_path = os.path.join("data", "val_frames")
-    test_masks_path = os.path.join("data", "val_masks")
-    img_type = "val"
-    
-    test_masks = raster.list_images(test_masks_path, "val")
-    test_frames = raster.list_images(test_frames_path, "val")
-    
-    tests = [common.get_local_image_path(test_frames_path, img_type, f) for f in test_frames]
-    outputs = [common.get_local_image_path(test_outputs_path, img_type, f) for f in test_frames]
-    masks = [common.get_local_image_path(test_masks_path, img_type, f)  for f in test_masks if f in test_frames]
-    
     channels = 8
+    img_type = 'val'
     target_size = (640, 640)
     model_name = 'my_keras_model.h5'
     model = os.path.join("results", model_name)
+    
+    track = {"iou": iou, 
+             "dice_coef": dice_coef,
+             "iou_thresholded": iou_thresholded}
+    
+    if img_type == 'val':
+        test_outputs_path = os.path.join("data", "val_outputs")
+        test_frames_path = os.path.join("data", "val_frames")
+        test_masks_path = os.path.join("data", "val_masks")
+        
+        test_masks = raster.list_images(test_masks_path, img_type)
+        test_frames = raster.list_images(test_frames_path, img_type)
+    
+    elif img_type == 'test':      
+        test_outputs_path = os.path.join("data", "test_outputs")
+        test_frames_path = os.path.join("data", "test_frames")
+        test_masks_path = os.path.join("data", "test_masks")
+    
+    test_masks = raster.list_images(test_masks_path, img_type)
+    test_frames = raster.list_images(test_frames_path, img_type)
+    
+    tests = [common.get_local_image_path(test_frames_path, img_type, f) for f in test_frames]
+    outputs = [common.get_local_image_path(test_outputs_path, img_type, f) for f in test_frames]
+    
+    masks = [common.get_local_image_path(test_masks_path, img_type, f)  for f in test_masks if f in test_frames]
     results = run_pred(model, track, tests, masks, outputs, target_size, channels, stack = False)
     
     return(results)
