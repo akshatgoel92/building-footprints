@@ -71,7 +71,7 @@ def get_prediction(model, img):
     """
     pred = model.predict(img)[0]
     print(pred)
-    threshold = filters.threshold_otsu(pred)
+    threshold = 0.5
     prediction = (pred > threshold).astype('uint8')
     return (prediction)
     
