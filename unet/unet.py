@@ -1,14 +1,14 @@
 # Import packages
 import os
 import time
-import keras
+import tensorflow.keras as keras
 import sys
 
 from unet import utils
 from unet import metrics
 
-from keras.models import Model
-from keras.layers import (
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import (
     BatchNormalization,
     Conv2D,
     Conv2DTranspose,
@@ -17,9 +17,9 @@ from keras.layers import (
     Input,
     concatenate,
 )
-from keras import backend
-from keras.optimizers import SGD
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras import backend
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from numpy import load
 from matplotlib import pyplot

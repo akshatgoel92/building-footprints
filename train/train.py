@@ -6,7 +6,7 @@ from unet import unet
 import os
 import sys
 import time
-import keras
+import tensorflow.keras as keras
     
     
 from numpy import load
@@ -14,8 +14,8 @@ from keras import backend
 from helpers import common
 from matplotlib import pyplot
 
-from keras.preprocessing.image import ImageDataGenerator
-from keras.optimizers import SGD
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.optimizers import SGD
 
 
 def train(
@@ -43,6 +43,7 @@ def train(
     paths = utils.get_paths(**path_args)
     utils.check_folders(paths, **extension_args)
     keras.backend.set_image_data_format(data_format)
+    keras.tensorflow_backend._get_available_gpus()
     
     callbacks = []
     callbacks.append(utils.get_early_stopping_callback())
