@@ -4,7 +4,7 @@ import sys
 import unet
 import time
 import json
-import keras
+import tensorflow.keras as keras
 import random
 import skimage
 import numpy as np
@@ -12,11 +12,11 @@ import tensorflow as tf
 
 
 from numpy import load
-from keras import backend
+from tensorflow.keras import backend
 from helpers import common
 from matplotlib import pyplot
-from keras.optimizers import SGD
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from skimage import io
 from skimage import transform

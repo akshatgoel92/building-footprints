@@ -4,7 +4,7 @@ import sys
 import unet
 import time
 import json
-import keras
+import tensorflow.keras as keras
 import random
 import skimage
 import numpy as np
@@ -20,10 +20,10 @@ from unet.metrics import iou_thresholded
 
 
 from numpy import load
-from keras import backend
+from tensorflow.keras import backend
 from matplotlib import pyplot
-from keras.optimizers import SGD
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
     
     
@@ -73,7 +73,7 @@ def get_prediction(model, img):
     pred = model.predict(img)[0]
     threshold = filters.threshold_otsu(pred)
     prediction = (pred > threshold).astype('uint8')
-    print(prediction.sum())
+    
     return (prediction)
     
     
@@ -193,8 +193,8 @@ def main():
     
     tests = [common.get_local_image_path(test_frames_path, img_type, f) for f in test_frames]
     outputs = [common.get_local_image_path(test_outputs_path, img_type, f) for f in test_frames]
-    
     masks = [common.get_local_image_path(test_masks_path, img_type, f)  for f in test_masks if f in test_frames]
+    
     results = run_pred(model, track, tests, masks, outputs, target_size, channels, stack = False)
     
     return(results)
