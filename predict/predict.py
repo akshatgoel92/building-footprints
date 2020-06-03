@@ -10,6 +10,7 @@ import skimage
 import numpy as np
 
 from skimage import filters
+from skimage import img_as_ubyte
 from helpers import common
 from helpers import raster
 from unet.metrics import iou
@@ -70,9 +71,9 @@ def get_prediction(model, img):
     ---------------------------------------------
     """
     pred = model.predict(img)[0]
-    print(pred)
-    threshold = 0.5
+    threshold = filters.threshold_otsu(pred)
     prediction = (pred > threshold).astype('uint8')
+    print(pred.sum())
     return (prediction)
     
     
@@ -119,6 +120,7 @@ def write_prediction(dest_path, pred, meta):
     Output: Tensorboard directory path
     ---------------------------------------------
     """
+    meta['nodata'] = 1
     meta['dtype'] = 'uint8'
     meta['width'] = pred.shape[1]
     meta['count'] = pred.shape[-1]
@@ -140,6 +142,8 @@ def run_pred(model, track, tests, masks, outputs, target_size, channels, stack):
         
         count += 1
         print(count)
+        print(dest_path)
+        
         test_img = prep_img(img_path, target_size, channels)
         pred = get_prediction(weights, test_img)
         meta = get_metadata(img_path)
