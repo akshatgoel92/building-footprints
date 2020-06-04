@@ -26,7 +26,6 @@ from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
     
     
-    
 def get_metadata(img_path):
     """
     ---------------------------------------------
@@ -115,6 +114,7 @@ def run_pred(model, track, tests, masks, outputs, target_size, channels):
         test_img = test_img[0]
         write_prediction(dest_path, pred, meta)
     
+    
 def parse_args(test):
     """
     ---------------------------------------------
@@ -145,9 +145,8 @@ def parse_args(test):
     
     if test == 1:
         tests = tests[20:30]
-        print(tests)
         masks = masks[20:30]
-        print(masks)
+        outputs = outputs[20:30]
     
     return(model, track, tests, masks, outputs, target_size, channels)
     
