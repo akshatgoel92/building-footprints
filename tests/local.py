@@ -9,7 +9,6 @@ def test_predict():
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    
     try:
         predict.main(test=1)
     

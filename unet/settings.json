@@ -7,7 +7,7 @@
     },
     
     "checkpoint_args":{
-        "checkpoint_path": "my_keras_model.h5"
+        "checkpoint_path": "results_3.h5"
     },
     
     "extension_args": {
@@ -46,7 +46,7 @@
     },
     
     "training_args":{
-        "epochs":10,
+        "epochs":50,
         "pretrained":false,
         "results_folder":"results",
         "steps_per_epoch":964,
