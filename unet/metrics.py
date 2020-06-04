@@ -12,9 +12,9 @@ import tensorflow as tf
 
 
 from numpy import load
-from tensorflow.keras import backend
 from helpers import common
 from matplotlib import pyplot
+from tensorflow.keras import backend
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 

@@ -6,16 +6,16 @@ from unet import unet
 import os
 import sys
 import time
-import tensorflow.keras as keras
-    
-    
+
 from numpy import load
-from keras import backend
 from helpers import common
 from matplotlib import pyplot
 
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import tensorflow.keras as keras
+from tensorflow.keras import backend
 from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
 
 
 def train(
