@@ -49,8 +49,8 @@
         "epochs":50,
         "pretrained":false,
         "results_folder":"results",
-        "steps_per_epoch":964,
-        "validation_steps":324,
+        "steps_per_epoch":723,
+        "validation_steps":241,
         "verbose":1
     }, 
     
