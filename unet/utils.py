@@ -203,11 +203,8 @@ def create_default_gen(train, mask, mode, rescale, shear_range,
     return gen
 
 
-def create_custom_gen(train_frame, train_mask, val_frame, val_mask, 
-                      img_type, rescale, shear_range, zoom_range, 
-                      horizontal_flip, batch_size, class_mode, 
-                      target_size, mask_color, data_format, 
-                      custom, channels):
+def get_img_list(img_type, train_frame, train_mask, 
+                 val_frame, val_mask):
     """
     ---------------------------------------------
     Input: N/A
@@ -222,35 +219,65 @@ def create_custom_gen(train_frame, train_mask, val_frame, val_mask,
         frame_root = val_frame
         mask_root = val_mask
     
-    n = common.list_local_images(frame_root, img_type)
-    random.shuffle(n)
-    c = 0
+    img_list = common.list_local_images(frame_root, img_type)
+    random.shuffle(img_list)
     
-    while True:
-
-        img = np.zeros((batch_size, 
+    return(img_list)
+    
+    
+def create_data_store():
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    img_store = np.zeros((batch_size, 
                         target_size[0], 
                         target_size[1], 
                         channels)).astype("float")
+    
+    return(img_store)
+    
+    
+def prep_mask():
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    mask_img = skimage.io.imread(mask_path)
+    mask_img = skimage.transform.resize(mask_img, target_size, preserve_range = True)
+    mask_img = mask_img.reshape(target_size[0], target_size[1], 1)
+    
+    
+def prep_img():
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    train_img = skimage.io.imread(img_path) / rescale
+    train_img = skimage.transform.resize(train_img, target_size)
+    
+    
+def create_custom_gen(train_frame, train_mask, val_frame, val_mask, 
+                      img_type, rescale, shear_range, zoom_range, 
+                      horizontal_flip, batch_size, class_mode, 
+                      target_size, mask_color, data_format, 
+                      custom, channels):
+    """
+    ---------------------------------------------
+    Input: N/A
+    Output: Tensorboard directory path
+    ---------------------------------------------
+    """
+    c = 0
+    while True:
         
-        mask = np.zeros((batch_size, 
-                         target_size[0], 
-                         target_size[1], 1)).astype("float")
 
-        for i in range(c, c + batch_size):
-
-            img_path = common.get_local_image_path(frame_root, img_type, n[i])
-            mask_path = common.get_local_image_path(mask_root, img_type, n[i])
-
-            train_img = skimage.io.imread(img_path) / rescale
-            train_img = skimage.transform.resize(train_img, target_size)
-            img[i - c] = train_img
-            
-            # Need to add extra dimension to mask for channel dimension
-            mask_img = skimage.io.imread(mask_path)
-            mask_img = skimage.transform.resize(mask_img, target_size, preserve_range = True)
-            mask_img = mask_img.reshape(target_size[0], target_size[1], 1)
-            mask[i - c] = mask_img
 
         c += batch_size
         if c + batch_size >= len(n):
