@@ -4,27 +4,17 @@ from unet import unet
     
     
 def predict():
-    pass
     
-    
-def train():
-    pass
-    
-    
-def unet():
-    pass
-    
-    
-def flatten():
-    pass
-    
-    
-def prep_img():
-    pass
+    try:
+        predict.predict()
+    except Exception as e:
+        print(e)
     
     
 def main():
-    pass
+    
+    
+    predict()
     
     
 if __name__ == '__main__':

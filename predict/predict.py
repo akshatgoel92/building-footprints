@@ -77,42 +77,6 @@ def get_prediction(model, img):
     return (prediction)
     
     
-def add_pred_band(prediction, img):
-    """
-    ---------------------------------------------
-    Input: N/A
-    Output: Tensorboard directory path
-    ---------------------------------------------
-    """
-    return(np.dstack((img, prediction)))
-    
-    
-def add_mask_band(mask, img):
-    """
-    ---------------------------------------------
-    Input: N/A
-    Output: Tensorboard directory path
-    ---------------------------------------------
-    """
-    return(np.dstack(prediction, img, mask))
-    
-    
-def stack_image(img, pred, mask_path, target_size):
-    """
-    ---------------------------------------------
-    Input: N/A
-    Output: Tensorboard directory path
-    ---------------------------------------------
-    """
-    mask_img = prep_img(mask_path, target_size, channels = 1)
-    mask_img = mask_img[0]
-            
-    pred = add_pred_band(pred, img)
-    pred = add_mask_band(mask_img, img)
-    
-    return(pred)
-    
-    
 def write_prediction(dest_path, pred, meta):
     """
     ---------------------------------------------
@@ -151,8 +115,7 @@ def run_pred(model, track, tests, masks, outputs, target_size, channels, stack):
         test_img = test_img[0]
         write_prediction(dest_path, pred, meta)
     
-    
-def main():
+def parse_args(test):
     """
     ---------------------------------------------
     Input: None
@@ -161,7 +124,7 @@ def main():
     ---------------------------------------------
     """
     channels = 8
-    img_type = 'val'
+    img_type = 'train'
     target_size = (640, 640)
     model_name = 'my_keras_model.h5'
     model = os.path.join("results", model_name)
@@ -195,8 +158,24 @@ def main():
     outputs = [common.get_local_image_path(test_outputs_path, img_type, f) for f in test_frames]
     masks = [common.get_local_image_path(test_masks_path, img_type, f)  for f in test_masks if f in test_frames]
     
-    results = run_pred(model, track, tests, masks, outputs, target_size, channels, stack = False)
+    if test == 1:
+        tests = tests[20:30]
+        masks = tests[30:30]
+        outputs = outputs[20:30]
     
+    return(model, track, tests, masks, outputs, target_size, channels)
+    
+    
+def main(test=0):
+    """
+    ---------------------------------------------
+    Input: None
+    Output: None
+    Run the test harness for evaluating a model
+    ---------------------------------------------
+    """
+    model, track, tests, masks, outputs, target_size, channels = parse_args(test)
+    results = run_pred(model, track, tests, masks, outputs, target_size, channels)
     return(results)
     
 if __name__ == "__main__":
