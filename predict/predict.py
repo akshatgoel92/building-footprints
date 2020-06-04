@@ -93,7 +93,7 @@ def write_prediction(dest_path, pred, meta):
     raster.write_image(dest_path, pred, meta)
     
     
-def run_pred(model, track, tests, masks, outputs, target_size, channels, stack):
+def run_pred(model, track, tests, masks, outputs, target_size, channels):
     """
     ---------------------------------------------
     Input: N/A
@@ -126,7 +126,7 @@ def parse_args(test):
     channels = 8
     img_type = 'train'
     target_size = (640, 640)
-    model_name = 'my_keras_model.h5'
+    model_name = 'run_2.h5'
     model = os.path.join("results", model_name)
     
     track = {"iou": iou, 
@@ -175,8 +175,7 @@ def main(test=0):
     ---------------------------------------------
     """
     model, track, tests, masks, outputs, target_size, channels = parse_args(test)
-    results = run_pred(model, track, tests, masks, outputs, target_size, channels)
-    return(results)
+    run_pred(model, track, tests, masks, outputs, target_size, channels)
     
 if __name__ == "__main__":
     results = main()
