@@ -51,7 +51,7 @@ def train(
     
     if pretrained:
         model = keras.models.load_model(checkpoint_path)
-    else:
+    elif model_type == "unet":
         model = unet.define_model(output_args, **model_args)
     
     train, test= utils.load_dataset(paths, 
