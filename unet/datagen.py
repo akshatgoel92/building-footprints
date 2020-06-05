@@ -58,8 +58,8 @@ def create_default_gen(train, mask, mode, rescale, shear_range,
     return gen
 
 
-def get_img_list(img_type, train_frame, train_mask, 
-                 val_frame, val_mask):
+def get_data_list(img_type, train_frame, train_mask, val_frame, 
+                  val_mask):
     """
     ---------------------------------------------
     Input: N/A
@@ -77,10 +77,10 @@ def get_img_list(img_type, train_frame, train_mask,
     img_list = common.list_local_images(frame_root, img_type)
     random.shuffle(img_list)
     
-    return(img_list)
+    return(img_list, frame_root, mask_root)
     
     
-def create_data_store():
+def get_data_store(batch_size, target_size, channels):
     """
     ---------------------------------------------
     Input: N/A
@@ -95,7 +95,7 @@ def create_data_store():
     return(img_store)
     
     
-def prep_mask():
+def prep_mask(mask_path, target_size):
     """
     ---------------------------------------------
     Input: N/A
@@ -107,8 +107,10 @@ def prep_mask():
                                         preserve_range = True)
     mask_img = mask_img.reshape(target_size[0], target_size[1], 1)
     
+    return(mask_img)
     
-def prep_img():
+    
+def prep_train(img_path, rescale, target_size):
     """
     ---------------------------------------------
     Input: N/A
@@ -117,6 +119,8 @@ def prep_img():
     """
     train_img = skimage.io.imread(img_path) / rescale
     train_img = skimage.transform.resize(train_img, target_size)
+    
+    return(train_img)
     
     
 def create_custom_gen(train_frame, train_mask, val_frame, val_mask, 
@@ -130,13 +134,32 @@ def create_custom_gen(train_frame, train_mask, val_frame, val_mask,
     Output: Tensorboard directory path
     ---------------------------------------------
     """
+    img_list, frame_root, mask_root = get_data_list(img_type, train_frame, 
+                                                    train_mask, val_frame, 
+                                                    val_mask)
     c = 0
+    
     while True:
         
+        img = get_data_store(batch_size, target_size, channels)
+        mask = get_data_store(batch_size, target_size, 1)
+
+        for i in range(c, c + batch_size):
+
+            img_path = common.get_local_image_path(frame_root, img_type, img_list[i])
+            mask_path = common.get_local_image_path(mask_root, img_type, img_list[i])
+
+            train_img = prep_train(img_path, rescale, target_size)
+            mask_img = prep_mask(mask_path, target_size)
+            
+            img[i - c] = train_img
+            mask[i - c] = mask_img
+        
         c += batch_size
-        if c + batch_size >= len(n):
+        
+        if c + batch_size >= len(img_list):
             c = 0
-            random.shuffle(n)
+            random.shuffle(img_list)
         
         yield img, mask
 
