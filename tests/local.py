@@ -59,6 +59,7 @@ def main():
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
+    test_predict()
     test_datagen()
     
     
