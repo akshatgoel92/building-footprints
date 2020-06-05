@@ -4,12 +4,13 @@ import sys
 import unet
 import time
 import json
-import tensorflow.keras as keras
+
 import random
 import skimage
 import argparse
 import numpy as np
-    
+import tensorflow.keras as keras
+
 from skimage import filters
 from skimage import img_as_ubyte
 from helpers import common
@@ -19,10 +20,10 @@ from unet.metrics import dice_coef
 from unet.metrics import jaccard_coef
 from unet.metrics import iou_thresholded
     
-    
 from numpy import load
-from tensorflow.keras import backend
 from matplotlib import pyplot
+
+from tensorflow.keras import backend
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
     
@@ -102,6 +103,7 @@ def run_pred(model, track, tests, masks, outputs, target_size, channels):
     print("Entering prediction loop...")
     weights = get_model(model, track)
     count = 0
+    
     for img_path, mask_path, dest_path in zip(tests, masks, outputs):
         
         count += 1
@@ -126,8 +128,8 @@ def parse_args(test):
     """
     channels = 8
     img_type = 'val'
-    target_size =[640, 640]
     model_name = 'run_2.h5'
+    target_size =[640, 640]
     
     track = {"iou": iou, "dice_coef": dice_coef,
              "iou_thresholded": iou_thresholded}
@@ -135,8 +137,8 @@ def parse_args(test):
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("--channels", type=int, default=channels)
     parser.add_argument("--img_type", type=str, default=img_type)
-    parser.add_argument("--target_size", type=int, nargs='+', default=target_size)
     parser.add_argument("--model_name", type=str, default=model_name)
+    parser.add_argument("--target_size", type=int, nargs='+', default=target_size)
     args = parser.parse_args()
     
     channels = args.channels
@@ -145,9 +147,9 @@ def parse_args(test):
     target_size = tuple(args.target_size)
     model = os.path.join("results", model_name)
     
-    outputs_path = os.path.join("data", "{}_outputs".format(img_type))
-    frames_path = os.path.join("data", "{}_frames".format(img_type))
     masks_path = os.path.join("data", "{}_masks".format(img_type))
+    frames_path = os.path.join("data", "{}_frames".format(img_type))
+    outputs_path = os.path.join("data", "{}_outputs".format(img_type))
     
     frames = raster.list_images(frames_path, img_type)
     masks = raster.list_images(masks_path, img_type)
