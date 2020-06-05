@@ -22,8 +22,6 @@ from skimage import io
 from skimage import transform
 
 
-
-
 def jaccard_distance(y_true, y_pred, smooth=100):
     """Jaccard distance for semantic segmentation.
     Also known as the intersection-over-union loss.
@@ -57,7 +55,7 @@ def jaccard_distance(y_true, y_pred, smooth=100):
     return (1 - jac) * smooth
 
 
-def iou(y_true, y_pred, smooth=1.):
+def iou(y_true, y_pred, smooth=1.0):
     """
     ---------------------------------------------
     Input: Keras history project
@@ -67,11 +65,13 @@ def iou(y_true, y_pred, smooth=1.):
     y_true_f = backend.flatten(y_true)
     y_pred_f = backend.flatten(y_pred)
     intersection = backend.sum(y_true_f * y_pred_f)
-    iou = (intersection + smooth) / (backend.sum(y_true_f) + backend.sum(y_pred_f) - intersection + smooth)
-    
-    return(iou)
+    iou = (intersection + smooth) / (
+        backend.sum(y_true_f) + backend.sum(y_pred_f) - intersection + smooth
+    )
 
-    
+    return iou
+
+
 def jaccard_coef(y_true, y_pred):
     """
     ---------------------------------------------
@@ -81,10 +81,10 @@ def jaccard_coef(y_true, y_pred):
     """
     intersection = backend.sum(y_true * y_pred)
     union = backend.sum(y_true + y_pred)
-    jac = (intersection + 1.) / (union - intersection + 1.)
+    jac = (intersection + 1.0) / (union - intersection + 1.0)
     return backend.mean(jac)
-    
-    
+
+
 def threshold_binarize(x, threshold=0.5):
     """
     ---------------------------------------------
@@ -97,7 +97,7 @@ def threshold_binarize(x, threshold=0.5):
     return y
 
 
-def iou_thresholded(y_true, y_pred, threshold=0.5, smooth=1.):
+def iou_thresholded(y_true, y_pred, threshold=0.5, smooth=1.0):
     """
     ---------------------------------------------
     Input: Keras history project
@@ -108,10 +108,12 @@ def iou_thresholded(y_true, y_pred, threshold=0.5, smooth=1.):
     y_true_f = backend.flatten(y_true)
     y_pred_f = backend.flatten(y_pred)
     intersection = backend.sum(y_true_f * y_pred_f)
-    return (intersection + smooth) / (backend.sum(y_true_f) + backend.sum(y_pred_f) - intersection + smooth)
+    return (intersection + smooth) / (
+        backend.sum(y_true_f) + backend.sum(y_pred_f) - intersection + smooth
+    )
 
 
-def dice_coef(y_true, y_pred, smooth=1.):
+def dice_coef(y_true, y_pred, smooth=1.0):
     """
     ---------------------------------------------
     Input: Keras history project
@@ -121,11 +123,13 @@ def dice_coef(y_true, y_pred, smooth=1.):
     y_true_f = backend.flatten(y_true)
     y_pred_f = backend.flatten(y_pred)
     intersection = backend.sum(y_true_f * y_pred_f)
-    coef = (2. * intersection + smooth) / (backend.sum(y_true_f) + backend.sum(y_pred_f) + smooth)
-    
-    return(coef)
-                
-                
+    coef = (2.0 * intersection + smooth) / (
+        backend.sum(y_true_f) + backend.sum(y_pred_f) + smooth
+    )
+
+    return coef
+
+
 def summarize_training(history):
     """
     ---------------------------------------------

@@ -27,13 +27,13 @@ from matplotlib import pyplot
 
 def get_layers_args(
     kernel_initializer,
-    kernel_size, 
-    activation, 
-    strides, 
+    kernel_size,
+    activation,
+    strides,
     padding,
     pool_strides,
     pool_padding,
-    pool_size, 
+    pool_size,
 ):
     """
     ---------------------------------------------
@@ -106,7 +106,6 @@ def define_model(
     pool_size,
     pool_strides,
     pool_padding,
-    
 ):
     """
     ---------------------------------------------
@@ -116,8 +115,15 @@ def define_model(
     """
     inputs = Input(input_shape)
     conv2d_args, conv2d_trans_args, maxpool2d_args = get_layers_args(
-        kernel_initializer, kernel_size, activation, strides, padding,  
-        pool_strides, pool_padding, pool_size)
+        kernel_initializer,
+        kernel_size,
+        activation,
+        strides,
+        padding,
+        pool_strides,
+        pool_padding,
+        pool_size,
+    )
 
     x = Conv2D(filters, **conv2d_args)(inputs)
     c1 = bn_conv_relu(x, filters, bachnorm_momentum, **conv2d_args)
@@ -156,5 +162,5 @@ def define_model(
         loss="binary_crossentropy",
         metrics=[metrics.iou, metrics.dice_coef, metrics.iou_thresholded],
     )
-    
+
     return model
