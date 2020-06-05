@@ -260,14 +260,7 @@ def get_histogram(df, f_no=0, overlay=0):
         weights = band_data[1][indices]
         weights = weights / np.sum(weights)
 
-        ax.hist(
-            vals,
-            weights=weights,
-            label=str(i),
-            color=colors[i],
-            range=(0, 260),
-            **hist_args
-        )
+        ax.hist(vals, weights=weights, label=str(i), color=colors[i], range=(0, 260), **hist_args)
 
     # Add annotations
     ax.legend(loc="upper right")

@@ -19,13 +19,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 def train(
-    path_args,
-    training_args,
-    model_args,
-    output_args,
-    load_dataset_args,
-    checkpoint_args,
-    extension_args,
+    path_args, training_args, model_args, output_args, load_dataset_args, checkpoint_args, extension_args,
 ):
     """
     ---------------------------------------------
@@ -57,9 +51,7 @@ def train(
 
     train, val = datagen.load_dataset(paths, load_dataset_args)
 
-    history = model.fit_generator(
-        train, validation_data=val, callbacks=callbacks, **training_args
-    )
+    history = model.fit_generator(train, validation_data=val, callbacks=callbacks, **training_args)
 
     return (history, model)
 

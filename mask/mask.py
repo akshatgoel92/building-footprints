@@ -32,13 +32,9 @@ def get_mask(f, shapes, invert=False, filled=True):
     """
     img = raster.open_image(f)
 
-    mask, transform = rasterio.mask.mask(
-        img, shapes, crop=False, invert=invert, filled=filled
-    )
+    mask, transform = rasterio.mask.mask(img, shapes, crop=False, invert=invert, filled=filled)
 
-    mask = (
-        (np.sum(mask, axis=0) > 0).astype(int).reshape(1, mask.shape[1], mask.shape[2])
-    )
+    mask = (np.sum(mask, axis=0) > 0).astype(int).reshape(1, mask.shape[1], mask.shape[2])
 
     mask.dtype = "uint8"
 
@@ -75,10 +71,10 @@ def main():
 
     shape_root = "data"
     output_format = ".tif"
-    
+
     shape_type = "geojson_buildings"
     shape_name = "vegas.geojson"
-    
+
     mode = "standard"
     extension = ".tif"
 
@@ -117,10 +113,7 @@ def main():
     shapes = get_shapes(shape_root, shape_type, shape_name)
 
     remaining = [
-        common.get_local_image_path(root, image_type, f)
-        for f in common.get_remaining(
-            output_format, extension, storage, prefix, prefix_storage,
-        )
+        common.get_local_image_path(root, image_type, f) for f in common.get_remaining(output_format, extension, storage, prefix, prefix_storage,)
     ]
 
     counter = 0

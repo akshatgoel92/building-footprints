@@ -37,13 +37,7 @@ def get_settings(model_type):
         settings = json.load(f)
 
     for config in settings.values():
-        config.update(
-            {
-                setting: tuple(val)
-                for setting, val in config.items()
-                if type(val) == list
-            }
-        )
+        config.update({setting: tuple(val) for setting, val in config.items() if type(val) == list})
 
     return settings
 
@@ -121,9 +115,7 @@ def get_checkpoint_callback(checkpoint_path):
     checkpoint_path = os.path.join("results", checkpoint_path)
 
     # Add checkpoints for regular saving
-    checkpoint_cb = keras.callbacks.ModelCheckpoint(
-        checkpoint_path, save_best_only=True
-    )
+    checkpoint_cb = keras.callbacks.ModelCheckpoint(checkpoint_path, save_best_only=True)
 
     return checkpoint_cb
 
@@ -136,9 +128,7 @@ def get_early_stopping_callback():
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    early_stopping_cb = keras.callbacks.EarlyStopping(
-        patience=10, restore_best_weights=True
-    )
+    early_stopping_cb = keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
 
     return early_stopping_cb
 

@@ -63,13 +63,7 @@ def write_mosaic(mosaic, out_trans, out_meta, out_fp):
     ------------------------
     """
     out_meta.update(
-        {
-            "driver": "GTiff",
-            "height": mosaic.shape[1],
-            "width": mosaic.shape[2],
-            "transform": out_trans,
-            "compress": "lzw",
-        }
+        {"driver": "GTiff", "height": mosaic.shape[1], "width": mosaic.shape[2], "transform": out_trans, "compress": "lzw",}
     )
 
     with rasterio.open(out_fp, "w", **out_meta, BIGTIFF="IF_NEEDED") as dest:

@@ -65,9 +65,7 @@ def iou(y_true, y_pred, smooth=1.0):
     y_true_f = backend.flatten(y_true)
     y_pred_f = backend.flatten(y_pred)
     intersection = backend.sum(y_true_f * y_pred_f)
-    iou = (intersection + smooth) / (
-        backend.sum(y_true_f) + backend.sum(y_pred_f) - intersection + smooth
-    )
+    iou = (intersection + smooth) / (backend.sum(y_true_f) + backend.sum(y_pred_f) - intersection + smooth)
 
     return iou
 
@@ -108,9 +106,7 @@ def iou_thresholded(y_true, y_pred, threshold=0.5, smooth=1.0):
     y_true_f = backend.flatten(y_true)
     y_pred_f = backend.flatten(y_pred)
     intersection = backend.sum(y_true_f * y_pred_f)
-    return (intersection + smooth) / (
-        backend.sum(y_true_f) + backend.sum(y_pred_f) - intersection + smooth
-    )
+    return (intersection + smooth) / (backend.sum(y_true_f) + backend.sum(y_pred_f) - intersection + smooth)
 
 
 def dice_coef(y_true, y_pred, smooth=1.0):
@@ -123,9 +119,7 @@ def dice_coef(y_true, y_pred, smooth=1.0):
     y_true_f = backend.flatten(y_true)
     y_pred_f = backend.flatten(y_pred)
     intersection = backend.sum(y_true_f * y_pred_f)
-    coef = (2.0 * intersection + smooth) / (
-        backend.sum(y_true_f) + backend.sum(y_pred_f) + smooth
-    )
+    coef = (2.0 * intersection + smooth) / (backend.sum(y_true_f) + backend.sum(y_pred_f) + smooth)
 
     return coef
 

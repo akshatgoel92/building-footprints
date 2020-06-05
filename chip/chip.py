@@ -24,9 +24,7 @@ def get_tiles(ds, width, height):
 
     for col_off, row_off in offsets:
 
-        window = windows.Window(
-            col_off=col_off, row_off=row_off, width=width, height=height,
-        ).intersection(big_window)
+        window = windows.Window(col_off=col_off, row_off=row_off, width=width, height=height,).intersection(big_window)
 
         transform = windows.transform(window, ds.transform)
         yield window, transform
@@ -55,10 +53,7 @@ def output_chip(
                 window.height,
             )
 
-            outpath = os.path.join(
-                out_path,
-                output_filename.format(int(window.col_off), int(window.row_off)),
-            )
+            outpath = os.path.join(out_path, output_filename.format(int(window.col_off), int(window.row_off)),)
 
             with rasterio.open(outpath, "w", **meta) as outds:
                 outds.write(inds.read(window=window))

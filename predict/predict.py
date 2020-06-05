@@ -154,11 +154,7 @@ def parse_args(test):
 
     tests = [common.get_local_image_path(frames_path, img_type, f) for f in frames]
     outputs = [common.get_local_image_path(outputs_path, img_type, f) for f in frames]
-    masks = [
-        common.get_local_image_path(masks_path, img_type, f)
-        for f in masks
-        if f in frames
-    ]
+    masks = [common.get_local_image_path(masks_path, img_type, f) for f in masks if f in frames]
 
     if test == 1:
         tests = tests[20:30]

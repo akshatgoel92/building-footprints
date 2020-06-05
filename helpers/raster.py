@@ -23,11 +23,7 @@ def list_images(root, image_type):
     """
     path = common.get_local_folder_path(root, image_type)
 
-    images = [
-        f
-        for f in os.listdir(path)
-        if os.path.isfile(os.path.join(path, f)) and f.endswith(".tif")
-    ]
+    images = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f)) and f.endswith(".tif")]
 
     return images
 

@@ -30,11 +30,8 @@ def main():
     for f in files[0:n]:
         train = utils.get_train_dev_set(files=[f], n=1, dev=dev)
         train = utils.get_X_Y(train)
-        rf_reg = utils.fit_random_forest(
-            np.transpose(np.array(train[4:-2])),
-            np.transpose(np.array(train[-1].data)),
-            n_estimators,
-        )
+        rf_reg = utils.fit_random_forest(np.transpose(np.array(train[4:-2])), 
+                                         np.transpose(np.array(train[-1].data)), n_estimators,)
 
     utils.save_model(rf_reg, "rf_reg_{}.sav".format(str(run)))
 
