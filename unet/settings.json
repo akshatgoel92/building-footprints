@@ -7,7 +7,7 @@
     },
     
     "checkpoint_args":{
-        "checkpoint_path": "results_3.h5"
+        "checkpoint_path": "results_4.h5"
     },
     
     "extension_args": {
