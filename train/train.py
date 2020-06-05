@@ -3,7 +3,7 @@ from unet import metrics
 from unet import datagen
 from unet import utils
 from unet import unet
-    
+
 import os
 import sys
 import time
@@ -34,38 +34,36 @@ def train(
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    pretrained = training_args.pop('pretrained')
-    results_folder = training_args.pop('results_folder')
-    
-    data_format = load_dataset_args['data_format']
-    checkpoint_path = checkpoint_args['checkpoint_path']
-    
+    pretrained = training_args.pop("pretrained")
+    results_folder = training_args.pop("results_folder")
+
+    data_format = load_dataset_args["data_format"]
+    checkpoint_path = checkpoint_args["checkpoint_path"]
+
     paths = utils.get_paths(**path_args)
     utils.check_folders(paths, **extension_args)
     keras.backend.set_image_data_format(data_format)
-    
+
     callbacks = []
     callbacks.append(utils.get_early_stopping_callback())
     callbacks.append(utils.get_tensorboard_directory_callback())
     callbacks.append(utils.get_checkpoint_callback(checkpoint_path))
-    
+
     if pretrained:
         model = keras.models.load_model(checkpoint_path)
-    
+
     elif model_type == "unet":
         model = unet.define_model(output_args, **model_args)
-    
-    train, val= datagen.load_dataset(paths, 
-                                     load_dataset_args)
-    
-    history = model.fit_generator(train, 
-                                  validation_data = val, 
-                                  callbacks = callbacks, 
-                                  **training_args)
-    
+
+    train, val = datagen.load_dataset(paths, load_dataset_args)
+
+    history = model.fit_generator(
+        train, validation_data=val, callbacks=callbacks, **training_args
+    )
+
     return (history, model)
-    
-    
+
+
 if __name__ == "__main__":
-    model_type="unet"
+    model_type = "unet"
     history, model = train(**utils.get_settings(model_type))

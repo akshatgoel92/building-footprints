@@ -5,8 +5,6 @@ from unet import datagen
 from unet import utils
 
 
-    
-    
 def test_predict():
     """
     ---------------------------------------------
@@ -17,13 +15,13 @@ def test_predict():
     """
     try:
         predict.main(test=1)
-    
+
     except Exception as e:
         print("Got an error!")
         print(e)
-        
-        
-def test_datagen(model_type = "unet"):
+
+
+def test_datagen(model_type="unet"):
     """
     ---------------------------------------------
     Input: None
@@ -32,25 +30,25 @@ def test_datagen(model_type = "unet"):
     ---------------------------------------------
     """
     settings = utils.get_settings(model_type)
-    load_dataset_args = settings['load_dataset_args']
-    
-    path_args=  settings['path_args']
+    load_dataset_args = settings["load_dataset_args"]
+
+    path_args = settings["path_args"]
     paths = utils.get_paths(**path_args)
     train, val = datagen.load_dataset(paths, load_dataset_args)
-    
+
     try:
         train_img = next(train)
     except Exception as e:
         print("Got an error!")
         print(e)
-    
-    try: 
+
+    try:
         val_img = next(val)
     except Exception as e:
         print("Got an error!")
         print(e)
-            
-        
+
+
 def main():
     """
     ---------------------------------------------
@@ -61,7 +59,7 @@ def main():
     """
     test_predict()
     test_datagen()
-    
-    
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     main()

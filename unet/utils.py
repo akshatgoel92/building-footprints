@@ -32,7 +32,7 @@ def get_settings(model_type):
     ---------------------------------------------
     """
     path = os.path.join(model_type, "settings.json")
-    
+
     with open(path) as f:
         settings = json.load(f)
 
@@ -44,8 +44,8 @@ def get_settings(model_type):
                 if type(val) == list
             }
         )
-    
-    return (settings)
+
+    return settings
 
 
 def get_paths(train_frames, train_masks, val_frames, val_masks):
@@ -122,8 +122,8 @@ def get_checkpoint_callback(checkpoint_path):
 
     # Add checkpoints for regular saving
     checkpoint_cb = keras.callbacks.ModelCheckpoint(
-        checkpoint_path, 
-        save_best_only=True)
+        checkpoint_path, save_best_only=True
+    )
 
     return checkpoint_cb
 
@@ -137,8 +137,8 @@ def get_early_stopping_callback():
     ---------------------------------------------
     """
     early_stopping_cb = keras.callbacks.EarlyStopping(
-        patience=10, 
-        restore_best_weights=True)
+        patience=10, restore_best_weights=True
+    )
 
     return early_stopping_cb
 
