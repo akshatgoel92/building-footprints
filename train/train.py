@@ -1,5 +1,6 @@
 # Import packages
 from unet import metrics
+from unet import datagen
 from unet import utils
 from unet import unet
     
@@ -15,7 +16,6 @@ import tensorflow.keras as keras
 from tensorflow.keras import backend
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
 
 
 def train(
@@ -51,14 +51,15 @@ def train(
     
     if pretrained:
         model = keras.models.load_model(checkpoint_path)
-    else:
+    
+    elif model_type == "unet":
         model = unet.define_model(output_args, **model_args)
     
-    train, test= utils.load_dataset(paths, 
-                                    load_dataset_args)
+    train, val= datagen.load_dataset(paths, 
+                                     load_dataset_args)
     
     history = model.fit_generator(train, 
-                                  validation_data = test, 
+                                  validation_data = val, 
                                   callbacks = callbacks, 
                                   **training_args)
     

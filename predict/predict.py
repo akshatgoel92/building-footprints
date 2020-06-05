@@ -124,7 +124,7 @@ def parse_args(test):
     ---------------------------------------------
     """
     channels = 8
-    img_type = 'train'
+    img_type = 'val'
     target_size =(640, 640)
     model_name = 'run_2.h5'
     model = os.path.join("results", model_name)

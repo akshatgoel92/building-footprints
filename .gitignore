@@ -2,7 +2,7 @@ logs/
 blocks/
 GE Gorakhpur/
 tiles/
-archive/
+ignore/
 secrets.json
 .python*
 data
