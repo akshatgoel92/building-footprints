@@ -7,6 +7,7 @@ import json
 import tensorflow.keras as keras
 import random
 import skimage
+import argparse
 import numpy as np
     
 from skimage import filters
@@ -125,12 +126,24 @@ def parse_args(test):
     """
     channels = 8
     img_type = 'val'
-    target_size =(640, 640)
+    target_size =[640, 640]
     model_name = 'run_2.h5'
-    model = os.path.join("results", model_name)
     
     track = {"iou": iou, "dice_coef": dice_coef,
              "iou_thresholded": iou_thresholded}
+    
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument("--channels", type=int, default=channels)
+    parser.add_argument("--img_type", type=str, default=img_type)
+    parser.add_argument("--target_size", type=int, nargs='+', default=target_size)
+    parser.add_argument("--model_name", type=str, default=model_name)
+    args = parser.parse_args()
+    
+    channels = args.channels
+    img_type = args.img_type
+    model_name = args.model_name
+    target_size = tuple(args.target_size)
+    model = os.path.join("results", model_name)
     
     outputs_path = os.path.join("data", "{}_outputs".format(img_type))
     frames_path = os.path.join("data", "{}_frames".format(img_type))
