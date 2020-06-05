@@ -71,17 +71,18 @@ def main():
     ------------------------
     """
     root = "data"
-    image_type = "val_frames_ps_ms"
+    image_type = "train_frames_rgb"
 
     shape_root = "data"
     output_format = ".tif"
-    shape_name = "vegas.geojson"
+    
     shape_type = "geojson_buildings"
-
+    shape_name = "vegas.geojson"
+    
     mode = "standard"
     extension = ".tif"
 
-    storage = "val_masks_ps_ms"
+    storage = "train_masks_rgb"
     prefix = common.get_local_image_path(root, image_type)
     prefix_storage = common.get_local_image_path(root, storage)
 
