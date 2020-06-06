@@ -23,7 +23,8 @@ from skimage import transform
 
 
 def create_default_gen(
-    train, mask, mode, rescale, shear_range, zoom_range, horizontal_flip, batch_size, class_mode, target_size, mask_color, data_format, custom,
+    train, mask, mode, rescale, shear_range, zoom_range, horizontal_flip, 
+    batch_size, class_mode, target_size, mask_color, data_format, custom,
 ):
     """
     ---------------------------------------------
