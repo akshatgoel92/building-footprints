@@ -77,11 +77,8 @@ def main():
 
     mode = "standard"
     extension = ".tif"
-
     storage = "train_masks_rgb"
-    prefix = common.get_local_image_path(root, image_type)
-    prefix_storage = common.get_local_image_path(root, storage)
-
+    
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("--root", type=str, default=root)
     parser.add_argument("--mode", type=str, default=mode)
@@ -92,9 +89,8 @@ def main():
     parser.add_argument("--shape_type", type=str, default=shape_type)
     parser.add_argument("--shape_name", type=str, default=shape_name)
     parser.add_argument("--output_format", type=str, default=output_format)
-
     args = parser.parse_args()
-
+    
     root = args.root
     mode = args.mode
     storage = args.storage
@@ -104,6 +100,9 @@ def main():
     shape_type = args.shape_type
     shape_name = args.shape_name
     output_format = args.output_format
+
+    prefix = common.get_local_image_path(root, image_type)
+    prefix_storage = common.get_local_image_path(root, storage)
 
     if mode == "append":
         out_path = common.get_local_image_path(shape_root, shape_type, shape_name)
