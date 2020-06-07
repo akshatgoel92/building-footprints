@@ -131,18 +131,6 @@ def parse_args(test):
     target_size = [640, 640]
 
     track = {"iou": iou, "dice_coef": dice_coef, "iou_thresholded": iou_thresholded}
-
-    parser = argparse.ArgumentParser(description="")
-    parser.add_argument("--channels", type=int, default=channels)
-    parser.add_argument("--img_type", type=str, default=img_type)
-    parser.add_argument("--model_name", type=str, default=model_name)
-    parser.add_argument("--target_size", type=int, nargs="+", default=target_size)
-    args = parser.parse_args()
-
-    channels = args.channels
-    img_type = args.img_type
-    model_name = args.model_name
-    target_size = tuple(args.target_size)
     model = os.path.join("results", model_name)
 
     masks_path = os.path.join("data", "{}_masks".format(img_type))
