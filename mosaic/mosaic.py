@@ -77,21 +77,14 @@ def main():
     Output:
     ------------------------
     """
+    chunksize=10
+    extension='.tif'
     path = common.get_s3_paths("Bing Gorakhpur", "Bing maps imagery_Gorakhpur")
 
-    parser = argparse.ArgumentParser(description="")
-    parser.add_argument("--path", type=str, default=path)
-    parser.add_argument("--chunksize", type=int, default=10)
-    parser.add_argument("--extension", type=str, default="tif")
-    args = parser.parse_args()
 
-    path = args.path
-    extension = args.extension
-    chunksize = args.chunksize
     images = get_image_list(path, extension, chunksize)
-
     for count, element in enumerate(images):
-
+        
         print(count)
         files = open_image_list(element)
         out_meta = files[0].meta.copy()
