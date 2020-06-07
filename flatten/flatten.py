@@ -90,30 +90,6 @@ def main():
     prefix = common.get_s3_paths(root, image_type)
     prefix_storage = common.get_s3_paths(root, storage)
     
-    
-    parser = argparse.ArgumentParser(description="")
-    parser.add_argument("--root", type=str, default=root)
-    parser.add_argument("--mask", type=str, default=mask)
-    parser.add_argument("--storage", type=str, default=storage)
-    parser.add_argument("--extension", type=str, default=extension)
-    parser.add_argument("--image_type", type=str, default=image_type)
-    parser.add_argument("--output_format", type=str, default=output_format)
-    
-
-    args = parser.parse_args()
-
-    
-    root = args.root
-    mask = args.mask
-    storage = args.storage
-    extension = args.extension
-    image_type = args.image_type
-    shape_root = args.shape_root
-    shape_type = args.shape_type
-    shape_name = args.shape_name
-    output_format = args.output_format
-    
-    
     remaining = common.get_remaining(
         output_format,
         extension,
