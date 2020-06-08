@@ -101,7 +101,7 @@ python split/split.py
 
 ### Train (Deep Learning) 
 
-This module takes trains a given deep neural network using keras. It takes in file paths to the following directories: 
+This module trains a given deep neural network using keras. It takes in file paths to the following directories: 
  - Training images
  - Training masks
  - Validation images
@@ -109,23 +109,31 @@ This module takes trains a given deep neural network using keras. It takes in fi
 
 It uses settings.json to compile a keras model with these settings. Each setting is described below: 
 
-```python
-{   
+```python 
     "path_args": {
         "train_frames": "train_frames",
         "train_masks": "train_masks", 
         "val_frames": "val_frames",
         "val_masks": "val_masks"
-    },
-    
+    }
+```
+These are the file paths to the data folders relative to the data storage folder in the folder structure given above. 
+
+```python
     "checkpoint_args":{
         "checkpoint_path": "results_4.h5"
-    },
-    
+    }
+```    
+This is the path where you want to store the output weights after training. 
+
+```python
     "extension_args": {
         "extension": ".tif"
-    },
-    
+    }
+```
+This is the file type of the data being used for training. 
+
+```python
     "load_dataset_args":{
         "custom":1,
         "batch_size": 4,
@@ -138,8 +146,10 @@ It uses settings.json to compile a keras model with these settings. Each setting
         "mask_color":"grayscale",
         "channels":3, 
         "data_format": "channels_last"
-    },
-    
+    }
+```
+
+```python
     "model_args":{
         "input_shape":[640, 640, 3], 
         "num_classes":1, 
@@ -155,8 +165,10 @@ It uses settings.json to compile a keras model with these settings. Each setting
         "pool_size":[2, 2],
         "pool_strides": [2, 2],
         "pool_padding": "valid"
-    },
-    
+    }
+```
+   
+```python 
     "training_args":{
         "epochs":50,
         "pretrained":false,
@@ -164,8 +176,10 @@ It uses settings.json to compile a keras model with these settings. Each setting
         "steps_per_epoch":723,
         "validation_steps":241,
         "verbose":1
-    }, 
-    
+    }
+```
+ 
+```python   
     "output_args":{
         "kernel_size":[1, 1],
         "strides":[1, 1],
