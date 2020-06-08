@@ -153,6 +153,19 @@ This is the file type of the data being used for training.
         "data_format": "channels_last"
     }
 ```
+These are the preprocessing arguments for the data generating functions in the data generator. Further detail is given below: 
+   - Custom: This gives which data generating function to use. The default KerasImageDataGenerator is used when this is set to 0.   
+   - Batch size: This gives the batch size of the training data i.e. at each iteration of the optimizer how many images are used to update the weights. 
+   - Target size: This gives the target size of the training data. 
+   - Rescale: This gives the value by which to rescale the data. 
+   - Shear range: This is an argument for Keras data generator so only gets used when custom = 0.
+   - Zoom range: This is an argument for Keras data generator so only gets used when custom = 0. 
+   - Horizontal flip: This is an argument for Keras data generator so only gets used when custom = 0. It flips each image horizontally in both directions and adds these flips to t                      he training dataset.
+   - Class mode: This is an argument for Keras data generator so only gets used when custom = 0. It specifies that it should treat the images as input datasets and not raise an er                 ror when it finds no output images. 
+   - Mask color: The image type of the mask. Generally set to grayscale.  
+   - Channels: No. of channels or bands in the data. 
+   - Data Format: This gives whether the imagery is in channels first (3, 640, 640) or channels last format (640, 640, 3).  
+
 
 ```python
     "model_args":{
@@ -172,6 +185,19 @@ This is the file type of the data being used for training.
         "pool_padding": "valid"
     }
 ```
+These are the arguments for the model. The parameters marked TBC are the ones that we are still unsure about. Further detail about this is given below: 
+ - Input shape: This gives the shape of the input file.
+ - Number of classes: This gives the number of possible output classes. This is set to 1 for segmentation but 2 for binary classification.
+ - Number of layers: This gives the number of downsampling and upsampling layers for the U-Net. 
+ - Upconvolution filters: [TBC]
+ - Kernel Size: [TBC] 
+ - Activation: This gives the activation function for each layer. 
+ - Padding: This gives the padding in the convolutional layers. [TBC]
+ - Initializer: This gives the weight initiliazation method for the start of training. 
+ - Momentum: This gives the 'learning rate' or 'speed' of the optimizer. 
+ - Pool size: This gives the size of the filter in the pooling layers. 
+ - Pool strides: This gives the size of the stride in the pooling layers. 
+ - Pool padding: This gives the padding in the pooling layers. 
    
 ```python 
     "training_args":{
