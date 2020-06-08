@@ -1,4 +1,5 @@
 # Introduction
+ 
 
 This is an experimental machine learning pipeline for semantic segmentation on Google Earth Engine data for Gorakhpur. The task we are trying to solve for is classifying all pixels which are part of a metal roof in a given satellite imagery tile from labeled data.
 
@@ -239,3 +240,215 @@ This module takes in a model .h5 file and an input directory containing images t
 ```python 
 python predict/predict.py
 ```
+
+### Experiments/Problems
+
+We have tried to use this pipeline for end-to-end training on SpaceNet2 data. We have not been successful in creating predicted building footprints. The pipeline outputs has returned blank masks in all our trainings. This section will go into detail about what we have tried to far. Our current work is focusing on finding what is causing our pipeline to predict blank masks and correcting this issue.
+
+### Experiment 1 
+
+We trained a UNET with the settings given below. The model arguments and output arguments are the default arguments in the keras-unet package which we have sourced the code from.
+
+### Settings
+
+```python
+    "model_args":{
+        "input_shape":[640, 640, 3],
+        "num_classes":1,
+        "num_layers":4,
+        "filters": 64,
+        "upconv_filters": 96,
+        "kernel_size": [3, 3],
+        "activation": "relu",
+        "strides": [1, 1],
+        "padding": "same",
+        "kernel_initializer": "he_normal",
+        "bachnorm_momentum": 0.01,
+        "pool_size":[2, 2],
+        "pool_strides": [2, 2],
+        "pool_padding": "valid"
+    }
+```
+```python
+    "training_args":{
+        "epochs":50,
+        "pretrained":false,
+        "results_folder":"results",
+        "steps_per_epoch":723,
+        "validation_steps":241,
+        "verbose":1
+    }
+```
+
+### Results
+
+The training failed. This is because KerasImageDataGenerator by default can only process imagery up to 4 bands of length and width that are multiples of 32. The SpaceNet Pan-Sharpened multi-band imagery is 8 bands and 650 X 650.  
+
+### Changes 
+
+We added the custom data generator given in unet/datagen.py which uses skimage to resize the images to 640 X 640. Skimage can take in 8 band imagery. 
+
+### Experiment 2 
+
+We trained a UNET with the settings given below. The model arguments and output arguments are the default arguments in the keras-unet package which we have sourced the code from and are the same as above. 
+
+### Settings 
+
+```python
+    "model_args":{
+        "input_shape":[640, 640, 3],
+        "num_classes":1,
+        "num_layers":4,
+        "filters": 64,
+        "upconv_filters": 96,
+        "kernel_size": [3, 3],
+        "activation": "relu",
+        "strides": [1, 1],
+        "padding": "same",
+        "kernel_initializer": "he_normal",
+        "bachnorm_momentum": 0.01,
+        "pool_size":[2, 2],
+        "pool_strides": [2, 2],
+        "pool_padding": "valid"
+    }
+```
+```python
+    "training_args":{
+        "epochs":50,
+        "pretrained":false,
+        "results_folder":"results",
+        "steps_per_epoch":723,
+        "validation_steps":241,
+        "verbose":1
+    }
+```
+
+### Results 
+The training worked but the loss metrics we were tracking at that time [IOU and F1 Score [Dice]] were both extremely tiny [0.0000e-4] and did not change even when we trained for 10 epochs.
+
+### Changes 
+We imported the IOU and F1 score from the unet-keras library to make sure that there was no bug. 
+
+### Experiment 3
+We trained a UNET with the settings given below. The model arguments and output arguments are the default arguments in the keras-unet package which we have sourced the code from a
+nd are the same as above.
+
+### Settings 
+
+```python
+    "model_args":{
+        "input_shape":[640, 640, 3],
+        "num_classes":1,
+        "num_layers":4,
+        "filters": 64,
+        "upconv_filters": 96,
+        "kernel_size": [3, 3],
+        "activation": "relu",
+        "strides": [1, 1],
+        "padding": "same",
+        "kernel_initializer": "he_normal",
+        "bachnorm_momentum": 0.01,
+        "pool_size":[2, 2],
+        "pool_strides": [2, 2],
+        "pool_padding": "valid"
+    }
+```
+```python
+    "training_args":{
+        "epochs":50,
+        "pretrained":false,
+        "results_folder":"results",
+        "steps_per_epoch":723,
+        "validation_steps":241,
+        "verbose":1
+    }
+```
+### Results 
+We saw the same pattern as above. The training worked but the loss metrics we were tracking at that time [IOU and F1 Score [Dice]] were both extremely tiny [0.0000e-4] and did notchange even when we trained for 10 epochs.
+
+### Changes
+Experiment 3 made us think that the loss functions and metrics were fine but that there might be a problem with pre-processing. We checked the pre-processed images that were beingfed into the neural network from the custom data generator and realized that the code was being rescaled twice. The pixel values were rescaled from their original values to float values between 0 and 1 when ski-kit image resized them and then again when our rescale argument was applied. We removed the rescale argument from the custom image data generator at this point. 
+
+### Experiment 4
+We trained a UNET with the settings given below. 
+
+### Settings 
+
+```python
+    "model_args":{
+        "input_shape":[640, 640, 3],
+        "num_classes":1,
+        "num_layers":4,
+        "filters": 64,
+        "upconv_filters": 96,
+        "kernel_size": [3, 3],
+        "activation": "relu",
+        "strides": [1, 1],
+        "padding": "same",
+        "kernel_initializer": "he_normal",
+        "bachnorm_momentum": 0.01,
+        "pool_size":[2, 2],
+        "pool_strides": [2, 2],
+        "pool_padding": "valid"
+    }
+```
+```python
+    "training_args":{
+        "epochs":50,
+        "pretrained":false,
+        "results_folder":"results",
+        "steps_per_epoch":723,
+        "validation_steps":241,
+        "verbose":1
+    }
+```
+### Results
+
+The training worked fine. The IOU and F1 score as well as the loss function decreased with each epoch. They were all within the expected range. However when we tried to use the trained model weights to make predictions we got blank masks [all black with no footprints].
+
+### Changes 
+We thought that maybe we were not training for enough epochs. We changed the epochs setting to 50 and used early stopping. 
+
+### Experiment 5 
+We trained a UNET with the settings given below. 
+
+### Settings 
+
+```python
+    "model_args":{
+        "input_shape":[640, 640, 3],
+        "num_classes":1,
+        "num_layers":4,
+        "filters": 64,
+        "upconv_filters": 96,
+        "kernel_size": [3, 3],
+        "activation": "relu",
+        "strides": [1, 1],
+        "padding": "same",
+        "kernel_initializer": "he_normal",
+        "bachnorm_momentum": 0.01,
+        "pool_size":[2, 2],
+        "pool_strides": [2, 2],
+        "pool_padding": "valid"
+    }
+```
+```python
+    "training_args":{
+        "epochs":50,
+        "pretrained":false,
+        "results_folder":"results",
+        "steps_per_epoch":723,
+        "validation_steps":241,
+        "verbose":1
+    }
+```
+### Results 
+The training worked fine. The metrics behaved in the same way as above. Early stopping made training end after 43 epochs.  We were getting blank masks. When we tried to diagnose this problem by looking at the numerical values of the predictions we found that the predicted probabilities were very small. When we looked at the numerical pixel values going into the model post-resizing we found that they were also very small too. So the first possibility is that we are pre-processing our images incorrectly in the custom image data generator. The other possibility is that we are writing the masks wrong and that there is a bug in our prediction module. 
+
+### Experiment 6 (Ongoing) 
+
+### Settings 
+
+Same as above.
+
+ 
