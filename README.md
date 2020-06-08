@@ -443,12 +443,41 @@ We trained a UNET with the settings given below.
     }
 ```
 ### Results 
-The training worked fine. The metrics behaved in the same way as above. Early stopping made training end after 43 epochs.  We were getting blank masks. When we tried to diagnose this problem by looking at the numerical values of the predictions we found that the predicted probabilities were very small. When we looked at the numerical pixel values going into the model post-resizing we found that they were also very small too. So the first possibility is that we are pre-processing our images incorrectly in the custom image data generator. The other possibility is that we are writing the masks wrong and that there is a bug in our prediction module. 
+The training worked fine. The metrics behaved in the same way as above. Early stopping made training end after 43 epochs.  We were getting blank masks. When we tried to diagnose this problem by looking at the numerical values of the predictions we found that the predicted probabilities were very small. When we looked at the numerical pixel values going into the model post-resizing we found that they were also very small too. So the first possibility is that we are pre-processing our images incorrectly in the custom image data generator. The other possibility is that we are writing the masks wrong and that there is a bug in our prediction module. This is why the next experiment tries to isolate the problem. 
 
 ### Experiment 6 (Ongoing) 
 
+This experiment changes the input data to the SpaceNet2 RGB 3 band imagery. The reason this will help is because we have already tested the default image data generator using the Gorakhpur Microsoft Bing data. If this works fine then this indicates that the problem is restricted to the two possibilities mentioned above. We should have these results by the vening of 9th June IST.
+
 ### Settings 
 
-Same as above.
+```python
+    "model_args":{
+        "input_shape":[640, 640, 3],
+        "num_classes":1,
+        "num_layers":4,
+        "filters": 64,
+        "upconv_filters": 96,
+        "kernel_size": [3, 3],
+        "activation": "relu",
+        "strides": [1, 1],
+        "padding": "same",
+        "kernel_initializer": "he_normal",
+        "bachnorm_momentum": 0.01,
+        "pool_size":[2, 2],
+        "pool_strides": [2, 2],
+        "pool_padding": "valid"
+    }
+```
+```python
+    "training_args":{
+        "epochs":50,
+        "pretrained":false,
+        "results_folder":"results",
+        "steps_per_epoch":723,
+        "validation_steps":241,
+        "verbose":1
+    }
+```
 
  
