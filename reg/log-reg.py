@@ -27,11 +27,7 @@ def main():
 
         hypers = [1]
         for c in hypers:
-            log_reg = utils.fit_log_reg(
-                np.transpose(np.array(train[4:-2])),
-                np.transpose(np.array(train[-1].data)),
-                c,
-            )
+            log_reg = utils.fit_log_reg(np.transpose(np.array(train[4:-2])), np.transpose(np.array(train[-1].data)), c,)
 
     utils.save_model(log_reg, "log_reg_{}.sav".format(str(c)))
 

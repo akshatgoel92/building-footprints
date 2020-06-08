@@ -86,9 +86,7 @@ def fit_log_reg(X, Y, C):
     Output:
     -------------------
     """
-    log_reg = LogisticRegression(
-        C=C, verbose=True, n_jobs=-1, solver="saga", warm_start=True
-    )
+    log_reg = LogisticRegression(C=C, verbose=True, n_jobs=-1, solver="saga", warm_start=True)
     log_reg.fit(X, Y)
 
     return log_reg
@@ -101,14 +99,7 @@ def fit_random_forest(X, Y, n_estimators):
     Output:
     -------------------
     """
-    rf_reg = RandomForestClassifier(
-        n_estimators=n_estimators,
-        max_depth=2,
-        bootstrap=False,
-        n_jobs=1,
-        verbose=1000,
-        warm_start=True,
-    )
+    rf_reg = RandomForestClassifier(n_estimators=n_estimators, max_depth=2, bootstrap=False, n_jobs=1, verbose=1000, warm_start=True,)
     rf_reg.fit(X, Y)
 
     return rf_reg

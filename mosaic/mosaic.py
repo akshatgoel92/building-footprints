@@ -63,13 +63,7 @@ def write_mosaic(mosaic, out_trans, out_meta, out_fp):
     ------------------------
     """
     out_meta.update(
-        {
-            "driver": "GTiff",
-            "height": mosaic.shape[1],
-            "width": mosaic.shape[2],
-            "transform": out_trans,
-            "compress": "lzw",
-        }
+        {"driver": "GTiff", "height": mosaic.shape[1], "width": mosaic.shape[2], "transform": out_trans, "compress": "lzw",}
     )
 
     with rasterio.open(out_fp, "w", **out_meta, BIGTIFF="IF_NEEDED") as dest:
@@ -83,21 +77,14 @@ def main():
     Output:
     ------------------------
     """
+    chunksize=10
+    extension='.tif'
     path = common.get_s3_paths("Bing Gorakhpur", "Bing maps imagery_Gorakhpur")
 
-    parser = argparse.ArgumentParser(description="")
-    parser.add_argument("--path", type=str, default=path)
-    parser.add_argument("--chunksize", type=int, default=10)
-    parser.add_argument("--extension", type=str, default="tif")
-    args = parser.parse_args()
 
-    path = args.path
-    extension = args.extension
-    chunksize = args.chunksize
     images = get_image_list(path, extension, chunksize)
-
     for count, element in enumerate(images):
-
+        
         print(count)
         files = open_image_list(element)
         out_meta = files[0].meta.copy()

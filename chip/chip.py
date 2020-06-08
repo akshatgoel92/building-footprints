@@ -24,9 +24,7 @@ def get_tiles(ds, width, height):
 
     for col_off, row_off in offsets:
 
-        window = windows.Window(
-            col_off=col_off, row_off=row_off, width=width, height=height,
-        ).intersection(big_window)
+        window = windows.Window(col_off=col_off, row_off=row_off, width=width, height=height,).intersection(big_window)
 
         transform = windows.transform(window, ds.transform)
         yield window, transform
@@ -55,10 +53,7 @@ def output_chip(
                 window.height,
             )
 
-            outpath = os.path.join(
-                out_path,
-                output_filename.format(int(window.col_off), int(window.row_off)),
-            )
+            outpath = os.path.join(out_path, output_filename.format(int(window.col_off), int(window.row_off)),)
 
             with rasterio.open(outpath, "w", **meta) as outds:
                 outds.write(inds.read(window=window))
@@ -71,34 +66,18 @@ def main():
     Output:
     ------------------------
     """
-    in_path = "GE Gorakhpur"
-    input_filename = "GC_GOOGLE_V1.tif"
-
-    out_path = "tiles"
-    output_filename = "tile_{}-{}.tif"
-
     width = 256
     height = 256
-
-    parser = argparse.ArgumentParser(description="")
-
-    parser.add_argument("--in_path", type=str, default=in_path)
-    parser.add_argument("--input_filename", type=str, default=input_filename)
-
-    parser.add_argument("--out_path", type=str, default=out_path)
-    parser.add_argument(
-        "--output_filename", type=str, default=output_filename,
-    )
-
-    parser.add_argument("--width", type=str, default=width)
-    parser.add_argument("--height", type=str, default=height)
-
-    args = parser.parse_args()
-    common.make_folders(args.in_path, args.out_path)
-
-    output_chip(**vars(args))
-    upload_chips(args.in_path, args.out_path)
-
+    
+    out_path = "tiles"
+    in_path = "GE Gorakhpur"
+    
+    input_filename = "GC_GOOGLE_V1.tif"
+    output_filename = "tile_{}-{}.tif"
+    
+    common.make_folders(in_path, out_path)
+    output_chip(in_path, input_filename, out_path, output_filename, width, height,)
+    
 
 if __name__ == "__main__":
     main()

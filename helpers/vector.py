@@ -86,9 +86,7 @@ def get_shapes(shape):
     Output:
     ------------------------
     """
-    shapes = [
-        feature["geometry"] for feature in shape if feature["geometry"] is not None
-    ]
+    shapes = [feature["geometry"] for feature in shape if feature["geometry"] is not None]
 
     return shapes
 

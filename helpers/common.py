@@ -36,11 +36,7 @@ def list_local_images(root, image_type):
     """
     path = get_local_folder_path(root, image_type)
 
-    images = [
-        f
-        for f in os.listdir(path)
-        if os.path.isfile(os.path.join(path, f)) and f.endswith(".tif")
-    ]
+    images = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f)) and f.endswith(".tif")]
 
     return images
 
@@ -95,15 +91,8 @@ def get_remaining(
 
     try:
 
-        existing = [
-            os.path.splitext(os.path.basename(f))[0]
-            for f in os.listdir(prefix_storage)
-            if f.endswith(output_format)
-        ]
-
-        remaining = [
-            f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing
-        ]
+        existing = [os.path.splitext(os.path.basename(f))[0] for f in os.listdir(prefix_storage) if f.endswith(output_format)]
+        remaining = [f for f in files if os.path.splitext(os.path.basename(f))[0] not in existing]
 
     except Exception as e:
         print(e)
@@ -138,9 +127,7 @@ def get_s3_client():
     ------------------------
     """
     _, access_key_id, secret_access_key = get_credentials()
-    s3 = boto3.client(
-        "s3", aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key
-    )
+    s3 = boto3.client("s3", aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
     return s3
 
 
@@ -152,9 +139,7 @@ def get_s3_resource():
     ------------------------
     """
     _, access_key_id, secret_access_key = get_credentials()
-    s3 = boto3.resource(
-        "s3", aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key
-    )
+    s3 = boto3.resource("s3", aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
     return s3
 
 
@@ -304,9 +289,7 @@ def get_raster_from_s3(path):
 
     url = "s3://{}/{}".format(bucket_name, path)
 
-    session = boto3.Session(
-        aws_access_key_id=access_key, aws_secret_access_key=secret_access_key
-    )
+    session = boto3.Session(aws_access_key_id=access_key, aws_secret_access_key=secret_access_key)
 
     with rasterio.Env(AWSSession(session)):
         f = rasterio.open(url)
@@ -335,9 +318,7 @@ def upload_chips(in_path, out_path):
     Output:
     ------------------------
     """
-    upload_files = [
-        os.path.join(out_path, img) for img in common.list_local_images(out_path, "")
-    ]
+    upload_files = [os.path.join(out_path, img) for img in common.list_local_images(out_path, "")]
 
     for img in upload_files:
         file_to = common.get_s3_paths(in_path, out_path)

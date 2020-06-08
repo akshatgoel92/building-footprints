@@ -26,14 +26,7 @@ from matplotlib import pyplot
 
 
 def get_layers_args(
-    kernel_initializer,
-    kernel_size,
-    activation,
-    strides,
-    padding,
-    pool_strides,
-    pool_padding,
-    pool_size,
+    kernel_initializer, kernel_size, activation, strides, padding, pool_strides, pool_padding, pool_size,
 ):
     """
     ---------------------------------------------
@@ -115,14 +108,7 @@ def define_model(
     """
     inputs = Input(input_shape)
     conv2d_args, conv2d_trans_args, maxpool2d_args = get_layers_args(
-        kernel_initializer,
-        kernel_size,
-        activation,
-        strides,
-        padding,
-        pool_strides,
-        pool_padding,
-        pool_size,
+        kernel_initializer, kernel_size, activation, strides, padding, pool_strides, pool_padding, pool_size,
     )
 
     x = Conv2D(filters, **conv2d_args)(inputs)
@@ -158,9 +144,7 @@ def define_model(
     model = Model(inputs=[inputs], outputs=[outputs])
 
     model.compile(
-        optimizer="Adam",
-        loss="binary_crossentropy",
-        metrics=[metrics.iou, metrics.dice_coef, metrics.iou_thresholded],
+        optimizer="Adam", loss="binary_crossentropy", metrics=[metrics.iou, metrics.dice_coef, metrics.iou_thresholded],
     )
 
     return model

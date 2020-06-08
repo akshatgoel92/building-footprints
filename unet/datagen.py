@@ -23,19 +23,8 @@ from skimage import transform
 
 
 def create_default_gen(
-    train,
-    mask,
-    mode,
-    rescale,
-    shear_range,
-    zoom_range,
-    horizontal_flip,
-    batch_size,
-    class_mode,
-    target_size,
-    mask_color,
-    data_format,
-    custom,
+    train, mask, mode, rescale, shear_range, zoom_range, horizontal_flip, 
+    batch_size, class_mode, target_size, mask_color, data_format, custom,
 ):
     """
     ---------------------------------------------
@@ -45,29 +34,12 @@ def create_default_gen(
     """
     keras.backend.set_image_data_format(data_format)
 
-    gen = ImageDataGenerator(
-        rescale=1.0 / rescale,
-        shear_range=shear_range,
-        zoom_range=zoom_range,
-        horizontal_flip=horizontal_flip,
-    )
+    gen = ImageDataGenerator(rescale=1.0 / rescale, shear_range=shear_range, zoom_range=zoom_range, horizontal_flip=horizontal_flip,)
 
-    train_gen = (
-        img[0]
-        for img in gen.flow_from_directory(
-            train, batch_size=batch_size, class_mode=class_mode, target_size=target_size
-        )
-    )
+    train_gen = (img[0] for img in gen.flow_from_directory(train, batch_size=batch_size, class_mode=class_mode, target_size=target_size))
 
     mask_gen = (
-        img[0]
-        for img in gen.flow_from_directory(
-            mask,
-            batch_size=batch_size,
-            class_mode=class_mode,
-            target_size=target_size,
-            color_mode=mask_color,
-        )
+        img[0] for img in gen.flow_from_directory(mask, batch_size=batch_size, class_mode=class_mode, target_size=target_size, color_mode=mask_color,)
     )
 
     gen = (pair for pair in zip(train_gen, mask_gen))
@@ -103,9 +75,7 @@ def get_data_store(batch_size, target_size, channels):
     Output: Tensorboard directory path
     ---------------------------------------------
     """
-    img_store = np.zeros((batch_size, target_size[0], target_size[1], channels)).astype(
-        "float"
-    )
+    img_store = np.zeros((batch_size, target_size[0], target_size[1], channels)).astype("float")
 
     return img_store
 
@@ -161,9 +131,7 @@ def create_custom_gen(
     Output: Tensorboard directory path
     ---------------------------------------------
     """
-    img_list, frame_root, mask_root = get_data_list(
-        img_type, train_frame, train_mask, val_frame, val_mask
-    )
+    img_list, frame_root, mask_root = get_data_list(img_type, train_frame, train_mask, val_frame, val_mask)
     c = 0
 
     while True:
