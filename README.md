@@ -35,7 +35,7 @@ This will go to the roof-classify directory which was just created after you ran
 
 	TBC
 
-### download 
+### Download 
 
 This module downloads existing imagery from S3 to the local machine. To run it just use the following command: 
 
@@ -178,7 +178,14 @@ This is the file type of the data being used for training.
         "verbose":1
     }
 ```
- 
+This block has the settings for training. Further detail on each argument is given below: 
+ - Epoch: This gives the number of epochs. Each epoch is one pass through the training data. 
+ - Pretrained: This gives whether we are using a pretrained model or not. 
+ - Results Folder: This gives the folder where results are going to be stored. 
+ - Steps per Epoch: It provides the number of steps per epoch for training. Right now it is manually calculated by No. of training images/Batch Size. 
+ - Validation steps: It provides the number of steps per epoch for validation. Right now it is manually calculated by No. of validation images/Batch size.
+ - Verbose: This tells keras to publish the metrics during training for monitoring.    
+
 ```python   
     "output_args":{
         "kernel_size":[1, 1],
@@ -188,6 +195,7 @@ This is the file type of the data being used for training.
     }
 }
 ```
+This block has the settings for the output layer. 
 
 To run this module adjust the settings.json file as required and then use the following command: 
 ```python
