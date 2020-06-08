@@ -16,13 +16,10 @@ These are the tasks in the order in which they have to be done to prepare the tr
 - Summarize
 - Train (Machine Learning)
   - Forest
-  - Reg 
+  - Regression
 - Train (Deep Learning) 
-  - UNet
-  - Predict
+- Predict
 - Tests
-  - Local 
-
 
 The following sections will describe what component of the repository does each of these tasks as well as how to run them.
 
@@ -117,27 +114,9 @@ To run this module adjust the settings.json file as required and then use the fo
 python train/train.py
 ```
 
-
-
-
-
 ### Predict
 
 This module takes in a model .h5 file and an input directory containing images that we want to make predictions for and returns grayscale predicted masks. To run this module use the following command: 
 ```python 
 python predict/predict.py
 ```
-
-
-
-
-
-
-### Summarize 
-
-### Split 
-
-###    
-
-
-
