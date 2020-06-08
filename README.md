@@ -1,4 +1,4 @@
-# Overview
+# Introduction
 
 This is an experimental machine learning pipeline for semantic segmentation on Google Earth Engine data for Gorakhpur. The task we are trying to solve for is classifying all pixels which are part of a metal roof in a given satellite imagery tile from labeled data.
 
@@ -31,6 +31,9 @@ cd ~/roof-classify && chmod +x setup.sh && setup.sh
 ```
 This will go to the roof-classify directory which was just created after you ran ``git clone ...`` and then will run the ``setup.sh`` shell script. If running this fails then open setup.sh and copy and paste each line into the server terminal. This will install all the required dependencies and create a functioning environment for you.
 
+## Data Folder Structure 
+
+	TBC
 
 ### download 
 
@@ -105,9 +108,72 @@ This module takes trains a given deep neural network using keras. It takes in fi
  - Validation masks 
 
 It uses settings.json to compile a keras model with these settings. Each setting is described below: 
- - layers
- - layers 
- - ....
+
+```python
+{   
+    "path_args": {
+        "train_frames": "train_frames",
+        "train_masks": "train_masks", 
+        "val_frames": "val_frames",
+        "val_masks": "val_masks"
+    },
+    
+    "checkpoint_args":{
+        "checkpoint_path": "results_4.h5"
+    },
+    
+    "extension_args": {
+        "extension": ".tif"
+    },
+    
+    "load_dataset_args":{
+        "custom":1,
+        "batch_size": 4,
+        "target_size":[640, 640],
+        "rescale": 255,
+        "shear_range":0.2,
+        "zoom_range":0.2,
+        "horizontal_flip":true,
+        "class_mode":"input",
+        "mask_color":"grayscale",
+        "channels":3, 
+        "data_format": "channels_last"
+    },
+    
+    "model_args":{
+        "input_shape":[640, 640, 3], 
+        "num_classes":1, 
+        "num_layers":4, 
+        "filters": 64,
+        "upconv_filters": 96, 
+        "kernel_size": [3, 3],
+        "activation": "relu",
+        "strides": [1, 1],
+        "padding": "same",
+        "kernel_initializer": "he_normal",
+        "bachnorm_momentum": 0.01,
+        "pool_size":[2, 2],
+        "pool_strides": [2, 2],
+        "pool_padding": "valid"
+    },
+    
+    "training_args":{
+        "epochs":50,
+        "pretrained":false,
+        "results_folder":"results",
+        "steps_per_epoch":723,
+        "validation_steps":241,
+        "verbose":1
+    }, 
+    
+    "output_args":{
+        "kernel_size":[1, 1],
+        "strides":[1, 1],
+        "activation":"sigmoid",
+        "padding":"valid"
+    }
+}
+```
 
 To run this module adjust the settings.json file as required and then use the following command: 
 ```python
