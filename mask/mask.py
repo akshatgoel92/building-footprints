@@ -4,6 +4,7 @@ import platform
 import rasterio
 import numpy as np
 
+from clize import run
 from helpers import raster
 from helpers import vector
 from helpers import common
@@ -59,26 +60,21 @@ def write_mask(
     raster.write_image(file_from, mask, meta)
 
 
-def main():
+def main(root = "data", image_type = "train_frames_rgb",  shape_root = "data", 
+         output_format = ".tif", shape_type = "geojson_buildings", 
+         shape_name = "vegas.geojson",  mode = "standard", 
+         extension = ".tif", storage = "train_masks_rgb", ):
     """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
+    Takes as input the a tile and returns chips.
+    ==========================================
+    :width: Desired width of each chip.
+    :height: Desired height of each chip.
+    :out_path: Desired output file storage folder.
+    :in_path: Folder where the input tile is stored.
+    :input_filename: Name of the input tile
+    :output_filename: Desired output file pattern
+    ===========================================
     """
-    root = "data"
-    image_type = "train_frames_rgb"
-    
-    shape_root = "data"
-    output_format = ".tif"
-    
-    shape_type = "geojson_buildings"
-    shape_name = "vegas.geojson"
-    
-    mode = "standard"
-    extension = ".tif"
-    storage = "train_masks_rgb"
-    
     prefix = common.get_local_image_path(root, image_type)
     prefix_storage = common.get_local_image_path(root, storage)
     
@@ -90,7 +86,9 @@ def main():
     shapes = get_shapes(shape_root, shape_type, shape_name)
     
     remaining = [
-        common.get_local_image_path(root, image_type, f) for f in common.get_remaining(output_format, extension, storage, prefix, prefix_storage,)
+        common.get_local_image_path(root, image_type, f) for f in common.get_remaining(output_format, 
+                                                                                       extension, storage, 
+                                                                                       prefix, prefix_storage,)
     ]
     
     counter = 0
@@ -112,4 +110,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run(main)
