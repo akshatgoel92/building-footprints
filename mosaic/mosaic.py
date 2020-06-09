@@ -2,11 +2,13 @@ import rasterio
 import argparse
 import os
 
+
 from rasterio.merge import merge
 from rasterio.plot import show
 from helpers import common
 from helpers import vector
 from helpers import raster
+from clize import run
 
 
 def get_image_list(path, extension, chunksize):
@@ -45,8 +47,6 @@ def get_mosaic(files):
     Output:
     ------------------------
     """
-
-    print(files)
     mosaic, out_trans = merge(files)
 
     for f in files:
@@ -63,26 +63,32 @@ def write_mosaic(mosaic, out_trans, out_meta, out_fp):
     ------------------------
     """
     out_meta.update(
-        {"driver": "GTiff", "height": mosaic.shape[1], "width": mosaic.shape[2], "transform": out_trans, "compress": "lzw",}
+        {"driver": "GTiff", "height": mosaic.shape[1], 
+        "width": mosaic.shape[2], "transform": out_trans, "compress": "lzw",}
     )
 
     with rasterio.open(out_fp, "w", **out_meta, BIGTIFF="IF_NEEDED") as dest:
         dest.write(mosaic)
 
 
-def main():
+def main(chunksize=10, extension='.tif', 
+         root = "Bing Gorakhpur", img_type = "Bing maps imagery_Gorakhpur"):
     """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
+    Takes as input the a tile and returns chips.
+    ==========================================
+    :width: Desired width of each chip.
+    :height: Desired height of each chip.
+    :out_path: Desired output file storage folder.
+    :in_path: Folder where the input tile is stored.
+    :input_filename: Name of the input tile
+    :output_filename: Desired output file pattern
+    ===========================================
     """
-    chunksize=10
-    extension='.tif'
-    path = common.get_s3_paths("Bing Gorakhpur", "Bing maps imagery_Gorakhpur")
-
-
+    
+    
+    path = common.get_s3_paths(root, img_type)
     images = get_image_list(path, extension, chunksize)
+    
     for count, element in enumerate(images):
         
         print(count)
@@ -95,4 +101,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run(main)
