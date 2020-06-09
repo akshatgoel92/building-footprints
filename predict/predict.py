@@ -1,9 +1,9 @@
 # Import packages
 import os
 import sys
-import unet
 import time
 import json
+import train_dl
 
 import random
 import skimage
@@ -16,10 +16,10 @@ from skimage import filters
 from skimage import img_as_ubyte
 from helpers import common
 from helpers import raster
-from train-dl.metrics import iou
-from train-dl.metrics import dice_coef
-from train-dl.metrics import jaccard_coef
-from train-dl.metrics import iou_thresholded
+from train_dl.metrics import iou
+from train_dl.metrics import dice_coef
+from train_dl.metrics import jaccard_coef
+from train_dl.metrics import iou_thresholded
 
 from numpy import load
 from matplotlib import pyplot
@@ -118,10 +118,12 @@ def run_pred(model, track, tests, masks, outputs, target_size, channels):
         write_prediction(dest_path, pred, meta)
 
 
-def parse_args(channels = 8, 
-               img_type = "val", 
-               model_name = "run_2.h5", 
-               target_size = [640, 640], test):
+def main(test=0,
+         channels = 8, 
+         img_type = "val", 
+         model_name = "run_2.h5", 
+         target_width = 640,
+         target_height = 640):
     """
     Takes as input the a tile and returns chips.
     ==========================================
@@ -133,9 +135,12 @@ def parse_args(channels = 8,
     :output_filename: Desired output file pattern
     ===========================================
     """
-    track = {"iou": iou, "dice_coef": dice_coef, "iou_thresholded": iou_thresholded}
+    target_size = (target_width, target_height)
+    
+    track = {"iou": iou, "dice_coef": dice_coef, 
+            "iou_thresholded": iou_thresholded}
+    
     model = os.path.join("results", model_name)
-
     masks_path = os.path.join("data", "{}_masks".format(img_type))
     frames_path = os.path.join("data", "{}_frames".format(img_type))
     outputs_path = os.path.join("data", "{}_outputs".format(img_type))
@@ -151,21 +156,8 @@ def parse_args(channels = 8,
         tests = tests[20:30]
         masks = masks[20:30]
         outputs = outputs[20:30]
-
-    return (model, track, tests, masks, outputs, target_size, channels)
-
-
-def main(test=0):
-    """
-    ---------------------------------------------
-    Input: None
-    Output: None
-    Run the test harness for evaluating a model
-    ---------------------------------------------
-    """
-    model, track, tests, masks, outputs, target_size, channels = parse_args(test)
+    
     run_pred(model, track, tests, masks, outputs, target_size, channels)
-
-
+    
 if __name__ == "__main__":
     run(main)
