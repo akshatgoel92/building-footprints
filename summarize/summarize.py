@@ -2,7 +2,8 @@
 import pandas as pd
 import numpy as np
 
-from summarize import utils
+from clize import run
+import utils
 from helpers import raster
 from helpers import vector
 
@@ -278,14 +279,21 @@ def get_histogram(df, f_no=0, overlay=0):
     plt.savefig(name)
 
 
-def main():
-
+def main(bands = 3, suffix = ".npz", root = "GE Gorakhpur", image_type = "blocks"):
+    """
+    Takes as input the a tile and returns chips.
+    ==============================================
+    :width: Desired width of each chip.
+    :height: Desired height of each chip.
+    :out_path: Desired output file storage folder.
+    :in_path: Folder where the input tile is stored.
+    :input_filename: Name of the input tile
+    :output_filename: Desired output file pattern
+    ===============================================
+    """
     # Convert to command line arguments
     # Need to remove hardcoding from this and other file
-    bands = 3
-    suffix = ".npz"
-    root = "GE Gorakhpur"
-    image_type = "blocks"
+
     
     # Get S3 paths
     # List files
@@ -319,4 +327,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run(main)

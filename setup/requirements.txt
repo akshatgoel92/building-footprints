@@ -18,6 +18,7 @@ chardet==3.0.4
 click==7.1.1
 click-plugins==1.1.1
 cligj==0.5.0
+clize==4.1.1
 cycler==0.10.0
 decorator==4.4.1
 defusedxml==0.6.0
@@ -65,6 +66,7 @@ networkx==2.4
 notebook==6.0.3
 numpy==1.18.1
 oauthlib==3.1.0
+od==1.0
 opencv-contrib-python==4.1.0.25
 opt-einsum==3.1.0
 OWSLib==0.19.2
@@ -106,13 +108,14 @@ scikit-learn==0.22.1
 scipy==1.4.1
 Send2Trash==1.5.0
 Shapely==1.7.0
+sigtools==2.0.2
 simplejson==3.17.0
 six==1.14.0
 snuggs==1.4.7
 tenacity==6.1.0
-tensorboard==2.1.1
-tensorflow==2.1.0
-tensorflow-estimator==2.1.0
+tensorboard==2.0.2
+tensorflow==2.0.0
+tensorflow-estimator==2.0.1
 termcolor==1.1.0
 terminado==0.8.3
 testpath==0.4.4

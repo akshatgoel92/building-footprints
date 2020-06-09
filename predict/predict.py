@@ -1,9 +1,9 @@
 # Import packages
 import os
 import sys
-import unet
 import time
 import json
+import train_dl
 
 import random
 import skimage
@@ -11,14 +11,15 @@ import argparse
 import numpy as np
 import tensorflow.keras as keras
 
+from clize import run
 from skimage import filters
 from skimage import img_as_ubyte
 from helpers import common
 from helpers import raster
-from unet.metrics import iou
-from unet.metrics import dice_coef
-from unet.metrics import jaccard_coef
-from unet.metrics import iou_thresholded
+from train_dl.metrics import iou
+from train_dl.metrics import dice_coef
+from train_dl.metrics import jaccard_coef
+from train_dl.metrics import iou_thresholded
 
 from numpy import load
 from matplotlib import pyplot
@@ -117,22 +118,29 @@ def run_pred(model, track, tests, masks, outputs, target_size, channels):
         write_prediction(dest_path, pred, meta)
 
 
-def parse_args(test):
+def main(test=0,
+         channels = 8, 
+         img_type = "val", 
+         model_name = "run_2.h5", 
+         target_width = 640,
+         target_height = 640):
     """
-    ---------------------------------------------
-    Input: None
-    Output: None
-    Run the test harness for evaluating a model
-    ---------------------------------------------
+    Takes as input the a tile and returns chips.
+    ==========================================
+    :width: Desired width of each chip.
+    :height: Desired height of each chip.
+    :out_path: Desired output file storage folder.
+    :in_path: Folder where the input tile is stored.
+    :input_filename: Name of the input tile
+    :output_filename: Desired output file pattern
+    ===========================================
     """
-    channels = 8
-    img_type = "val"
-    model_name = "run_2.h5"
-    target_size = [640, 640]
-
-    track = {"iou": iou, "dice_coef": dice_coef, "iou_thresholded": iou_thresholded}
+    target_size = (target_width, target_height)
+    
+    track = {"iou": iou, "dice_coef": dice_coef, 
+            "iou_thresholded": iou_thresholded}
+    
     model = os.path.join("results", model_name)
-
     masks_path = os.path.join("data", "{}_masks".format(img_type))
     frames_path = os.path.join("data", "{}_frames".format(img_type))
     outputs_path = os.path.join("data", "{}_outputs".format(img_type))
@@ -148,21 +156,8 @@ def parse_args(test):
         tests = tests[20:30]
         masks = masks[20:30]
         outputs = outputs[20:30]
-
-    return (model, track, tests, masks, outputs, target_size, channels)
-
-
-def main(test=0):
-    """
-    ---------------------------------------------
-    Input: None
-    Output: None
-    Run the test harness for evaluating a model
-    ---------------------------------------------
-    """
-    model, track, tests, masks, outputs, target_size, channels = parse_args(test)
+    
     run_pred(model, track, tests, masks, outputs, target_size, channels)
-
-
+    
 if __name__ == "__main__":
-    results = main()
+    run(main)

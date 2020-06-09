@@ -1,8 +1,8 @@
 import os
-import utils
-import argparse
 import platform
 import numpy as np
+
+from clize import run
 from helpers import raster
 from helpers import common
 
@@ -73,20 +73,20 @@ def convert_img_to_flat_file(img, mask):
     return flat
 
 
-def main():
+def main(output_format = ".npz", root = "GE Gorakhpur", 
+         image_type = "tiles", extension = ".tif", 
+         storage = "flat", mask = 'train'):
     """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
+    Takes as input the a tile and returns chips.
+    ==========================================
+    :width: Desired width of each chip.
+    :height: Desired height of each chip.
+    :out_path: Desired output file storage folder.
+    :in_path: Folder where the input tile is stored.
+    :input_filename: Name of the input tile
+    :output_filename: Desired output file pattern
+    ===========================================
     """
-    output_format = ".npz"
-    root = "GE Gorakhpur"
-    image_type = "tiles"
-    extension = ".tif"
-    storage = "flat"
-    mask = 'train'
-    
     prefix = common.get_s3_paths(root, image_type)
     prefix_storage = common.get_s3_paths(root, storage)
     
@@ -102,7 +102,7 @@ def main():
     masks = common.list_local_images(root, mask)
     counter = 0
 
-    for rast, mask in zip(remaining, masks[-len(remaining):]:
+    for rast, mask in zip(remaining, masks[-len(remaining):]):
         
         counter += 1
         print(f)
@@ -122,4 +122,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run(main)
