@@ -3,6 +3,7 @@ from rasterio import windows
 from helpers import common
 from helpers import raster
 from helpers import vector
+from clize import run
 
 import os
 import argparse
@@ -11,33 +12,44 @@ import rasterio
 
 def get_tiles(ds, width, height):
     """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
+    Takes as input the a tile and returns chips.
+    ==========================================
+    :width: Desired width of each chip.
+    :height: Desired height of each chip.
+    :out_path: Desired output file storage folder.
+    :in_path: Folder where the input tile is stored.
+    :input_filename: Name of the input tile
+    :output_filename: Desired output file pattern
+    ===========================================
     """
     ncols = ds.meta["width"]
     nrows = ds.meta["height"]
 
     offsets = product(range(0, ncols, width), range(0, nrows, height))
-    big_window = windows.Window(col_off=0, row_off=0, width=ncols, height=nrows)
+    
+    big_window = windows.Window(col_off=0, row_off=0, 
+                                width=ncols, height=nrows)
 
     for col_off, row_off in offsets:
 
-        window = windows.Window(col_off=col_off, row_off=row_off, width=width, height=height,).intersection(big_window)
+        window = windows.Window(col_off=col_off, row_off=row_off, 
+                                width=width, height=height,).intersection(big_window)
 
         transform = windows.transform(window, ds.transform)
         yield window, transform
 
 
-def output_chip(
-    in_path, input_filename, out_path, output_filename, width, height,
-):
+def output_chip(in_path, input_filename, out_path, output_filename, width, height,):
     """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
+    Takes as input the a tile and returns chips.
+    ==========================================
+    :width: Desired width of each chip.
+    :height: Desired height of each chip.
+    :out_path: Desired output file storage folder.
+    :in_path: Folder where the input tile is stored.
+    :input_filename: Name of the input tile
+    :output_filename: Desired output file pattern
+    ===========================================
     """
     path = os.path.join(in_path, input_filename)
 
@@ -53,31 +65,32 @@ def output_chip(
                 window.height,
             )
 
-            outpath = os.path.join(out_path, output_filename.format(int(window.col_off), int(window.row_off)),)
+            outpath = os.path.join(out_path, 
+                                   output_filename.\
+                                   format(int(window.col_off), 
+                                   int(window.row_off)),)
 
             with rasterio.open(outpath, "w", **meta) as outds:
                 outds.write(inds.read(window=window))
 
 
-def main():
+def main(width, height, out_path, in_path, 
+         input_filename, output_filename):
     """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
+    Takes as input the a tile and returns chips.
+    ==========================================
+    :width: Desired width of each chip.
+    :height: Desired height of each chip.
+    :out_path: Desired output file storage folder.
+    :in_path: Folder where the input tile is stored.
+    :input_filename: Name of the input tile
+    :output_filename: Desired output file pattern
+    ===========================================
     """
-    width = 256
-    height = 256
-    
-    out_path = "tiles"
-    in_path = "GE Gorakhpur"
-    
-    input_filename = "GC_GOOGLE_V1.tif"
-    output_filename = "tile_{}-{}.tif"
-    
     common.make_folders(in_path, out_path)
-    output_chip(in_path, input_filename, out_path, output_filename, width, height,)
+    output_chip(in_path, input_filename, out_path, 
+                output_filename, width, height,)
     
 
 if __name__ == "__main__":
-    main()
+    run(main)
