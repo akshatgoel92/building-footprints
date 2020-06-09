@@ -4,6 +4,7 @@ import math
 import os
 import re
 
+from clize import run
 from helpers import common
 
 
@@ -62,16 +63,18 @@ def add_frames(source_frames, dest_frames):
     return
 
 
-def main():
+def main(root = "data", image_type = "frames"):
     """
-    ------------------------
-    Input: 
-    Output:
-    ------------------------
+    Takes as input the a tile and returns chips.
+    ==========================================
+    :width: Desired width of each chip.
+    :height: Desired height of each chip.
+    :out_path: Desired output file storage folder.
+    :in_path: Folder where the input tile is stored.
+    :input_filename: Name of the input tile
+    :output_filename: Desired output file pattern
+    ===========================================
     """
-    root = "data"
-    image_type = "frames"
-
     train_target = os.path.join(root, "train_frames")
     val_target = os.path.join(root, "val_frames")
 
@@ -87,4 +90,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run(main)
