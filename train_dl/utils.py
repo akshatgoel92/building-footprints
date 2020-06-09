@@ -122,7 +122,7 @@ def get_checkpoint_callback(checkpoint_path):
     return checkpoint_cb
 
 
-def get_early_stopping_callback():
+def get_early_stopping_callback(patience=10):
     """
     ---------------------------------------------
     Input: None
@@ -130,7 +130,7 @@ def get_early_stopping_callback():
     Run the test harness for evaluating a model
     ---------------------------------------------
     """
-    early_stopping_cb = keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
+    early_stopping_cb = keras.callbacks.EarlyStopping(patience=patience, restore_best_weights=True)
 
     return early_stopping_cb
 
