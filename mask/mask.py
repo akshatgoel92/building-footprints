@@ -86,9 +86,11 @@ def main(root = "data", image_type = "train_frames_rgb",  shape_root = "data",
     shapes = get_shapes(shape_root, shape_type, shape_name)
     
     remaining = [
-        common.get_local_image_path(root, image_type, f) for f in common.get_remaining(output_format, 
-                                                                                       extension, storage, 
-                                                                                       prefix, prefix_storage,)
+        common.\
+        get_local_image_path(root, image_type, f) 
+        for f in common.get_remaining(output_format, 
+                                      extension, storage, 
+                                      prefix, prefix_storage,)
     ]
     
     counter = 0
