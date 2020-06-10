@@ -1,6 +1,7 @@
 import os
 import platform
 import numpy as np
+import pandas as pd
 
 from clize import run
 from helpers import raster
@@ -16,30 +17,29 @@ import numpy as np
 import rasterio.mask
 import matplotlib.pyplot as plt
 
-from helpers import raster
-from helpers import vector
-from helpers import common
-from rasterio.plot import show
-from rasterio.session import AWSSession
 
 
-def convert_img_to_flat_file(img, mask):
-    """''
+
+def convert_img_to_flat_file(img, label):
+    """
     --------------------------
     Input:
     Output:
     --------------------------
-    """ ""
-    arr = raster.convert_img_to_array(img)
-    height = range(img.height)
-    width = range(img.width)
-    bands = range(img.count)
+    """
+    img = raster.open_image(img)
+    print(2)
+    label = raster.open_image(label)
+    
     trans = img.transform
+    bands = range(img.count)
+    width = range(img.width)
+    height = range(img.height)
+    
+    img = raster.convert_img_to_array(img)
+    label = raster.convert_img_to_array(label)
+    
     flat = []
-
-    # Geographic coordinates get stored here
-    # Fix a row and iterate through all the columns
-    # Then move to the next row
     geo = [trans * (row, col) for row in height for col in width]
     x = []
     y = []
@@ -48,11 +48,10 @@ def convert_img_to_flat_file(img, mask):
         y.append(y_)
 
     # Get row and columns
-    # This fixes a row and goes through each column
-    # Then it goes to the next row
     img_coords = [(row, col) for row in height for col in width]
     row = []
     col = []
+    
     for row_, col_ in img_coords:
         row.append(row)
         col.append(col)
@@ -62,22 +61,34 @@ def convert_img_to_flat_file(img, mask):
     flat.append(y)
     flat.append(row)
     flat.append(col)
-
-    # Now add the labels
-    for band in bands:
-        flat.append(np.array([arr[band][row, col] for row in height for col in width]))
     
-    labels = (np.sum(mask, axis=0) > 0).astype(int).flatten()
-    flat.append(labels)
-
-    return flat
-
-
-def main(output_format = ".npz", root = "GE Gorakhpur", 
-         image_type = "tiles", extension = ".tif", 
-         storage = "flat", mask = 'train'):
+    # Now add the raster
+    for band in bands:
+        flat.append([img[band][row, col] for row in height for col in width])
+    
+    # Now add the label
+    label = list((np.sum(label, axis=0) > 0).astype(int).flatten())
+    flat.append(label)
+    
+    flat = pd.DataFrame(flat)
+    return(flat)
+    
+    
+def write_file(flat, f_name):
     """
-    Takes as input the a tile and returns chips.
+    --------------------------
+    Input:
+    Output:
+    --------------------------
+    """
+    flat.to_pickle(f_name)
+    
+    
+def main(output_format = ".npz", root = "tests", 
+         image_type = "train", extension = ".tif", 
+         storage = "train", mask = 'mask'):
+    """
+    Takes as input the tile and returns chips.
     ==========================================
     :width: Desired width of each chip.
     :height: Desired height of each chip.
@@ -87,39 +98,35 @@ def main(output_format = ".npz", root = "GE Gorakhpur",
     :output_filename: Desired output file pattern
     ===========================================
     """
-    prefix = common.get_s3_paths(root, image_type)
-    prefix_storage = common.get_s3_paths(root, storage)
+    prefix = common.get_local_folder_path(root, image_type)
+    prefix_mask = common.get_local_folder_path(root, mask)
+    prefix_storage = common.get_local_folder_path(root, storage)
+    args = (output_format, extension, storage, prefix, prefix_storage)
     
-    remaining = common.get_remaining(
-        output_format,
-        extension,
-        storage,
-        prefix,
-        prefix_storage,
-    )
-    
-    mask = os.path.join(os.path.join('data', '{}_masks'.format(mask)), mask)
+    remaining = common.get_remaining(*args)
     masks = common.list_local_images(root, mask)
+    
+    remaining = [os.path.join(prefix, f) for f in remaining]
+    masks = [os.path.join(prefix_mask, f) for f in masks]
+    
     counter = 0
-
-    for rast, mask in zip(remaining, masks[-len(remaining):]):
+    for img, label in zip(remaining, masks[-len(remaining):]):
         
         counter += 1
-        print(f)
         print(counter)
         
         try:
-            img = raster.get_image(rast)
-            mask = raster.get_image(mask)
-            flat = convert_img_to_flat_file(img, mask)
             
-            os.path.splitext(os.path.basename(f))[0] + output_format
-            common.write_flat_file(flat, root, storage, f_name)
-
+            f_name = os.path.splitext(os.path.basename(img))[0]
+            f_name = os.path.join(prefix_storage, f_name) + output_format
+            
+            flat = convert_img_to_flat_file(img, label)
+            write_file(flat, f_name)
+        
         except Exception as e:
             print(e)
             continue
-
-
+            
+            
 if __name__ == "__main__":
     run(main)
