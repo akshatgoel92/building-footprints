@@ -34,7 +34,7 @@ def open_image_list(images):
     files = []
 
     for f in images:
-        src = raster.get_image(f)
+        src = raster.open_image(f)
         files.append(src)
 
     return files
@@ -74,7 +74,7 @@ def write_mosaic(mosaic, out_trans, out_meta, out_fp):
 def main(chunksize=100, 
          extension='.tif', 
          root = "tests", 
-         img_type = "chips"):
+         img_type = "chip"):
     """
     Takes as input the a tile and returns chips.
     ==========================================
@@ -89,7 +89,9 @@ def main(chunksize=100,
     
     
     path = common.get_local_folder_path(root, img_type)
-    images = get_image_list(path, extension, chunksize)
+    
+    images = common.list_local_images(root, img_type)
+    images = [os.path.join(path, img) for img in images]
     
     for count, element in enumerate(images):
         

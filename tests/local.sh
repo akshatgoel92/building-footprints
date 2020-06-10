@@ -11,15 +11,14 @@ chip()
     height=65
     expected=100
     in="tests/train/"
-    out="tests/chips/"
+    out="tests/chip/"
     infile="test.tif"
     outfile="result_{}-result{}.tif"
     
     find $out -type f -name 'result*.tif' -delete
-    python chip/chip.py $width $height $out $in $infile $outfile
     
+    python chip/chip.py $width $height $out $in $infile $outfile
     test=$(ls $out | grep 'result' | wc -l)
-    find $out -type f -name 'result*.tif' -delete
     
     if [ $test == $expected ]
     then
@@ -28,6 +27,32 @@ chip()
         echo "The chipping module is not working..."
     fi
 }
+
+mosaic()
+{   
+    passed=0
+    root="tests" 
+    chunksize=100
+    img_type="chip"
+    extension=".tif"
+    
+    python mosaic/mosaic.py $chunksize $extension $root $img_type
+    
+    if [ $test==$expected ]
+    then
+        echo "The mosaic module is working..."
+    else
+        echo "The mosaic module is not working..."
+    fi
+    
+    find $out -type f -name 'result*.tif' -delete
+}
+
+mask()
+{
+
+}
+   
 
 flatten()
 {   
@@ -49,26 +74,34 @@ flatten()
     fi
 }
 
-mosaic()
-{   
-    passed=0
-    chunksize="mask"
-    extension="tests"
-    root="flat" 
-    img_type=".tif"
-    
-    python mosaic/mosaic.py $chunksize $extension $root $img_type
-    
-    if [ $test==$expected ]
-    then
-        echo "The mosaic module is working..."
-    else
-        echo "The mosaic module is not working..."
-    fi
+
+split()
+
+{
+
+
+
 }
+
+
+summarize()
+{
+
+
+
+
+}
+
+ 
+run()    
+{   
+    chip
+    mosaic
+    mask 
+    flatten
     
+    split
+    summarize
     
-chip
-mosaic
-    
+}
     
