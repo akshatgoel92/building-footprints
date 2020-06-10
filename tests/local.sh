@@ -5,8 +5,6 @@
 chip()
 {   
 
-    # Set vars
-    passed=0
     width=65
     height=65
     expected=100
@@ -33,26 +31,38 @@ mosaic()
     passed=0
     root="tests" 
     chunksize=100
-    out="tests/chip/"
     img_type="chip"
     extension=".tif"
     out_fp="mosaic"
     
+    in="tests/train/"
+    out="tests/chip/"
+    infile="test.tif"
+    
     python mosaic/mosaic.py $chunksize $extension $root $img_type $out_fp
     
-    if [ $test==$expected ]
-    then
-        echo "The mosaic module is working..."
-    else
-        echo "The mosaic module is not working..."
-    fi
-    
     find $out -type f -name 'result*.tif' -delete
+    diff "$root/$out_fp/chunk_0.tif" "$root/$in/$infile"
+    
+    
 }
 
 mask()
 {
-    echo "Mask will go here.."
+    root="tests"
+    storage ="mask"
+    mode="standard" 
+    extension=".tif" 
+    shape_type="shape"
+    image_type="train"  
+    shape_root="tests" 
+    output_format=".tif" 
+    shape_name="vegas.geojson"
+    
+    python mask/mask.py $root $image_type $shape_root \
+    $output_format $shape_type $shape_name $mode $extension $storage
+    
+     
 }
    
 
@@ -80,7 +90,7 @@ flatten()
 split()
 
 {
-
+    
     echo "Split will go here..."
 
 }
@@ -98,10 +108,13 @@ summarize()
 run()    
 {   
     chip
+    mask
     mosaic
-    mask 
+    
+    chip
     flatten
     
+    chip
     split
     summarize
     
