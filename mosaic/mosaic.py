@@ -71,8 +71,10 @@ def write_mosaic(mosaic, out_trans, out_meta, out_fp):
         dest.write(mosaic)
 
 
-def main(chunksize=10, extension='.tif', 
-         root = "Bing Gorakhpur", img_type = "Bing maps imagery_Gorakhpur"):
+def main(chunksize=100, 
+         extension='.tif', 
+         root = "tests", 
+         img_type = "chips"):
     """
     Takes as input the a tile and returns chips.
     ==========================================
@@ -86,7 +88,7 @@ def main(chunksize=10, extension='.tif',
     """
     
     
-    path = common.get_s3_paths(root, img_type)
+    path = common.get_local_folder_path(root, img_type)
     images = get_image_list(path, extension, chunksize)
     
     for count, element in enumerate(images):
@@ -98,7 +100,7 @@ def main(chunksize=10, extension='.tif',
         mosaic, out_trans = get_mosaic(files)
         out_fp = "chunk_{}.tif".format(count)
         write_mosaic(mosaic, out_trans, out_meta, out_fp)
-
-
+        
+        
 if __name__ == "__main__":
     run(main)

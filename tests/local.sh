@@ -11,7 +11,7 @@ chip()
     height=65
     expected=100
     in="tests/train/"
-    out="tests/train/"
+    out="tests/chips/"
     infile="test.tif"
     outfile="result_{}-result{}.tif"
     
@@ -49,6 +49,26 @@ flatten()
     fi
 }
 
-flatten
+mosaic()
+{   
+    passed=0
+    chunksize="mask"
+    extension="tests"
+    root="flat" 
+    img_type=".tif"
+    
+    python mosaic/mosaic.py $chunksize $extension $root $img_type
+    
+    if [ $test==$expected ]
+    then
+        echo "The mosaic module is working..."
+    else
+        echo "The mosaic module is not working..."
+    fi
+}
+    
+    
+chip
+mosaic
     
     
