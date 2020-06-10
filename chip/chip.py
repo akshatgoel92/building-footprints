@@ -74,8 +74,11 @@ def output_chip(in_path, input_filename, out_path, output_filename, width, heigh
                 outds.write(inds.read(window=window))
 
 
-def main(width, height, out_path, in_path, 
-         input_filename, output_filename):
+def main(width=20, height=20, 
+         out_path="tests/chip/", 
+         in_path="tests/chip/", 
+         input_filename="chunk_7.tif", 
+         output_filename="tile_{}-tile_{}.tif"):
     """
     Takes as input the a tile and returns chips.
     ==========================================
@@ -87,6 +90,12 @@ def main(width, height, out_path, in_path,
     :output_filename: Desired output file pattern
     ===========================================
     """
+    print(width)
+    print(height)
+    print(out_path)
+    print(in_path)
+    print(input_filename)
+    print(output_filename)
     common.make_folders(in_path, out_path)
     output_chip(in_path, input_filename, out_path, 
                 output_filename, width, height,)
