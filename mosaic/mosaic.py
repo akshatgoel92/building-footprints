@@ -74,7 +74,8 @@ def write_mosaic(mosaic, out_trans, out_meta, out_fp):
 def main(chunksize=100, 
          extension='.tif', 
          root = "tests", 
-         img_type = "chip"):
+         img_type = "chip",
+         out_fp = "mosaic"):
     """
     Takes as input the a tile and returns chips.
     ==========================================
@@ -92,16 +93,20 @@ def main(chunksize=100,
     
     images = common.list_local_images(root, img_type)
     images = [os.path.join(path, img) for img in images]
+    chunks = [images[i:i + chunksize] for i in range(0, len(images), chunksize)] 
     
-    for count, element in enumerate(images):
+    for count, element in enumerate(chunks):
         
         print(count)
+        print(element)
         files = open_image_list(element)
         out_meta = files[0].meta.copy()
 
         mosaic, out_trans = get_mosaic(files)
-        out_fp = "chunk_{}.tif".format(count)
-        write_mosaic(mosaic, out_trans, out_meta, out_fp)
+        out_name = os.path.join(out_fp, "chunk_{}.tif".format(count))
+        
+        args = (mosaic, out_trans, out_meta, os.path.join(root, out_name))
+        write_mosaic(*args)
         
         
 if __name__ == "__main__":

@@ -33,10 +33,12 @@ mosaic()
     passed=0
     root="tests" 
     chunksize=100
+    out="tests/chip/"
     img_type="chip"
     extension=".tif"
+    out_fp="mosaic"
     
-    python mosaic/mosaic.py $chunksize $extension $root $img_type
+    python mosaic/mosaic.py $chunksize $extension $root $img_type $out_fp
     
     if [ $test==$expected ]
     then
@@ -50,7 +52,7 @@ mosaic()
 
 mask()
 {
-
+    echo "Mask will go here.."
 }
    
 
@@ -79,7 +81,7 @@ split()
 
 {
 
-
+    echo "Split will go here..."
 
 }
 
@@ -88,7 +90,7 @@ summarize()
 {
 
 
-
+    echo "Summarize will go here..."
 
 }
 
@@ -104,4 +106,7 @@ run()
     summarize
     
 }
+
+
+run
     
