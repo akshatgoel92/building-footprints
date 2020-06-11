@@ -25,7 +25,7 @@ chip()
     
     if [ $test == $expected ]
     then
-        echo "The chipping module is working..."
+        echo "The chipping module is working.."
     else
         echo "The chipping module is not working..."
     fi
@@ -43,7 +43,7 @@ mosaic()
     
     out_fp="mosaic"
     
-    in="tests/train/"
+    in="train"
     
     out="tests/chip/"
     
@@ -53,11 +53,13 @@ mosaic()
     
     find $out -type f -name 'result*.tif' -delete
     
-    echo "Please check the mosaic if needed..."
-    
-    echo ls $root/$out_fp | grep 'chunk' | wc -l)
+    ls $root/$out_fp | wc -l
     
     diff "$root/$out_fp/chunk_0.tif" "$root/$in/$infile"
+    
+    echo "Mosaic test complete...."
+    
+    echo "Please check the mosaic if needed..."
     
 }
 
@@ -85,9 +87,11 @@ mask()
     
     diff "$root/$storage/mask.tif" "$root/$storage/test.tif"
     
-    echo "Please check the generated mask if needed..."
-    
     find "$root/$storage" -type f -name 'test.tif' -delete
+    
+    echo "Mask test complete...."
+    
+    echo "Please check the mask if needed..."
      
 }
    
@@ -107,6 +111,8 @@ flatten()
     output_format=".npz" 
     
     python flatten/flatten.py $output_format $root $image_type $extension $storage $mask
+    
+    echo "Flatten test completed..."
     
     echo "Please check the generated file manually if needed..."
 }
@@ -134,17 +140,20 @@ split()
     val==$(ls $root/$val_target | grep 'result' | wc -l)
     
     if [ train==$expected ]
+    
     then 
         echo "The split module is working fine..."
+    
     else
         echo "Check the split module..."
+    
     fi
     
     find $root/$image_type -type f -name 'result*.tif' -delete
     
-    ls $root/$train_target
+    ls $root/$train_target | wc -l
     
-    ls $root/$val_target
+    ls $root/$val_target | wc -l
     
     rm -r $root/$train_target
     
