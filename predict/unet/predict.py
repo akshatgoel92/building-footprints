@@ -3,7 +3,7 @@ import os
 import sys
 import time
 import json
-import train_dl
+import train.unet as train
 
 import random
 import skimage
@@ -16,10 +16,10 @@ from skimage import filters
 from skimage import img_as_ubyte
 from helpers import common
 from helpers import raster
-from train_dl.metrics import iou
-from train_dl.metrics import dice_coef
-from train_dl.metrics import jaccard_coef
-from train_dl.metrics import iou_thresholded
+from train.unet.metrics import iou
+from train.unet.metrics import dice_coef
+from train.unet.metrics import jaccard_coef
+from train.unet.metrics import iou_thresholded
 
 from numpy import load
 from matplotlib import pyplot
@@ -118,13 +118,12 @@ def run_pred(model, track, tests, masks, outputs, target_size, channels):
         write_prediction(dest_path, pred, meta)
 
 
-def main(test=0,
+def main(test=1,
          channels = 8, 
          img_type = "val", 
          model_name = "run_2.h5", 
          target_width = 640,
-         target_height = 640,
-         test=1):
+         target_height = 640,):
     """
     Takes as input the a tile and returns chips.
     ==========================================
@@ -141,7 +140,8 @@ def main(test=0,
     track = {"iou": iou, "dice_coef": dice_coef, 
             "iou_thresholded": iou_thresholded}
     
-    model = os.path.join("results", model_name)
+    results=os.path.join("train", "results")
+    model = os.path.join(results, model_name)
     masks_path = os.path.join("data", "{}_masks".format(img_type))
     frames_path = os.path.join("data", "{}_frames".format(img_type))
     outputs_path = os.path.join("data", "{}_outputs".format(img_type))
