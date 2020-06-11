@@ -112,14 +112,19 @@ split()
 summarize()
 {
 
-    echo '.....'
+    bands=3 
+    suffix=".npz" 
+    root="tests" 
+    image_type="flat"
+    
+    python summarize/summarize.py $bands $suffix $root $image_type
 
 }
 
  
 run()    
 {   
-flatten
+    summarize
     
 }
 

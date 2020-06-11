@@ -27,7 +27,7 @@ def get_local_image_path(root, image_type, image_name=""):
     return os.path.join(root, image_type, image_name)
 
 
-def list_local_images(root, image_type):
+def list_local_images(root, image_type, suffix = ".tif"):
     """
     ------------------------
     Input: 
@@ -36,7 +36,7 @@ def list_local_images(root, image_type):
     """
     path = get_local_folder_path(root, image_type)
 
-    images = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f)) and f.endswith(".tif")]
+    images = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f)) and f.endswith(suffix)]
 
     return images
 
