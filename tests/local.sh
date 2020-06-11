@@ -121,6 +121,13 @@ summarize()
 
 }
 
+predict()
+{
+
+    python predict/unet/predict.py
+
+}
+
  
 run()    
 {   

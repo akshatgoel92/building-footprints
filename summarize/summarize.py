@@ -169,7 +169,7 @@ def get_poly_proportion_shp(shapes, path):
     return proportion
 
 
-def get_summary_df(avgs, sd, bands=3):
+def get_summary_df(avgs, sd, bands):
     """
     ------------------------
     Input: 
@@ -204,7 +204,7 @@ def get_regular_data(df):
     Output:
     ------------------------
     """
-    return df[4:-2]
+    return df[4:-1]
 
 
 def get_histogram(df, df_summary, dest, f_no=0, overlay=0, x_loc=0.5, y_loc=0.6):
@@ -297,7 +297,7 @@ def main(bands = 3, suffix = ".npz", root = "tests", image_type = "flat", x_loc 
         sd = get_sd(df)
 
         # Get summary dataframes
-        df_summary = get_summary_df(avgs, sd)
+        df_summary = get_summary_df(avgs, sd, bands)
 
         # Call histograms
         # First make regular histogram
@@ -305,11 +305,9 @@ def main(bands = 3, suffix = ".npz", root = "tests", image_type = "flat", x_loc 
         get_histogram(df_regular, df_summary, dest, f_no=i, x_loc = x_loc, y_loc = y_loc)
         
         # Now make overlaid histograms
-        overlay = []
-        
-    for j, band in enumerate(range(bands)):
-        df_overlay = get_overlay_data(df, band)
-        get_histogram(df_overlay, df_summary, dest, f_no=j, overlay=1, x_loc = x_loc, y_loc = y_loc)
+        for j, band in enumerate(range(bands)):
+            df_overlay = get_overlay_data(df, band)
+            get_histogram(df_overlay, df_summary, dest, f_no=j, overlay=1, x_loc = x_loc, y_loc = y_loc)
             
 if __name__ == "__main__":
     run(main)
