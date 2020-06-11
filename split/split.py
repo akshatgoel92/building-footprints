@@ -63,7 +63,8 @@ def add_frames(source_frames, dest_frames):
     return
 
 
-def main(root = "data", image_type = "frames"):
+def main(root = "data", image_type = "frames", train_split=0.75, 
+         train_target="train_frames", val_target="val_frames"):
     """
     Takes as input the a tile and returns chips.
     ==========================================
@@ -75,14 +76,20 @@ def main(root = "data", image_type = "frames"):
     :output_filename: Desired output file pattern
     ===========================================
     """
-    train_target = os.path.join(root, "train_frames")
-    val_target = os.path.join(root, "val_frames")
+    train_target = os.path.join(root, train_target)
+    val_target = os.path.join(root, val_target)
+    
+    if not os.path.exists(train_target):
+        os.makedirs(train_target)
+    
+    if not os.path.exists(val_target):
+        os.makedirs(val_target)
 
     prefix = common.get_local_image_path(root, image_type)
     files = [os.path.join(prefix, f) for f in common.list_local_images(root, image_type)]
 
     files = shuffle_files(files)
-    train_frames, val_frames = get_train_val(files)
+    train_frames, val_frames = get_train_val(files, train_split)
     train_dest, val_dest = get_dest_files(train_target, val_target, train_frames, val_frames)
 
     add_frames(train_frames, train_dest)

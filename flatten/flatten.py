@@ -28,7 +28,6 @@ def convert_img_to_flat_file(img, label):
     --------------------------
     """
     img = raster.open_image(img)
-    print(2)
     label = raster.open_image(label)
     
     trans = img.transform
@@ -52,15 +51,15 @@ def convert_img_to_flat_file(img, label):
     row = []
     col = []
     
-    for row_, col_ in img_coords:
-        row.append(row)
-        col.append(col)
+    for element in img_coords:
+        row.append(int(element[0]))
+        col.append(int(element[1]))
     
     # Put everything together here
-    flat.append(x)
-    flat.append(y)
-    flat.append(row)
-    flat.append(col)
+    flat.append(np.array(x))
+    flat.append(np.array(y))
+    flat.append(np.array(row))
+    flat.append(np.array(col))
     
     # Now add the raster
     for band in bands:
@@ -68,7 +67,7 @@ def convert_img_to_flat_file(img, label):
     
     # Now add the label
     label = list((np.sum(label, axis=0) > 0).astype(int).flatten())
-    flat.append(label)
+    flat.append(np.array(label))
     
     flat = pd.DataFrame(flat)
     return(flat)
@@ -81,7 +80,7 @@ def write_file(flat, f_name):
     Output:
     --------------------------
     """
-    flat.to_pickle(f_name)
+    np.savez_compressed(f_name, flat)
     
     
 def main(output_format = ".npz", root = "tests", 
@@ -118,7 +117,7 @@ def main(output_format = ".npz", root = "tests",
         try:
             
             f_name = os.path.splitext(os.path.basename(img))[0]
-            f_name = os.path.join(prefix_storage, f_name) + output_format
+            f_name = os.path.join(prefix_storage, f_name)
             
             flat = convert_img_to_flat_file(img, label)
             write_file(flat, f_name)

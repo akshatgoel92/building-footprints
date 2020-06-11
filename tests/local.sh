@@ -1,10 +1,9 @@
 #!/bin/sh
 
-# Test chip 
 
 chip()
 {   
-
+    
     width=65
     height=65
     expected=100
@@ -28,7 +27,6 @@ chip()
 
 mosaic()
 {   
-    passed=0
     root="tests" 
     chunksize=100
     img_type="chip"
@@ -50,7 +48,7 @@ mosaic()
 mask()
 {
     root="tests"
-    storage ="mask"
+    storage="mask"
     mode="standard" 
     extension=".tif" 
     shape_type="shape"
@@ -62,64 +60,68 @@ mask()
     python mask/mask.py $root $image_type $shape_root \
     $output_format $shape_type $shape_name $mode $extension $storage
     
+    diff "$root/$storage/mask.tif" "$root/$storage/test.tif"
+    find "$root/$storage" -type f -name 'test.tif' -delete
      
 }
    
 
 flatten()
 {   
-    passed=0
     mask="mask"
     root="tests"
     storage="flat" 
     extension=".tif"
     image_type="train" 
-    output_format=".pkl" 
+    output_format=".npz" 
     
     python flatten/flatten.py $output_format $root $image_type $extension $storage $mask
     
-    if [ $test==$expected ]
-    then
-        echo "The flatten module is working..."
-    else
-        echo "The flatten module is not working..."
-    fi
 }
 
 
 split()
 
 {
+    expected=75
+    root="tests"
+    image_type="chip"
+    train_split=0.75
+    val_target="val_frames"
+    train_target="train_frames"
     
-    echo "Split will go here..."
-
+    python split/split.py $root $image_type $train_split $train_target $val_target
+    
+    train=$(ls $root/$train_target | grep 'result' | wc -l)
+    val==$(ls $root/$val_target | grep 'result' | wc -l)
+    
+    if [ train==$expected ]
+    then 
+        echo "The split module is working fine..."
+    else
+        echo "Check the split module..."
+    fi
+    
+    find $root/$image_type -type f -name 'result*.tif' -delete
+    rm -r $root/$train_target
+    rm -r $root/$val_target
+        
 }
 
 
 summarize()
 {
 
-
-    echo "Summarize will go here..."
+    echo '.....'
 
 }
 
  
 run()    
 {   
-    chip
-    mask
-    mosaic
-    
-    chip
-    flatten
-    
-    chip
-    split
-    summarize
+flatten
     
 }
 
 
 run
-    
