@@ -123,7 +123,8 @@ def main(test=0,
          img_type = "val", 
          model_name = "run_2.h5", 
          target_width = 640,
-         target_height = 640):
+         target_height = 640,
+         test=1):
     """
     Takes as input the a tile and returns chips.
     ==========================================

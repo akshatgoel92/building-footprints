@@ -219,6 +219,7 @@ def get_histogram(df, df_summary, dest, f_no=0, overlay=0, x_loc=0.5, y_loc=0.6)
         "histtype": "stepfilled",
         "bins": 500,
         "alpha": 0.6,
+        "range": (0, 1000)
     }
 
     # Store the colors here
@@ -238,7 +239,7 @@ def get_histogram(df, df_summary, dest, f_no=0, overlay=0, x_loc=0.5, y_loc=0.6)
 
     # Now iterate through bands and draw each layer
     for i, band in enumerate(df):
-
+        
         # Now prepare image
         band_data = np.unique(band, return_counts=True)
         indices = np.where(band_data[0] > 0)
@@ -249,19 +250,20 @@ def get_histogram(df, df_summary, dest, f_no=0, overlay=0, x_loc=0.5, y_loc=0.6)
         # Note that we are normalizing to probabilities
         weights = band_data[1][indices]
         weights = weights / np.sum(weights)
-
-        ax.hist(vals, weights=weights, label=str(i), color=colors[i], range=(0, 260), **hist_args)
+        
+        # Make histogram
+        ax.hist(vals, weights=weights, label=str(i), color=colors[i], **hist_args)
 
     # Add annotations
     ax.legend(loc="upper right")
     ax.set_title(title, fontweight="bold")
     
-    if not overlay:
+    if overlay:
+        name = "hist_masked_{}.png".format(str(f_no))
+    else:
         name = "hist_{}.png".format(str(f_no))
         plt.figtext(x_loc, y_loc, df_summary.to_string(), fontsize=8)
-    else:
-        name = "hist_masked_{}.png".format(str(f_no))
-    
+        
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     plt.savefig(os.path.join(dest, name))
@@ -305,9 +307,9 @@ def main(bands = 3, suffix = ".npz", root = "tests", image_type = "flat", x_loc 
         # Now make overlaid histograms
         overlay = []
         
-        for j, band in enumerate(range(bands)):
-            df_overlay = get_overlay_data(df, band)
-            get_histogram(df_overlay, df_summary, dest, f_no=j, overlay=1, x_loc = x_loc, y_loc = y_loc)
+    for j, band in enumerate(range(bands)):
+        df_overlay = get_overlay_data(df, band)
+        get_histogram(df_overlay, df_summary, dest, f_no=j, overlay=1, x_loc = x_loc, y_loc = y_loc)
             
 if __name__ == "__main__":
     run(main)
