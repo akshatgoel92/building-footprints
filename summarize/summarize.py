@@ -84,10 +84,7 @@ def get_poly_count(df):
     Output:
     ------------------------
     """
-    mask = df[-1]
-    labels = mask.mask.astype(int).sum()
-
-    return labels
+    return df[-1].sum()
 
 
 def get_poly_proportion(df):
@@ -98,7 +95,7 @@ def get_poly_proportion(df):
     ------------------------
     """
     mask = df[-1]
-    total = len(mask.mask)
+    total = len(mask)
     labels = get_poly_count(df)
 
     return (1 - (labels / total)) * 100
