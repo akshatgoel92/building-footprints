@@ -1,4 +1,7 @@
 *.xml
+deploy/chip/*
+deploy/train_frames/*
+deploy/val_frames/*
 logs/
 blocks/
 GE Gorakhpur/
