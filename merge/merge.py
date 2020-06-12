@@ -77,7 +77,7 @@ def write_block(df, block):
     np.savez_compressed("output_{}.npz".format(block), df)
 
 
-def get_block(root, image_type, extension):
+def main(root, image_type, extension):
     """
     ------------------------
     Input: 
