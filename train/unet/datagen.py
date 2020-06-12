@@ -45,10 +45,10 @@ def create_default_gen(
     Output: Tensorboard directory path
     ---------------------------------------------
     """
-    if img_type = 'train':
+    if img_type == 'train':
         train = train_frame 
         mask = mask_frame
-    elif img_type = 'val':
+    elif img_type == 'val':
         train = val_frame
         mask = val_mask
 
