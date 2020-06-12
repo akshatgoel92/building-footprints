@@ -22,8 +22,22 @@ from skimage import transform
 
 
 def create_default_gen(
-    train, mask, mode, rescale, shear_range, zoom_range, horizontal_flip, 
-    batch_size, class_mode, target_size, mask_color, data_format, custom,
+    train_frame,
+    train_mask,
+    val_frame,
+    val_mask,
+    img_type,
+    rescale,
+    shear_range,
+    zoom_range,
+    horizontal_flip,
+    batch_size,
+    class_mode,
+    target_size,
+    mask_color,
+    data_format,
+    custom,
+    channels,
 ):
     """
     ---------------------------------------------
@@ -33,13 +47,22 @@ def create_default_gen(
     """
     keras.backend.set_image_data_format(data_format)
 
-    gen = ImageDataGenerator(rescale=1.0 / rescale, shear_range=shear_range, zoom_range=zoom_range, horizontal_flip=horizontal_flip,)
+    gen = ImageDataGenerator(rescale=1.0 / rescale, 
+                             shear_range=shear_range, 
+                             zoom_range=zoom_range, 
+                             horizontal_flip=horizontal_flip,)
 
-    train_gen = (img[0] for img in gen.flow_from_directory(train, batch_size=batch_size, class_mode=class_mode, target_size=target_size))
+    train_gen = (img[0] for img in gen.flow_from_directory(train, 
+                 batch_size=batch_size, 
+                 class_mode=class_mode, 
+                 target_size=target_size))
 
     mask_gen = (
-        img[0] for img in gen.flow_from_directory(mask, batch_size=batch_size, class_mode=class_mode, target_size=target_size, color_mode=mask_color,)
-    )
+        img[0] for img in gen.flow_from_directory(mask, 
+                                                  batch_size=batch_size, 
+                                                  class_mode=class_mode, 
+                                                  target_size=target_size, 
+                                                  color_mode=mask_color,))
 
     gen = (pair for pair in zip(train_gen, mask_gen))
 
