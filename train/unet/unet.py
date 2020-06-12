@@ -4,8 +4,8 @@ import time
 import tensorflow.keras as keras
 import sys
 
-from train import utils
-from train import metrics
+from train.unet import utils
+from train.unet import metrics
 
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (
