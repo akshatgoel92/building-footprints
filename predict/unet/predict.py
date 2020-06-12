@@ -123,7 +123,8 @@ def main(test=1,
          img_type = "val", 
          model_name = "run_2.h5", 
          target_width = 640,
-         target_height = 640,):
+         target_height = 640,
+         root = "data"):
     """
     Takes as input the a tile and returns chips.
     ==========================================
@@ -141,10 +142,10 @@ def main(test=1,
             "iou_thresholded": iou_thresholded}
     
     results=os.path.join("train", "results")
-    model = os.path.join(results, model_name)
-    masks_path = os.path.join("data", "{}_masks".format(img_type))
-    frames_path = os.path.join("data", "{}_frames".format(img_type))
-    outputs_path = os.path.join("data", "{}_outputs".format(img_type))
+    model=os.path.join(results, model_name)
+    masks_path = os.path.join(root, "{}_masks".format(img_type))
+    frames_path = os.path.join(root, "{}_frames".format(img_type))
+    outputs_path = os.path.join(root, "{}_outputs".format(img_type))
 
     frames = raster.list_images(frames_path, img_type)
     masks = raster.list_images(masks_path, img_type)
@@ -154,9 +155,9 @@ def main(test=1,
     masks = [common.get_local_image_path(masks_path, img_type, f) for f in masks if f in frames]
 
     if test == 1:
-        tests = tests[20:30]
-        masks = masks[20:30]
-        outputs = outputs[20:30]
+        tests = tests[20:22]
+        masks = masks[20:22]
+        outputs = outputs[20:22]
     
     run_pred(model, track, tests, masks, outputs, target_size, channels)
     
