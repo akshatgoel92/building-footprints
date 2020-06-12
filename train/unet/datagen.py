@@ -1,6 +1,7 @@
 # Import packages
 import os
 import sys
+import unet
 import time
 import json
 import keras
@@ -8,7 +9,6 @@ import random
 import skimage
 import numpy as np
 import tensorflow as tf
-import unet
 
 from numpy import load
 from keras import backend
