@@ -1,15 +1,15 @@
 # Import packages
 import os
 import sys
+import train
 
 import time
 import json
 import keras
 import random
 import skimage
-import train_dl
-import numpy as np
 
+import numpy as np
 import tensorflow as tf
 
 
@@ -33,7 +33,7 @@ def get_settings(model_type):
     Output: Display diagnostic learning curves
     ---------------------------------------------
     """
-    path = os.path.join(model_type, "settings.json")
+    path = os.path.join("train", os.path.join(model_type, "settings.json"))
 
     with open(path) as f:
         settings = json.load(f)

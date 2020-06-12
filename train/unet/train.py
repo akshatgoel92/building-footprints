@@ -1,8 +1,10 @@
 # Import packages
-from train.unet import metrics
-from train.unet import datagen
-from train.unet import utils
-from train.unet import unet
+import datagen
+import metrics
+import utils
+import unet
+import utils
+
 
 import os
 import sys
@@ -19,8 +21,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
     
     
 def train(
-    path_args, training_args, model_args, output_args, load_dataset_args, checkpoint_args, extension_args,
-):
+     model_type, path_args, training_args, model_args, 
+     output_args, load_dataset_args, checkpoint_args, extension_args,):
     """
     ---------------------------------------------
     Input: None
@@ -58,7 +60,7 @@ def train(
 def main():
     
     model_type = "unet"
-    history, model = train(**utils.get_settings(model_type))
+    history, model = train(model_type, **utils.get_settings(model_type))
     
 if __name__ == '__main__':
     main()
