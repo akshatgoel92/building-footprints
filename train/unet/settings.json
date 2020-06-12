@@ -15,7 +15,7 @@
     },
     
     "load_dataset_args":{
-        "custom":1,
+        "custom":0,
         "batch_size": 4,
         "target_size":[640, 640],
         "rescale": 255,
