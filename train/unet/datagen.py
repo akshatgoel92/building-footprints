@@ -47,7 +47,7 @@ def create_default_gen(
     """
     if img_type == 'train':
         train = train_frame 
-        mask = mask_frame
+        mask = train_mask
     elif img_type == 'val':
         train = val_frame
         mask = val_mask
