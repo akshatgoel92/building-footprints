@@ -109,6 +109,7 @@ def main(prod, chip=False, mask=False,
     if mode == "test":
         path = os.path.join("run", "test.json")
         args = get_settings(path)
+        
         if chip:
             run_chip(chip_args)
         if mask:
@@ -127,6 +128,7 @@ def main(prod, chip=False, mask=False,
     elif test == "prod":
         path = os.path.join("run", "prod.json")
         args = get_settings(path)
+        
         if chip:
             run_chip(chip_args)
         if mask:
