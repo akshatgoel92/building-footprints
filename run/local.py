@@ -116,23 +116,31 @@ def main(*, prod=False, chip=False, mask=False,
         args = get_settings(path)
         
         
+        
     else:
         path = os.path.join("run", "test.json")
         args = get_settings(path)
         
     if chip:
+        chip_args = args['chip_args']
         run_chip(chip_args)
     if mask:
+        mask_args = args['mask_args']
         run_mask(mask_args)
     if mosaic:
+        mosaic_args = args['mosaic_args']
         run_mosaic(mosaic_args)
     if flatten:
+        flatten_args = args['flatten_args']
         run_flatten(flatten_args)
     if split:
+        split_args = args['split_args']
         run_split(split_args)
     if summarize:
+        sum_args = args['sum_args']
         run_summarize(sum_args)
     if predict:
+        predict_args = args['predict_args']
         run_predict(predict_args)
         
         
