@@ -57,10 +57,9 @@ def train(
     return (history, model)
     
     
-def main():
+def main(path):
     
-    model_type = "unet"
-    history, model = train(model_type, **utils.get_settings(model_type))
+    history, model = train(model_type, **utils.get_settings(path))
     
 if __name__ == '__main__':
     main()

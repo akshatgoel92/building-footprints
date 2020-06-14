@@ -25,7 +25,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 
 
-def get_settings(model_type):
+def get_settings(path):
     """
     ---------------------------------------------
     Deal with recale argument: need to reciprocate
@@ -34,8 +34,7 @@ def get_settings(model_type):
     Output: Display diagnostic learning curves
     ---------------------------------------------
     """
-    path = os.path.join("train", os.path.join(model_type, "settings.json"))
-
+    
     with open(path) as f:
         settings = json.load(f)
 
