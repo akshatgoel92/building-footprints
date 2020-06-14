@@ -39,7 +39,11 @@ This will go to the roof-classify directory which was just created after you ran
 
 ### Data Folder Structure 
 
-	TBC
++-- data
+|   +-- train_frames
+    +-- train_masks 
+    +-- val_masks
+|   +-- val_frames
 
 ### Download 
 
@@ -253,7 +257,7 @@ We trained a UNET with the settings given below. The model arguments and output 
 
 ```python
     "model_args":{
-        "input_shape":[640, 640, 3],
+        "input_shape":[650, 650, 8],
         "num_classes":1,
         "num_layers":4,
         "filters": 64,
@@ -271,7 +275,7 @@ We trained a UNET with the settings given below. The model arguments and output 
 ```
 ```python
     "training_args":{
-        "epochs":50,
+        "epochs":10,
         "pretrained":false,
         "results_folder":"results",
         "steps_per_epoch":723,
@@ -296,7 +300,7 @@ We trained a UNET with the settings given below. The model arguments and output 
 
 ```python
     "model_args":{
-        "input_shape":[640, 640, 3],
+        "input_shape":[640, 640, 8],
         "num_classes":1,
         "num_layers":4,
         "filters": 64,
@@ -314,7 +318,7 @@ We trained a UNET with the settings given below. The model arguments and output 
 ```
 ```python
     "training_args":{
-        "epochs":50,
+        "epochs":10,
         "pretrained":false,
         "results_folder":"results",
         "steps_per_epoch":723,
@@ -337,7 +341,7 @@ nd are the same as above.
 
 ```python
     "model_args":{
-        "input_shape":[640, 640, 3],
+        "input_shape":[640, 640, 8],
         "num_classes":1,
         "num_layers":4,
         "filters": 64,
@@ -355,7 +359,7 @@ nd are the same as above.
 ```
 ```python
     "training_args":{
-        "epochs":50,
+        "epochs":10,
         "pretrained":false,
         "results_folder":"results",
         "steps_per_epoch":723,
@@ -376,7 +380,7 @@ We trained a UNET with the settings given below.
 
 ```python
     "model_args":{
-        "input_shape":[640, 640, 3],
+        "input_shape":[650, 650, 8],
         "num_classes":1,
         "num_layers":4,
         "filters": 64,
@@ -394,7 +398,7 @@ We trained a UNET with the settings given below.
 ```
 ```python
     "training_args":{
-        "epochs":50,
+        "epochs":10,
         "pretrained":false,
         "results_folder":"results",
         "steps_per_epoch":723,
@@ -416,7 +420,7 @@ We trained a UNET with the settings given below.
 
 ```python
     "model_args":{
-        "input_shape":[640, 640, 3],
+        "input_shape":[640, 640, 8],
         "num_classes":1,
         "num_layers":4,
         "filters": 64,
@@ -445,9 +449,13 @@ We trained a UNET with the settings given below.
 ### Results 
 The training worked fine. The metrics behaved in the same way as above. Early stopping made training end after 43 epochs.  We were getting blank masks. When we tried to diagnose this problem by looking at the numerical values of the predictions we found that the predicted probabilities were very small. When we looked at the numerical pixel values going into the model post-resizing we found that they were also very small too. So the first possibility is that we are pre-processing our images incorrectly in the custom image data generator. The other possibility is that we are writing the masks wrong and that there is a bug in our prediction module. This is why the next experiment tries to isolate the problem. 
 
-### Experiment 6 (Ongoing) 
+### Changes
 
-This experiment changes the input data to the SpaceNet2 RGB 3 band imagery. The reason this will help is because we have already tested the default image data generator using the Gorakhpur Microsoft Bing data. If this works fine then this indicates that the problem is restricted to the two possibilities mentioned above. We should have these results by the vening of 9th June IST.
+To isolate the problem we decided to switch from 8-band Pan-Sharpened Multi-spectral images to 3-band RGB imagery. The reasoning behind this is given below. 
+
+### Experiment 6
+
+This experiment changes the input data to the SpaceNet2 RGB 3 band imagery. The reason this will help is because we have already tested the default image data generator using the Gorakhpur Microsoft Bing data. If this works fine then this indicates that the problem is restricted to the two possibilities mentioned above.
 
 ### Settings 
 
@@ -479,5 +487,9 @@ This experiment changes the input data to the SpaceNet2 RGB 3 band imagery. The 
         "verbose":1
     }
 ```
+
+### Results 
+
+The default image data generator throws an error. The PIL image library keeps finding unidentified images in the dataset and is unable to load them. Further documentation on this error is given here. We tried to change the extension from .tif to .tiff as suggested in the post but this raised the same error. This seems to be a dataset issue rather than a code issue because this code has been tested on the Gorakhpur 4-band .tif imagery. My suggested next steps are to continue with diagnosing the problem in the custom image data generator and the footprint [prediction] creation code in further experiments rather than continuiing with this.
 
  

@@ -1,3 +1,4 @@
+.Rhistory
 *.xml
 deploy/chip/*
 deploy/train_frames/*
