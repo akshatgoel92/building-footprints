@@ -62,15 +62,32 @@ This will go to the roof-classify directory which was just created after you ran
 		       -- val_2.tif
 			       ...
 
+### Documentation for Gorakhpur Metal Roof Use Case 
 
-### Download 
+This can be found on Google Docs here and also under the ```docs``` folder in the repository. 
 
-This module downloads existing imagery from S3 to the local machine. To run it just use the following command: 
+
+### Tests 
+
+To test the pipeline run: 
 
 ```python 
-python download/download.py 
+python run/local.py --test --chip --mask --mosaic --flatten --summarize --predict
 ```
-This code will then give you a sequence of options to which you can reply to get the imagery that you need. This was used to download the Microsoft Bing Imagery but is not needed for SpaceNet2.
+
+To train locally just for testing purposes run: 
+
+```python 
+python run/local.py --test --train
+```
+
+To run the actual pipeline on the cloud use: 
+
+```python
+python run/local.py --prod --chip --mask --mosaic --flatten --summarize --train --predict 
+```
+
+Now we describe each individual module one by one including how to run it locally manually without using the method given above.
 
 ### Chip 
 
