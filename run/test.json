@@ -4,15 +4,15 @@
         "width":65,
         "height":65,
         "expected":100,
-        "in_path":"deploy/train/",
-        "out_path":"deploy/chip/",
+        "in_path":"run/train/",
+        "out_path":"run/chip/",
         "input_filename":"test.tif",
         "output_filename":"result_{}-result{}.tif"
     },
     
     "mosaic_args":{
         
-        "root":"deploy", 
+        "root":"run", 
         "chunksize":100,
         "img_type":"chip",
         "extension":".tif",
@@ -20,20 +20,20 @@
     },
     
     "mask_args": {
-        "root": "deploy",
+        "root": "run",
         "storage":"mask",
         "mode":"standard",
         "extension":".tif",
         "shape_type":"shape",
         "image_type": "train", 
-        "shape_root": "deploy", 
+        "shape_root": "run", 
         "output_format":".tif",
         "shape_name":"vegas.geojson"
     },
     
     "flatten_args":{
         "mask":"mask",
-        "root":"deploy",
+        "root":"run",
         "storage":"flat", 
         "extension":".tif",
         "image_type":"train", 
@@ -41,7 +41,7 @@
     },
     
     "split_args":{
-        "root":"deploy",
+        "root":"run",
         "image_type":"chip",
         "train_split":0.75,
         "val_target":"val_frames",
@@ -51,7 +51,7 @@
     "sum_args":{
         "bands":3, 
         "suffix":".npz", 
-        "root":"deploy", 
+        "root":"run", 
         "image_type":"flat"
     }, 
     
