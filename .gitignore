@@ -1,8 +1,8 @@
 .Rhistory
 *.xml
-deploy/chip/*
-deploy/train_frames/*
-deploy/val_frames/*
+run/chip/*
+run/train_frames/*
+run/val_frames/*
 store/
 logs/
 blocks/
