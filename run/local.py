@@ -2,13 +2,13 @@ import os
 import json
 import glob
 
+from train import unet
 from clize import run
 from chip import chip 
 from mask import mask 
 from split import split 
 from mosaic import mosaic
 from flatten import flatten 
-from train.unet import train
 from summarize import summarize 
 from predict.unet import predict
 
@@ -97,52 +97,43 @@ def run_predict(predict_args):
     predict.main(**predict_args)
     
 
-def main(prod, chip=False, mask=False, 
-         mosaic=False, flatten=False, 
-         split=False, summarize=False, predict=False):
-    '''
-    ====================================================
-    Input: 
-    Output: 
-    ====================================================
-    '''
-    if mode == "test":
-        path = os.path.join("run", "test.json")
-        args = get_settings(path)
-        
-        if chip:
-            run_chip(chip_args)
-        if mask:
-            test_mask(mask_args)
-        if mosaic:
-            test_mosaic(mosaic_args)
-        if flatten:
-            test_flatten(flatten_args)
-        if split:
-            test_split(split_args)
-        if summarize:
-            test_summarize(sum_args)
-        if predict:
-            test_predict(predict_args)
-        
-    elif test == "prod":
+def main(*, prod=False, chip=False, mask=False, 
+         mosaic=False, flatten=False, split=False, 
+         summarize=False, predict=False):
+    """
+    Takes as input the a tile and returns chips.
+    ==========================================
+    :width: Desired width of each chip.
+    :height: Desired height of each chip.
+    :out_path: Desired output file storage folder.
+    :in_path: Folder where the input tile is stored.
+    :input_filename: Name of the input tile
+    :output_filename: Desired output file pattern
+    ===========================================
+    """
+    if prod:
         path = os.path.join("run", "prod.json")
         args = get_settings(path)
         
-        if chip:
-            run_chip(chip_args)
-        if mask:
-            test_mask(mask_args)
-        if mosaic:
-            test_mosaic(mosaic_args)
-        if flatten:
-            test_flatten(flatten_args)
-        if split:
-            test_split(split_args)
-        if summarize:
-            test_summarize(sum_args)
-        if predict:
-            test_predict(predict_args)
+        
+    else:
+        path = os.path.join("run", "test.json")
+        args = get_settings(path)
+        
+    if chip:
+        run_chip(chip_args)
+    if mask:
+        run_mask(mask_args)
+    if mosaic:
+        run_mosaic(mosaic_args)
+    if flatten:
+        run_flatten(flatten_args)
+    if split:
+        run_split(split_args)
+    if summarize:
+        run_summarize(sum_args)
+    if predict:
+        run_predict(predict_args)
         
         
 if __name__ == '__main__':

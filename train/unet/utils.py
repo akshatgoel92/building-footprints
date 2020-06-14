@@ -12,6 +12,8 @@ import skimage
 import numpy as np
 import tensorflow as tf
 
+from skimage import io
+from skimage import transform
 
 from numpy import load
 from keras import backend
@@ -20,8 +22,7 @@ from matplotlib import pyplot
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
 
-from skimage import io
-from skimage import transform
+
 
 
 def get_settings(model_type):
