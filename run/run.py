@@ -114,9 +114,7 @@ def main(*, prod=False, chip=False, mask=False,
     if prod:
         path = os.path.join("run", "prod.json")
         args = get_settings(path)
-        
-        
-        
+         
     else:
         path = os.path.join("run", "test.json")
         args = get_settings(path)

@@ -53,6 +53,12 @@
         "suffix":".npz", 
         "root":"run", 
         "image_type":"flat"
+    },
+    
+    "train_args":{
+        
+        "test_path": "run/set/unet_test.json", 
+        "train_args": "run/set/unet_prod.json"
     }, 
     
     "predict_args":{
