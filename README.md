@@ -52,12 +52,12 @@ This will go to the roof-classify directory which was just created after you ran
 		       -- train_2.tif
 			       ...
 	       -- val_frames
-         -- val_0.tif
+         	       -- val_0.tif
 		       -- val_1.tif
 		       -- val_2.tif
 			       ...
         -- val_masks
-         -- val_0.tif
+         	       -- val_0.tif
 		       -- val_1.tif
 		       -- val_2.tif
 			       ...
