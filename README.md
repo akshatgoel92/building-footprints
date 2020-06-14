@@ -39,11 +39,29 @@ This will go to the roof-classify directory which was just created after you ran
 
 ### Data Folder Structure 
 
---- data
-  -- train_frames
-  -- train_masks 
-  -- val_masks
-  -- val_frames
+     --- data
+	       -- train_frames
+		       -- train_0.tif
+		       -- train_1.tif
+		       -- train_2.tif
+			       ...
+		       -- train_40478.tif
+	       -- train_masks
+		       -- train_0.tif
+		       -- train_1.tif
+		       -- train_2.tif
+			       ...
+	       -- val_frames
+         -- val_0.tif
+		       -- val_1.tif
+		       -- val_2.tif
+			       ...
+        -- val_masks
+         -- val_0.tif
+		       -- val_1.tif
+		       -- val_2.tif
+			       ...
+
 
 ### Download 
 
