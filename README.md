@@ -1,7 +1,7 @@
 # Introduction
  
 
-This is an experimental machine learning pipeline for semantic segmentation on Google Earth Engine data for Gorakhpur. The task we are trying to solve for is classifying all pixels which are part of a metal roof in a given satellite imagery tile from labeled data.
+This is an experimental continuous integration machine learning pipeline for semantic segmentation on Google Earth Engine data for Gorakhpur. The task we are trying to solve for is classifying all pixels which are part of a metal roof in a given satellite imagery tile from labeled data.
 
 # Overview
 
@@ -69,17 +69,11 @@ This can be found on Google Docs here and also under the ```docs``` folder in th
 
 ### Tests 
 
-To test the pipeline run: 
+To test the pipeline we use Travis CI:  
 
-```python 
-python run/local.py --test --chip --mask --mosaic --flatten --summarize --predict
-```
+- Make sure your Travis account is enabled and configured. 
 
-To train locally just for testing purposes run: 
-
-```python 
-python run/local.py --test --train
-```
+- Fork this repostiory and the .travis.yml file will do the rest.
 
 To run the actual pipeline on the cloud use: 
 
