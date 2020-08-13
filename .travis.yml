@@ -5,4 +5,4 @@ install:
   - pip install --upgrade pip
   - pip install -r cloud/requirements.txt
 script:
-  - python run/run.py 
+  - export PYTHONPATH=. && python run/run.py 
